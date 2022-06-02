@@ -11,7 +11,7 @@ source:
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
 build:
-  number: 0
+  number: 1
   skip: true  # [win]
 
 {% set mpi = "mpich" %}
