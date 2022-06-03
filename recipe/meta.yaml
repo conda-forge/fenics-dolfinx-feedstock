@@ -11,7 +11,7 @@ source:
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
 build:
-  number: 3
+  number: 4
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
@@ -38,7 +38,8 @@ outputs:
         - pkg-config
       host:
         - {{ mpi }}
-        # - adios2  # optional, not ready yet
+        - adios2
+        - adios2 * mpi_{{ mpi }}_*
         - boost-cpp
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - parmetis
