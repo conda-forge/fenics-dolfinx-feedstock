@@ -11,7 +11,7 @@ source:
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
 build:
-  number: 5
+  number: 6
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
@@ -83,6 +83,9 @@ outputs:
         - cmake
         - make
         - pkg-config
+        - python                                 # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+        - pybind11                               # [build_platform != target_platform]
       host:
         - {{ mpi }}
         - boost-cpp

@@ -4,6 +4,7 @@ if [[ "$target_platform" == "osx-64" ]]; then
 fi
 
 cmake \
+  ${CMAKE_ARGS} \
   -DCMAKE_INSTALL_PREFIX=$PREFIX \
   -B build \
   cpp
