@@ -1,0 +1,42 @@
+boost_cpp:
+- 1.74.0
+cdt_name:
+- cos6
+channel_sources:
+- conda-forge
+channel_targets:
+- conda-forge main
+cxx_compiler:
+- gxx
+cxx_compiler_version:
+- '10'
+docker_image:
+- quay.io/condaforge/linux-anvil-cos7-x86_64
+hdf5:
+- 1.10.6
+mpi:
+- mpich
+mpich:
+- '4'
+openmpi:
+- '4'
+petsc:
+- '3.17'
+petsc4py:
+- '3.17'
+pin_run_as_build:
+  boost-cpp:
+    max_pin: x.x.x
+  python:
+    min_pin: x.x
+    max_pin: x.x
+ptscotch:
+- 6.0.9
+python:
+- 3.7.* *_cpython
+slepc:
+- '3.17'
+slepc4py:
+- '3.17'
+target_platform:
+- linux-64
