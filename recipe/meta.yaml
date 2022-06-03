@@ -18,7 +18,6 @@ requirements:
   build:
     - python  # not used, just for build matrix
 
-{% set mpi = "mpich" %}
 outputs:
   - name: fenics-libdolfinx
     script: build-libdolfinx.sh
