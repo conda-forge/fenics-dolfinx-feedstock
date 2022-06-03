@@ -14,6 +14,10 @@ build:
   number: 2
   skip: true  # [win]
 
+requirements:
+  build:
+    - python  # not used, just for build matrix
+
 {% set mpi = "mpich" %}
 outputs:
   - name: fenics-libdolfinx
