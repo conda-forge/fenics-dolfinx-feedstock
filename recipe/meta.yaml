@@ -11,7 +11,7 @@ source:
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
 build:
-  number: 4
+  number: 5
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
