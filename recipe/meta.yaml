@@ -11,14 +11,19 @@ source:
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
 build:
-  number: 2
+  number: 3
   skip: true  # [win]
+  script_env:
+    - OMPI_ALLOW_RUN_AS_ROOT=1
+    - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+    - OMPI_MCA_rmaps_base_oversubscribe=1
+    - OMPI_MCA_plm=isolated
+    - OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 requirements:
   build:
     - python  # not used, just for build matrix
 
-{% set mpi = "mpich" %}
 outputs:
   - name: fenics-libdolfinx
     script: build-libdolfinx.sh

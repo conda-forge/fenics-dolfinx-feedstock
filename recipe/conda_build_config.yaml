@@ -1,6 +1,6 @@
 mpi:
   - mpich
-  # - openmpi  # add variant after merge
+  - openmpi
 
 pin_run_as_build:
   boost-cpp:
