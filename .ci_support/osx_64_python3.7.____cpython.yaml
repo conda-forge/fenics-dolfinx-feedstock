@@ -34,8 +34,6 @@ ptscotch:
 - 6.0.9
 python:
 - 3.7.* *_cpython
-- 3.8.* *_cpython
-- 3.9.* *_cpython
 slepc:
 - '3.17'
 slepc4py:
