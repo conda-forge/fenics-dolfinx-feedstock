@@ -10,6 +10,7 @@ source:
   sha256: 68dcf29a26c750fcea5e02d8d58411e3b054313c3bf6fcbc1d0f08dd2851117f
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
+    - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" ]
 build:
   number: 6
   skip: true  # [win]

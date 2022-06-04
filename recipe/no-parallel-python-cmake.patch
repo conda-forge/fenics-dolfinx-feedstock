@@ -1,0 +1,26 @@
+From 7a0dc443a6267f2b46226b5339693af06db9b454 Mon Sep 17 00:00:00 2001
+From: Min RK <benjaminrk@gmail.com>
+Date: Sat, 4 Jun 2022 10:49:16 +0200
+Subject: [PATCH] disable parallel builds
+
+maybe this is hitting memory issues on travis aarch64
+---
+ python/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/setup.py b/python/setup.py
+index 52f26bc11d..f0c42d7e95 100644
+--- a/python/setup.py
++++ b/python/setup.py
+@@ -48,7 +48,7 @@ class CMakeBuild(build_ext):
+         cfg = 'Debug' if self.debug else 'Release'
+         build_args = ['--config', cfg]
+         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
+-        build_args += ['--', '-j3']
++        # build_args += ['--', '-j3']
+ 
+         env = os.environ.copy()
+         import pybind11
+-- 
+2.35.3
+
