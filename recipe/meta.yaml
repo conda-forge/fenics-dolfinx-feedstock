@@ -11,6 +11,7 @@ source:
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
     - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
+    - "cmake-args-python.patch"  # [ target_platform != build_platform ]
 build:
   number: 6
   skip: true  # [win]
@@ -35,6 +36,7 @@ outputs:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
     requirements:
       build:
+        - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - cmake
         - make
@@ -82,6 +84,7 @@ outputs:
     script: build-dolfinx.sh
     requirements:
       build:
+        - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - cmake
         - make
