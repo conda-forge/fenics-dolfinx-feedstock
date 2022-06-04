@@ -10,8 +10,10 @@ source:
   sha256: 68dcf29a26c750fcea5e02d8d58411e3b054313c3bf6fcbc1d0f08dd2851117f
   patches:
     - "0001-cpp-test-remove-extra-semicolon.patch"
+    - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
+    - "cmake-args-python.patch"  # [ target_platform != build_platform ]
 build:
-  number: 5
+  number: 6
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
@@ -28,14 +30,18 @@ outputs:
   - name: fenics-libdolfinx
     script: build-libdolfinx.sh
     build:
+      skip_compile_pyc:
+        - "*"  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
     requirements:
       build:
+        - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - cmake
         - make
         - pkg-config
+        - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
         - adios2
@@ -45,8 +51,7 @@ outputs:
         - parmetis
         - ptscotch
         - petsc
-        # slepc not yet packaged for mac-arm
-        - slepc  # [not (osx and arm64)]
+        - slepc
         - xtensor
         - fenics-libbasix 0.4.*
         - fenics-ufcx 0.4.*
@@ -56,7 +61,7 @@ outputs:
         - hdf5
         - ptscotch
         - petsc
-        - slepc  # [not (osx and arm64)]
+        - slepc
         - fenics-libbasix
         # these don't have run_exports
         # but are needed at runtime for code generation
@@ -79,10 +84,15 @@ outputs:
     script: build-dolfinx.sh
     requirements:
       build:
+        - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - cmake
         - make
         - pkg-config
+        - python                                 # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+        - pybind11                               # [build_platform != target_platform]
+        - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
         - boost-cpp
@@ -98,8 +108,8 @@ outputs:
         - mpi4py
         - petsc
         - petsc4py
-        - slepc  # [not (osx and arm64)]
-        - slepc4py  # [not (osx and arm64)]
+        - slepc
+        - slepc4py
       run:
         - {{ compiler("cxx") }}  # [linux]
         - python
@@ -107,7 +117,7 @@ outputs:
         - mpi4py
         - numpy
         - petsc4py
-        - slepc4py  # [not (osx and arm64)]
+        - slepc4py
         - fenics-basix ==0.4.*,>=0.4.1
         - fenics-ffcx ==0.4.*,>=0.4.2
         - fenics-ufl ==2022.1.*
