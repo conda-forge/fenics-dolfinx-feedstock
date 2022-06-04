@@ -46,8 +46,7 @@ outputs:
         - parmetis
         - ptscotch
         - petsc
-        # slepc not yet packaged for mac-arm
-        - slepc  # [not (osx and arm64)]
+        - slepc
         - xtensor
         - fenics-libbasix 0.4.*
         - fenics-ufcx 0.4.*
@@ -57,7 +56,7 @@ outputs:
         - hdf5
         - ptscotch
         - petsc
-        - slepc  # [not (osx and arm64)]
+        - slepc
         - fenics-libbasix
         # these don't have run_exports
         # but are needed at runtime for code generation
@@ -102,8 +101,8 @@ outputs:
         - mpi4py
         - petsc
         - petsc4py
-        - slepc  # [not (osx and arm64)]
-        - slepc4py  # [not (osx and arm64)]
+        - slepc
+        - slepc4py
       run:
         - {{ compiler("cxx") }}  # [linux]
         - python
@@ -111,7 +110,7 @@ outputs:
         - mpi4py
         - numpy
         - petsc4py
-        - slepc4py  # [not (osx and arm64)]
+        - slepc4py
         - fenics-basix ==0.4.*,>=0.4.1
         - fenics-ffcx ==0.4.*,>=0.4.2
         - fenics-ufl ==2022.1.*
