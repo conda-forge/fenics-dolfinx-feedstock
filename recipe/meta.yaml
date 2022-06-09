@@ -13,7 +13,7 @@ source:
     - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
     - "cmake-args-python.patch"  # [ target_platform != build_platform ]
 build:
-  number: 6
+  number: 7
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
@@ -114,6 +114,7 @@ outputs:
         - {{ compiler("cxx") }}  # [linux]
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
+        - cffi
         - mpi4py
         - numpy
         - petsc4py
