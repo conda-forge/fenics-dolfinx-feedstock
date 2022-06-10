@@ -40,6 +40,7 @@ outputs:
         - "*"  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
+        - petsc * {{ scalar }}_*
     requirements:
       build:
         - {{ compiler("c") }}
@@ -57,7 +58,7 @@ outputs:
         - parmetis
         - ptscotch
         - petsc
-        - petsc * {{ scalar }}*
+        - petsc * {{ scalar }}_*
         - slepc
         - xtensor
         - fenics-libbasix 0.4.*
@@ -67,7 +68,7 @@ outputs:
         - {{ mpi }}
         - hdf5
         - ptscotch
-        - petsc * {{ scalar }}*
+        - petsc * {{ scalar }}_*
         - slepc
         - fenics-libbasix
         # these don't have run_exports
@@ -113,7 +114,7 @@ outputs:
         - pybind11
         - xtensor
         - mpi4py
-        - petsc * {{ scalar }}*
+        - petsc * {{ scalar }}_*
         - petsc4py
         - slepc
         - slepc4py
