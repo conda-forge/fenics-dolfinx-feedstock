@@ -68,6 +68,7 @@ outputs:
         - hdf5
         - ptscotch
         - petsc
+        - petsc * {{ scalar }}_*
         - slepc
         - fenics-libbasix
         # these don't have run_exports

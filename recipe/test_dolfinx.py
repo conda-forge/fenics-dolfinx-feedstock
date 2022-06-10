@@ -4,6 +4,7 @@ import numpy as np
 from petsc4py.PETSc import ScalarType
 import pytest
 
+import dolfinx
 from dolfinx.cpp import common
 
 
