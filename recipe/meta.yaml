@@ -1,6 +1,12 @@
 {% set name = "fenics-dolfinx" %}
 {% set version = "0.4.1" %}
 {% set extra = "" %}
+
+{% set build = 8 %}
+{% if build == "real" %}
+{%   set build = build + 100 %}
+{% endif %}
+
 package:
   name: {{ name|lower }}-split
   version: {{ version }}
@@ -13,7 +19,7 @@ source:
     - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
     - "cmake-args-python.patch"  # [ target_platform != build_platform ]
 build:
-  number: 7
+  number: {{ build }}
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
@@ -51,6 +57,7 @@ outputs:
         - parmetis
         - ptscotch
         - petsc
+        - petsc * {{ scalar }}_*
         - slepc
         - xtensor
         - fenics-libbasix 0.4.*
