@@ -3,7 +3,7 @@
 {% set extra = "" %}
 
 {% set build = 8 %}
-{% if build == "real" %}
+{% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
 
@@ -113,7 +113,7 @@ outputs:
         - pybind11
         - xtensor
         - mpi4py
-        - petsc
+        - petsc * {{ scalar }}*
         - petsc4py
         - slepc
         - slepc4py
