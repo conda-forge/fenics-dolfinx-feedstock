@@ -57,7 +57,7 @@ outputs:
         - parmetis
         - ptscotch
         - petsc
-        - petsc * {{ scalar }}_*
+        - petsc * {{ scalar }}*
         - slepc
         - xtensor
         - fenics-libbasix 0.4.*
@@ -67,8 +67,7 @@ outputs:
         - {{ mpi }}
         - hdf5
         - ptscotch
-        - petsc
-        - petsc * {{ scalar }}_*
+        - petsc * {{ scalar }}*
         - slepc
         - fenics-libbasix
         # these don't have run_exports
