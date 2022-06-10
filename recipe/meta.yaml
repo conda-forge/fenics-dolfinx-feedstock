@@ -41,6 +41,8 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
+      ignore_run_exports:
+        - python
     requirements:
       build:
         - {{ compiler("c") }}
@@ -51,6 +53,7 @@ outputs:
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
+        - python  # adios2 is a Python package, not yet split into libadios2
         - adios2
         - adios2 * mpi_{{ mpi }}_*
         - boost-cpp
