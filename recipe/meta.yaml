@@ -131,6 +131,8 @@ outputs:
         - fenics-ufl ==2022.1.*
     test:
       script: test-dolfinx.sh
+      files:
+        - test_dolfinx.py
       source_files:
         - python/demo
       requires:

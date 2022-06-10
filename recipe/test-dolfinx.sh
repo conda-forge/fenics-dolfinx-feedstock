@@ -13,7 +13,7 @@ export OMPI_MCA_rmaps_base_oversubscribe=1
 export OMPI_MCA_plm=isolated
 export OMPI_MCA_btl_vader_single_copy_mechanism=none
 
-pytest -vsx ${RECIPE_DIR}/test_dolfinx.py
+pytest -vs test_dolfinx.py
 
 cd python/demo
-pytest -vsx -k poisson test.py
+pytest -vs -k poisson test.py
