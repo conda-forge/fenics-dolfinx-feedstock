@@ -8,36 +8,68 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
-      linux_64_mpimpichpython3.10.____cpython:
-        CONFIG: linux_64_mpimpichpython3.10.____cpython
+      linux_64_mpimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpimpichpython3.7.____cpython:
-        CONFIG: linux_64_mpimpichpython3.7.____cpython
+      linux_64_mpimpichpython3.10.____cpythonscalarreal:
+        CONFIG: linux_64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpimpichpython3.8.____cpython:
-        CONFIG: linux_64_mpimpichpython3.8.____cpython
+      linux_64_mpimpichpython3.7.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpimpichpython3.7.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpimpichpython3.9.____cpython:
-        CONFIG: linux_64_mpimpichpython3.9.____cpython
+      linux_64_mpimpichpython3.7.____cpythonscalarreal:
+        CONFIG: linux_64_mpimpichpython3.7.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpiopenmpipython3.10.____cpython:
-        CONFIG: linux_64_mpiopenmpipython3.10.____cpython
+      linux_64_mpimpichpython3.8.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpimpichpython3.8.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpiopenmpipython3.7.____cpython:
-        CONFIG: linux_64_mpiopenmpipython3.7.____cpython
+      linux_64_mpimpichpython3.8.____cpythonscalarreal:
+        CONFIG: linux_64_mpimpichpython3.8.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpiopenmpipython3.8.____cpython:
-        CONFIG: linux_64_mpiopenmpipython3.8.____cpython
+      linux_64_mpimpichpython3.9.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpiopenmpipython3.9.____cpython:
-        CONFIG: linux_64_mpiopenmpipython3.9.____cpython
+      linux_64_mpimpichpython3.9.____cpythonscalarreal:
+        CONFIG: linux_64_mpimpichpython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: linux_64_mpiopenmpipython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.7.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpiopenmpipython3.7.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.7.____cpythonscalarreal:
+        CONFIG: linux_64_mpiopenmpipython3.7.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.8.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpiopenmpipython3.8.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.8.____cpythonscalarreal:
+        CONFIG: linux_64_mpiopenmpipython3.8.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.9.____cpythonscalarcomplex:
+        CONFIG: linux_64_mpiopenmpipython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_64_mpiopenmpipython3.9.____cpythonscalarreal:
+        CONFIG: linux_64_mpiopenmpipython3.9.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
   timeoutInMinutes: 360

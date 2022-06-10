@@ -1,6 +1,12 @@
 {% set name = "fenics-dolfinx" %}
 {% set version = "0.4.1" %}
 {% set extra = "" %}
+
+{% set build = 8 %}
+{% if scalar == "real" %}
+{%   set build = build + 100 %}
+{% endif %}
+
 package:
   name: {{ name|lower }}-split
   version: {{ version }}
@@ -13,7 +19,7 @@ source:
     - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
     - "cmake-args-python.patch"  # [ target_platform != build_platform ]
 build:
-  number: 7
+  number: {{ build }}
   skip: true  # [win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
@@ -34,6 +40,9 @@ outputs:
         - "*"  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
+        - petsc * {{ scalar }}_*
+      ignore_run_exports:
+        - python
     requirements:
       build:
         - {{ compiler("c") }}
@@ -44,6 +53,7 @@ outputs:
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
+        - python  # adios2 is a Python package, not yet split into libadios2
         - adios2
         - adios2 * mpi_{{ mpi }}_*
         - boost-cpp
@@ -51,6 +61,7 @@ outputs:
         - parmetis
         - ptscotch
         - petsc
+        - petsc * {{ scalar }}_*
         - slepc
         - xtensor
         - fenics-libbasix 0.4.*
@@ -60,7 +71,7 @@ outputs:
         - {{ mpi }}
         - hdf5
         - ptscotch
-        - petsc
+        - petsc * {{ scalar }}_*
         - slepc
         - fenics-libbasix
         # these don't have run_exports
@@ -106,7 +117,7 @@ outputs:
         - pybind11
         - xtensor
         - mpi4py
-        - petsc
+        - petsc * {{ scalar }}_*
         - petsc4py
         - slepc
         - slepc4py
@@ -124,6 +135,8 @@ outputs:
         - fenics-ufl ==2022.1.*
     test:
       script: test-dolfinx.sh
+      files:
+        - test_dolfinx.py
       source_files:
         - python/demo
       requires:
