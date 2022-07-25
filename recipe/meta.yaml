@@ -2,7 +2,7 @@
 {% set version = "0.4.1" %}
 {% set extra = "" %}
 
-{% set build = 8 %}
+{% set build = 9 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -41,7 +41,7 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
-      ignore_run_exports:
+      ignore_run_exports_from:
         - python
     requirements:
       build:
