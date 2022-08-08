@@ -2,7 +2,7 @@
 {% set version = "0.4.1" %}
 {% set extra = "" %}
 
-{% set build = 9 %}
+{% set build = 10 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -41,8 +41,6 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
-      ignore_run_exports_from:
-        - python
     requirements:
       build:
         - {{ compiler("c") }}
@@ -53,9 +51,8 @@ outputs:
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
-        - python  # adios2 is a Python package, not yet split into libadios2
-        - adios2
-        - adios2 * mpi_{{ mpi }}_*
+        - libadios2
+        - libadios2 * mpi_{{ mpi }}_*
         - boost-cpp
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - parmetis
