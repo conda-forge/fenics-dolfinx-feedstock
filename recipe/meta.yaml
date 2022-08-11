@@ -1,8 +1,8 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.4.1" %}
+{% set version = "0.5.0" %}
 {% set extra = "" %}
 
-{% set build = 10 %}
+{% set build = 0 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -13,11 +13,11 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: 68dcf29a26c750fcea5e02d8d58411e3b054313c3bf6fcbc1d0f08dd2851117f
+  sha256: 43c1fa486bb61eeae44055c1880e364f2313a6a0d09e7cc6cdd99c9bdfdb5123
   patches:
-    - "0001-cpp-test-remove-extra-semicolon.patch"
-    - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
-    - "cmake-args-python.patch"  # [ target_platform != build_platform ]
+    - 0001-cpp-test-remove-extra-semicolon.patch
+    - no-parallel-python-cmake.patch    # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
+    - cmake-args-python.patch    # [ target_platform != build_platform ]
 build:
   number: {{ build }}
   skip: true  # [win]
@@ -37,7 +37,7 @@ outputs:
     script: build-libdolfinx.sh
     build:
       skip_compile_pyc:
-        - "*"  # [build_platform != target_platform]
+        - '*'  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
