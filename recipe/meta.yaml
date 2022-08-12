@@ -2,6 +2,11 @@
 {% set version = "0.5.0" %}
 {% set extra = "" %}
 
+# pins are usually updated on minor bumps:
+# basix is currently co-versioned with ffcx
+{% set major_minor = version.rsplit(".", 1)[0] %}
+{% set ufl_version = "2022.2" %}
+
 {% set build = 0 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
@@ -61,8 +66,8 @@ outputs:
         - petsc * {{ scalar }}_*
         - slepc
         - xtensor
-        - fenics-libbasix 0.4.*
-        - fenics-ufcx 0.4.*
+        - fenics-libbasix {{ major_minor }}.*
+        - fenics-ufcx {{ major_minor }}.*
       run:
         # host dependencies with run_exports
         - {{ mpi }}
@@ -87,7 +92,7 @@ outputs:
         - cmake
         - catch2 2.*
         - make
-        - fenics-ffcx ==0.4.*,>=0.4.2
+        - fenics-ffcx {{ major_minor }}.*
   - name: fenics-dolfinx
     script: build-dolfinx.sh
     requirements:
@@ -127,9 +132,9 @@ outputs:
         - numpy
         - petsc4py
         - slepc4py
-        - fenics-basix ==0.4.*,>=0.4.1
-        - fenics-ffcx ==0.4.*,>=0.4.2
-        - fenics-ufl ==2022.1.*
+        - fenics-basix {{ major_minor }}.*
+        - fenics-ffcx {{ major_minor }}.*
+        - fenics-ufl {{ ufl_version }}.*
     test:
       script: test-dolfinx.sh
       files:
