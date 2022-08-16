@@ -13,7 +13,7 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: 43c1fa486bb61eeae44055c1880e364f2313a6a0d09e7cc6cdd99c9bdfdb5123
+  sha256: 503c70c01a44d1ffe48e052ca987693a49f8d201877652cabbe2a44eb3b7c040
   patches:
     - 0001-cpp-test-remove-extra-semicolon.patch
     - no-parallel-python-cmake.patch    # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
