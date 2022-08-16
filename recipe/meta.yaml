@@ -1,8 +1,13 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.4.1" %}
+{% set version = "0.5.0" %}
 {% set extra = "" %}
 
-{% set build = 10 %}
+# pins are usually updated on minor bumps:
+# basix is currently co-versioned with ffcx
+{% set major_minor = version.rsplit(".", 1)[0] %}
+{% set ufl_version = "2022.2" %}
+
+{% set build = 0 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -13,14 +18,13 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: 68dcf29a26c750fcea5e02d8d58411e3b054313c3bf6fcbc1d0f08dd2851117f
+  sha256: 503c70c01a44d1ffe48e052ca987693a49f8d201877652cabbe2a44eb3b7c040
   patches:
-    - "0001-cpp-test-remove-extra-semicolon.patch"
-    - "no-parallel-python-cmake.patch"  # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
-    - "cmake-args-python.patch"  # [ target_platform != build_platform ]
+    - no-parallel-python-cmake.patch    # [ target_platform == "linux-aarch64" or target_platform == "linux-ppc64le" ]
+    - cmake-args-python.patch    # [ target_platform != build_platform ]
 build:
   number: {{ build }}
-  skip: true  # [win]
+  skip: true  # [win or py==37]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
@@ -37,7 +41,7 @@ outputs:
     script: build-libdolfinx.sh
     build:
       skip_compile_pyc:
-        - "*"  # [build_platform != target_platform]
+        - '*'  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
@@ -59,10 +63,11 @@ outputs:
         - ptscotch
         - petsc
         - petsc * {{ scalar }}_*
+        - pugixml
         - slepc
         - xtensor
-        - fenics-libbasix 0.4.*
-        - fenics-ufcx 0.4.*
+        - fenics-libbasix {{ major_minor }}.*
+        - fenics-ufcx {{ major_minor }}.*
       run:
         # host dependencies with run_exports
         - {{ mpi }}
@@ -87,7 +92,7 @@ outputs:
         - cmake
         - catch2 2.*
         - make
-        - fenics-ffcx ==0.4.*,>=0.4.2
+        - fenics-ffcx {{ major_minor }}.*
   - name: fenics-dolfinx
     script: build-dolfinx.sh
     requirements:
@@ -127,9 +132,9 @@ outputs:
         - numpy
         - petsc4py
         - slepc4py
-        - fenics-basix ==0.4.*,>=0.4.1
-        - fenics-ffcx ==0.4.*,>=0.4.2
-        - fenics-ufl ==2022.1.*
+        - fenics-basix {{ major_minor }}.*
+        - fenics-ffcx {{ major_minor }}.*
+        - fenics-ufl {{ ufl_version }}.*
     test:
       script: test-dolfinx.sh
       files:

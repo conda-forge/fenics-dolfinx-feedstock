@@ -14,6 +14,7 @@ fi
 
 cmake \
   ${CMAKE_ARGS} \
+  -DDOLFINX_UFCX_PYTHON=OFF \
   -DCMAKE_INSTALL_PREFIX=$PREFIX \
   -B build \
   cpp
