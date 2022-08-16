@@ -63,6 +63,7 @@ outputs:
         - ptscotch
         - petsc
         - petsc * {{ scalar }}_*
+        - pugixml
         - slepc
         - xtensor
         - fenics-libbasix {{ major_minor }}.*
