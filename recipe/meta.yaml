@@ -24,7 +24,7 @@ source:
     - cmake-args-python.patch    # [ target_platform != build_platform ]
 build:
   number: {{ build }}
-  skip: true  # [win]
+  skip: true  # [win or py==37]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
