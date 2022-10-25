@@ -11,7 +11,7 @@ Summary: The computational environment of FEniCSx
 
 Development: https://github.com/fenics/dolfinx
 
-Documentation: https://docs.fenicsproject.org/dolfinx/v0.5.1/
+Documentation: https://docs.fenicsproject.org/dolfinx/v0.5.2/
 
 DOLFINx is the computational environment of FEniCSx
 and implements the FEniCS Problem Solving Environment in Python and C++.
