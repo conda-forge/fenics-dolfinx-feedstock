@@ -1,13 +1,13 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.5.2" %}
+{% set version = "0.6.0" %}
 {% set extra = "" %}
 
 # pins are usually updated on minor bumps:
 # basix is currently co-versioned with ffcx
 {% set major_minor = version.rsplit(".", 1)[0] %}
-{% set ufl_version = "2022.2" %}
+{% set ufl_version = "2023.1" %}
 
-{% set build = 2 %}
+{% set build = 0 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -18,11 +18,7 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: 42052ab22aceee6176a470988b9c6bd2c1b1f350d9aebd283f5d271a8c8c24dd
-  patches:
-    # patches submitted upstream, shouldn't be needed after 0.5.1
-    - 2318.patch
-    - 2322.patch
+  sha256: eb8ac2bb2f032b0d393977993e1ab6b4101a84d54023a67206e3eac1a8d79b80
 build:
   number: {{ build }}
   skip: true  # [win or py==37]
@@ -66,7 +62,6 @@ outputs:
         - petsc * {{ scalar }}_*
         - pugixml
         - slepc
-        - xtensor
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
       run:
@@ -82,7 +77,6 @@ outputs:
         - fenics-ufcx
         - boost-cpp
         - parmetis
-        - xtensor
     test:
       script: test-libdolfinx.sh
       source_files:
@@ -118,7 +112,6 @@ outputs:
         - setuptools >=58
         - wheel
         - pybind11
-        - xtensor
         - mpi4py
         - petsc * {{ scalar }}_*
         - petsc4py
