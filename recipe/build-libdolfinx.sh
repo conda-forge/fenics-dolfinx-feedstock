@@ -24,6 +24,7 @@ cat $RECIPE_DIR/hdf5-config.cmake \
 cmake \
   ${CMAKE_ARGS} \
   -DDOLFINX_UFCX_PYTHON=OFF \
+  -DDOLFINX_ENABLE_KAHIP=ON \
   -DCMAKE_INSTALL_PREFIX=$PREFIX \
   -B build \
   cpp
