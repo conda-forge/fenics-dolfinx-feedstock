@@ -1,0 +1,2788 @@
+From cbeb4ce42721b750444d49445a10581175eb8f79 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 14:33:23 +0000
+Subject: [PATCH 01/25] Wrap mesh in place of too clever casting
+
+---
+ .github/workflows/ccpp.yml     |  14 ++--
+ python/dolfinx/fem/function.py |  36 ++++----
+ python/dolfinx/io/utils.py     |   4 +-
+ python/dolfinx/mesh.py         | 146 ++++++++++++++++++++++-----------
+ python/dolfinx/plot.py         |   2 +-
+ 5 files changed, 126 insertions(+), 76 deletions(-)
+
+diff --git a/.github/workflows/ccpp.yml b/.github/workflows/ccpp.yml
+index 75ec7edda85..d44c9e30dba 100644
+--- a/.github/workflows/ccpp.yml
++++ b/.github/workflows/ccpp.yml
+@@ -74,13 +74,13 @@ jobs:
+         run: |
+           cd python/
+           python3 -m isort --check .
+-      - name: mypy checks
+-        run: |
+-          python3 -m pip install types-setuptools
+-          cd python/
+-          mypy dolfinx
+-          mypy demo
+-          mypy test
++      # - name: mypy checks
++      #   run: |
++      #     python3 -m pip install types-setuptools
++      #     cd python/
++      #     mypy dolfinx
++      #     mypy demo
++      #     mypy test
+       - name: clang-format C++ checks (non-blocking)
+         continue-on-error: true
+         run: |
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index 28224ca858e..f39479b111a 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -371,10 +371,8 @@ def _(expr: Expression, cells: typing.Optional[np.ndarray] = None):
+         except TypeError:
+             # u is callable
+             assert callable(u)
+-            x = _cpp.fem.interpolation_coords(
+-                self._V.element, self._V.mesh, cells)
+-            self._cpp_object.interpolate(
+-                np.asarray(u(x), dtype=self.dtype), cells)
++            x = _cpp.fem.interpolation_coords(self._V.element, self._V.mesh._mesh, cells)
++            self._cpp_object.interpolate(np.asarray(u(x), dtype=self.dtype), cells)
+ 
+     def copy(self) -> Function:
+         """Return a copy of the Function. The FunctionSpace is shared and the
+@@ -443,8 +441,7 @@ def split(self) -> tuple[Function, ...]:
+ 
+     def collapse(self) -> Function:
+         u_collapsed = self._cpp_object.collapse()
+-        V_collapsed = FunctionSpace(None, self.ufl_element(),
+-                                    u_collapsed.function_space)
++        V_collapsed = FunctionSpace(self.function_space._mesh, self.ufl_element(), u_collapsed.function_space)
+         return Function(V_collapsed, u_collapsed.x)
+ 
+ 
+@@ -466,10 +463,12 @@ def __init__(self, mesh: typing.Union[None, Mesh],
+         # Create function space from a UFL element and existing cpp
+         # FunctionSpace
+         if cppV is not None:
+-            assert mesh is None
+-            ufl_domain = cppV.mesh.ufl_domain()
++            # assert mesh is None
++            # ufl_domain = cppV.mesh.ufl_domain()
++            ufl_domain = mesh.ufl_domain()
+             super().__init__(ufl_domain, element)
+             self._cpp_object = cppV
++            self._mesh = mesh
+             return
+ 
+         if mesh is not None:
+@@ -489,14 +488,17 @@ def __init__(self, mesh: typing.Union[None, Mesh],
+                 jit_options=jit_options)
+ 
+             ffi = module.ffi
+-            cpp_element = _cpp.fem.FiniteElement(
+-                ffi.cast("uintptr_t", ffi.addressof(self._ufcx_element)))
++            cpp_element = _cpp.fem.FiniteElement(ffi.cast("uintptr_t", ffi.addressof(self._ufcx_element)))
+             cpp_dofmap = _cpp.fem.create_dofmap(mesh.comm, ffi.cast(
+                 "uintptr_t", ffi.addressof(self._ufcx_dofmap)), mesh.topology, cpp_element)
+ 
+             # Initialize the cpp.FunctionSpace
+-            self._cpp_object = _cpp.fem.FunctionSpace(
+-                mesh, cpp_element, cpp_dofmap)
++            try:
++                self._cpp_object = _cpp.fem.FunctionSpace(mesh, cpp_element, cpp_dofmap)
++            except TypeError:
++                self._cpp_object = _cpp.fem.FunctionSpace(mesh._mesh, cpp_element, cpp_dofmap)
++
++            self._mesh = mesh
+ 
+     def clone(self) -> FunctionSpace:
+         """Return a new FunctionSpace :math:`W` which shares data with this
+@@ -512,8 +514,7 @@ def clone(self) -> FunctionSpace:
+         conditions.
+ 
+         """
+-        Vcpp = _cpp.fem.FunctionSpace(
+-            self._cpp_object.mesh, self._cpp_object.element, self._cpp_object.dofmap)
++        Vcpp = _cpp.fem.FunctionSpace(self._cpp_object.mesh, self._cpp_object.element, self._cpp_object.dofmap)
+         return FunctionSpace(None, self.ufl_element(), Vcpp)
+ 
+     @property
+@@ -534,7 +535,8 @@ def sub(self, i: int) -> FunctionSpace:
+         assert self.ufl_element().num_sub_elements() > i
+         sub_element = self.ufl_element().sub_elements()[i]
+         cppV_sub = self._cpp_object.sub([i])
+-        return FunctionSpace(None, sub_element, cppV_sub)
++        print("A: ******", type(self._mesh))
++        return FunctionSpace(self._mesh, sub_element, cppV_sub)
+ 
+     def component(self):
+         """Return the component relative to the parent space."""
+@@ -579,7 +581,7 @@ def dofmap(self) -> dofmap.DofMap:
+     @property
+     def mesh(self) -> _cpp.mesh.Mesh:
+         """Return the mesh on which the function space is defined."""
+-        return self._cpp_object.mesh
++        return self._mesh
+ 
+     def collapse(self) -> tuple[FunctionSpace, np.ndarray]:
+         """Collapse a subspace and return a new function space and a map from
+@@ -590,7 +592,7 @@ def collapse(self) -> tuple[FunctionSpace, np.ndarray]:
+ 
+         """
+         cpp_space, dofs = self._cpp_object.collapse()
+-        V = FunctionSpace(None, self.ufl_element(), cpp_space)
++        V = FunctionSpace(self._mesh, self.ufl_element(), cpp_space)
+         return V, dofs
+ 
+     def tabulate_dof_coordinates(self) -> np.ndarray:
+diff --git a/python/dolfinx/io/utils.py b/python/dolfinx/io/utils.py
+index 52122a54ab6..a7a4278994e 100644
+--- a/python/dolfinx/io/utils.py
++++ b/python/dolfinx/io/utils.py
+@@ -151,7 +151,7 @@ def __exit__(self, exception_type, exception_value, traceback):
+ 
+     def write_mesh(self, mesh: Mesh) -> None:
+         """Write mesh to file for a given time (default 0.0)"""
+-        super().write_mesh(mesh)
++        super().write_mesh(mesh._mesh)
+ 
+     def write_function(self, u, t: float = 0.0, mesh_xpath="/Xdmf/Domain/Grid[@GridType='Uniform'][1]"):
+         super().write_function(getattr(u, "_cpp_object", u), t, mesh_xpath)
+@@ -171,7 +171,7 @@ def read_mesh(self, ghost_mode=GhostMode.shared_facet, name="mesh", xpath="/Xdmf
+         domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element(
+             "Lagrange", cell_shape.name, cell_degree, basix.LagrangeVariant.equispaced, dim=x.shape[1],
+             gdim=x.shape[1]))
+-        return Mesh.from_cpp(mesh, domain)
++        return Mesh(mesh, domain)
+ 
+     def read_meshtags(self, mesh, name, xpath="/Xdmf/Domain"):
+         return super().read_meshtags(mesh, name, xpath)
+diff --git a/python/dolfinx/mesh.py b/python/dolfinx/mesh.py
+index dcbd0621942..266f6b39f9a 100644
+--- a/python/dolfinx/mesh.py
++++ b/python/dolfinx/mesh.py
+@@ -9,32 +9,34 @@
+ 
+ import typing
+ 
+-import numpy as np
+-import numpy.typing
+-
+ import basix
+ import basix.ufl_wrapper
++import numpy as np
++import numpy.typing
+ import ufl
+-from dolfinx import cpp as _cpp
+ from dolfinx.cpp.mesh import (CellType, DiagonalType, GhostMode,
+                               build_dual_graph, cell_dim,
+-                              compute_incident_entities, compute_midpoints,
++                              compute_incident_entities,
+                               create_cell_partitioner, exterior_facet_indices,
+                               to_string, to_type)
+-
+ from mpi4py import MPI as _MPI
+ 
++from dolfinx import cpp as _cpp
++
+ __all__ = ["meshtags_from_entities", "locate_entities", "locate_entities_boundary",
+            "refine", "create_mesh", "Mesh", "MeshTagsMetaClass", "meshtags", "CellType",
+-           "GhostMode", "build_dual_graph", "cell_dim", "compute_midpoints",
++           "GhostMode", "build_dual_graph", "cell_dim",
+            "exterior_facet_indices", "compute_incident_entities", "create_cell_partitioner",
+            "create_interval", "create_unit_interval", "create_rectangle", "create_unit_square",
+            "create_box", "create_unit_cube", "to_type", "to_string"]
+ 
+ 
+-class Mesh(_cpp.mesh.Mesh):
+-    def __init__(self, comm: _MPI.Comm, topology: _cpp.mesh.Topology,
+-                 geometry: _cpp.mesh.Geometry, domain: ufl.Mesh):
++def compute_midpoints(mesh, dim: int, entities):
++    return _cpp.mesh.compute_midpoints(mesh._mesh, dim, entities)
++
++
++class Mesh:
++    def __init__(self, mesh, domain: ufl.Mesh):
+         """A class for representing meshes
+ 
+         Args:
+@@ -47,17 +49,23 @@ def __init__(self, comm: _MPI.Comm, topology: _cpp.mesh.Topology,
+             Mesh objects are not generally created using this class directly.
+ 
+         """
+-        super().__init__(comm, topology, geometry)
++        # super().__init__(comm, topology, geometry)
++        self._mesh = mesh
+         self._ufl_domain = domain
+-        domain._ufl_cargo = self
++        self._ufl_domain._ufl_cargo = self._mesh
++        # domain._ufl_cargo = self
+ 
+-    @classmethod
+-    def from_cpp(cls, obj: _cpp.mesh.Mesh, domain: ufl.Mesh) -> Mesh:
+-        """Create Mesh object from a C++ Mesh object"""
+-        obj._ufl_domain = domain
+-        obj.__class__ = Mesh
+-        domain._ufl_cargo = obj
+-        return obj
++    # @classmethod
++    # def from_cpp(cls, obj: _cpp.mesh.Mesh, domain: ufl.Mesh) -> Mesh:
++    #     """Create Mesh object from a C++ Mesh object"""
++    #     obj._ufl_domain = domain
++    #     obj.__class__ = Mesh
++    #     domain._ufl_cargo = obj
++    #     return obj
++
++    @property
++    def comm(self):
++        return self._mesh.comm
+ 
+     def ufl_cell(self) -> ufl.Cell:
+         """Return the UFL cell type"""
+@@ -67,6 +75,49 @@ def ufl_domain(self) -> ufl.Mesh:
+         """Return the ufl domain corresponding to the mesh."""
+         return self._ufl_domain
+ 
++    @property
++    def topology(self):
++        return self._mesh.topology
++
++    @property
++    def geometry(self):
++        return self._mesh.geometry
++
++# class Mesh(_cpp.mesh.Mesh):
++#     def __init__(self, comm: _MPI.Comm, topology: _cpp.mesh.Topology,
++#                  geometry: _cpp.mesh.Geometry, domain: ufl.Mesh):
++#         """A class for representing meshes
++
++#         Args:
++#             comm: The MPI communicator
++#             topology: The mesh topology
++#             geometry: The mesh geometry
++#             domain: The MPI communicator
++
++#         Note:
++#             Mesh objects are not generally created using this class directly.
++
++#         """
++#         super().__init__(comm, topology, geometry)
++#         self._ufl_domain = domain
++#         domain._ufl_cargo = self
++
++#     @classmethod
++#     def from_cpp(cls, obj: _cpp.mesh.Mesh, domain: ufl.Mesh) -> Mesh:
++#         """Create Mesh object from a C++ Mesh object"""
++#         obj._ufl_domain = domain
++#         obj.__class__ = Mesh
++#         domain._ufl_cargo = obj
++#         return obj
++
++#     def ufl_cell(self) -> ufl.Cell:
++#         """Return the UFL cell type"""
++#         return ufl.Cell(self.topology.cell_name(), geometric_dimension=self.geometry.dim)
++
++#     def ufl_domain(self) -> ufl.Mesh:
++#         """Return the ufl domain corresponding to the mesh."""
++#         return self._ufl_domain
++
+ 
+ def locate_entities(mesh: Mesh, dim: int, marker: typing.Callable) -> np.ndarray:
+     """Compute mesh entities satisfying a geometric marking function
+@@ -82,7 +133,7 @@ def locate_entities(mesh: Mesh, dim: int, marker: typing.Callable) -> np.ndarray
+         Indices (local to the process) of marked mesh entities.
+ 
+     """
+-    return _cpp.mesh.locate_entities(mesh, dim, marker)
++    return _cpp.mesh.locate_entities(mesh._mesh, dim, marker)
+ 
+ 
+ def locate_entities_boundary(mesh: Mesh, dim: int, marker: typing.Callable) -> np.ndarray:
+@@ -109,7 +160,7 @@ def locate_entities_boundary(mesh: Mesh, dim: int, marker: typing.Callable) -> n
+         Indices (local to the process) of marked mesh entities.
+ 
+     """
+-    return _cpp.mesh.locate_entities_boundary(mesh, dim, marker)
++    return _cpp.mesh.locate_entities_boundary(mesh._mesh, dim, marker)
+ 
+ 
+ _uflcell_to_dolfinxcell = {
+@@ -125,28 +176,28 @@ def locate_entities_boundary(mesh: Mesh, dim: int, marker: typing.Callable) -> n
+ }
+ 
+ 
+-def refine(mesh: Mesh, edges: typing.Optional[np.ndarray] = None, redistribute: bool = True) -> Mesh:
+-    """Refine a mesh
++# def refine(mesh: Mesh, edges: typing.Optional[np.ndarray] = None, redistribute: bool = True) -> Mesh:
++#     """Refine a mesh
+ 
+-    Args:
+-        mesh: The mesh from which to build a refined mesh
+-        edges: Optional argument to specify which edges should be refined. If
+-            not supplied uniform refinement is applied.
+-        redistribute:
+-            Optional argument to redistribute the refined mesh if mesh is a
+-            distributed mesh.
++#     Args:
++#         mesh: The mesh from which to build a refined mesh
++#         edges: Optional argument to specify which edges should be refined. If
++#             not supplied uniform refinement is applied.
++#         redistribute:
++#             Optional argument to redistribute the refined mesh if mesh is a
++#             distributed mesh.
+ 
+-    Returns:
+-        A refined mesh
+-    """
+-    if edges is None:
+-        mesh_refined = _cpp.refinement.refine(mesh, redistribute)
+-    else:
+-        mesh_refined = _cpp.refinement.refine(mesh, edges, redistribute)
++#     Returns:
++#         A refined mesh
++#     """
++#     if edges is None:
++#         mesh_refined = _cpp.refinement.refine(mesh, redistribute)
++#     else:
++#         mesh_refined = _cpp.refinement.refine(mesh, edges, redistribute)
+ 
+-    coordinate_element = mesh._ufl_domain.ufl_coordinate_element()
+-    domain = ufl.Mesh(coordinate_element)
+-    return Mesh.from_cpp(mesh_refined, domain)
++#     coordinate_element = mesh._ufl_domain.ufl_coordinate_element()
++#     domain = ufl.Mesh(coordinate_element)
++#     return Mesh.from_cpp(mesh_refined, domain)
+ 
+ 
+ def create_mesh(comm: _MPI.Comm, cells: typing.Union[np.ndarray, _cpp.graph.AdjacencyList_int64],
+@@ -180,8 +231,7 @@ def create_mesh(comm: _MPI.Comm, cells: typing.Union[np.ndarray, _cpp.graph.Adja
+     except TypeError:
+         mesh = _cpp.mesh.create_mesh(comm, _cpp.graph.AdjacencyList_int64(np.cast['int64'](cells)),
+                                      cmap, x, partitioner)
+-    domain._ufl_cargo = mesh
+-    return Mesh.from_cpp(mesh, domain)
++    return Mesh(mesh, domain)
+ 
+ 
+ def create_submesh(mesh, dim, entities):
+@@ -191,7 +241,7 @@ def create_submesh(mesh, dim, entities):
+     submesh_domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element(
+         "Lagrange", submesh_ufl_cell.cellname(), submesh.geometry.cmap.degree, submesh.geometry.cmap.variant,
+         dim=submesh.geometry.dim, gdim=submesh.geometry.dim))
+-    return (Mesh.from_cpp(submesh, submesh_domain), entity_map, vertex_map, geom_map)
++    return (Mesh(submesh._mesh, submesh_domain), entity_map, vertex_map, geom_map)
+ 
+ 
+ # Add attribute to MeshTags
+@@ -226,7 +276,7 @@ def __init__(self, mesh: Mesh, dim: int, entities: numpy.typing.NDArray[typing.A
+             directly.
+ 
+         """
+-        super().__init__(mesh, dim, np.asarray(entities, dtype=np.int32), values)  # type: ignore
++        super().__init__(mesh._mesh, dim, np.asarray(entities, dtype=np.int32), values)  # type: ignore
+ 
+     def ufl_id(self) -> int:
+         """Object identifier.
+@@ -336,7 +386,7 @@ def create_interval(comm: _MPI.Comm, nx: int, points: numpy.typing.ArrayLike,
+         partitioner = _cpp.mesh.create_cell_partitioner(ghost_mode)
+     domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element("Lagrange", "interval", 1))
+     mesh = _cpp.mesh.create_interval(comm, nx, points, ghost_mode, partitioner)
+-    return Mesh.from_cpp(mesh, domain)
++    return Mesh(mesh, domain)
+ 
+ 
+ def create_unit_interval(comm: _MPI.Comm, nx: int, ghost_mode=GhostMode.shared_facet,
+@@ -388,8 +438,7 @@ def create_rectangle(comm: _MPI.Comm, points: numpy.typing.ArrayLike, n: numpy.t
+         partitioner = _cpp.mesh.create_cell_partitioner(ghost_mode)
+     domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element("Lagrange", cell_type.name, 1))
+     mesh = _cpp.mesh.create_rectangle(comm, points, n, cell_type, partitioner, diagonal)
+-
+-    return Mesh.from_cpp(mesh, domain)
++    return Mesh(mesh, domain)
+ 
+ 
+ def create_unit_square(comm: _MPI.Comm, nx: int, ny: int, cell_type=CellType.triangle,
+@@ -443,8 +492,7 @@ def create_box(comm: _MPI.Comm, points: typing.List[numpy.typing.ArrayLike], n:
+         partitioner = _cpp.mesh.create_cell_partitioner(ghost_mode)
+     domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element("Lagrange", cell_type.name, 1))
+     mesh = _cpp.mesh.create_box(comm, points, n, cell_type, partitioner)
+-
+-    return Mesh.from_cpp(mesh, domain)
++    return Mesh(mesh, domain)
+ 
+ 
+ def create_unit_cube(comm: _MPI.Comm, nx: int, ny: int, nz: int, cell_type=CellType.tetrahedron,
+diff --git a/python/dolfinx/plot.py b/python/dolfinx/plot.py
+index ad773581f7f..b0246494949 100644
+--- a/python/dolfinx/plot.py
++++ b/python/dolfinx/plot.py
+@@ -51,7 +51,7 @@ def create_vtk_mesh(msh: mesh.Mesh, dim: typing.Optional[int] = None, entities=N
+         entities = range(msh.topology.index_map(dim).size_local)
+ 
+     if dim == tdim:
+-        vtk_topology = _cpp.io.extract_vtk_connectivity(msh)[entities]
++        vtk_topology = _cpp.io.extract_vtk_connectivity(msh._mesh)[entities]
+         num_nodes_per_cell = vtk_topology.shape[1]
+     else:
+         # NOTE: This linearizes higher order geometries
+
+From db4468fad19315b9afb144fea37aa14371766869 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 15:18:14 +0000
+Subject: [PATCH 02/25] Wrap Mesh on Python side.
+
+---
+ python/dolfinx/fem/function.py                |  1 -
+ python/dolfinx/geometry.py                    |  6 +-
+ python/dolfinx/io/utils.py                    | 22 +++---
+ python/dolfinx/mesh.py                        | 70 +++++++++++--------
+ python/dolfinx/plot.py                        |  2 +-
+ python/test/unit/fem/test_custom_assembler.py | 11 ++-
+ .../test/unit/fem/test_custom_jit_kernels.py  | 10 +--
+ python/test/unit/fem/test_expression.py       |  7 +-
+ python/test/unit/fem/test_interpolation.py    |  8 +--
+ .../unit/geometry/test_bounding_box_tree.py   | 10 ++-
+ python/test/unit/io/test_xdmf_mesh.py         | 18 ++---
+ python/test/unit/mesh/test_face.py            |  4 +-
+ .../unit/mesh/test_manifold_point_search.py   |  2 +-
+ python/test/unit/mesh/test_mesh.py            | 10 +--
+ python/test/unit/mesh/test_refinement.py      |  4 +-
+ 15 files changed, 96 insertions(+), 89 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index f39479b111a..0914938aa48 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -535,7 +535,6 @@ def sub(self, i: int) -> FunctionSpace:
+         assert self.ufl_element().num_sub_elements() > i
+         sub_element = self.ufl_element().sub_elements()[i]
+         cppV_sub = self._cpp_object.sub([i])
+-        print("A: ******", type(self._mesh))
+         return FunctionSpace(self._mesh, sub_element, cppV_sub)
+ 
+     def component(self):
+diff --git a/python/dolfinx/geometry.py b/python/dolfinx/geometry.py
+index aa6671add17..45c941e4bdb 100644
+--- a/python/dolfinx/geometry.py
++++ b/python/dolfinx/geometry.py
+@@ -44,7 +44,7 @@ def __init__(self, mesh: Mesh, dim: int, entities=None, padding: float = 0.0):
+         if entities is None:
+             entities = range(0, map.size_local + map.num_ghosts)
+ 
+-        super().__init__(mesh, dim, entities, padding)
++        super().__init__(mesh._mesh, dim, entities, padding)
+ 
+ 
+ def compute_colliding_cells(mesh: Mesh, candidates: AdjacencyList_int32, x: numpy.ndarray):
+@@ -60,7 +60,7 @@ def compute_colliding_cells(mesh: Mesh, candidates: AdjacencyList_int32, x: nump
+         Adjacency list where the ith node is the list of entities that
+         collide with the ith point
+     """
+-    return _cpp.geometry.compute_colliding_cells(mesh, candidates, x)
++    return _cpp.geometry.compute_colliding_cells(mesh._mesh, candidates, x)
+ 
+ 
+ def squared_distance(mesh: Mesh, dim: int, entities: typing.List[int], points: numpy.ndarray):
+@@ -80,4 +80,4 @@ def squared_distance(mesh: Mesh, dim: int, entities: typing.List[int], points: n
+         Squared shortest distance from points[i] to entities[i]
+ 
+     """
+-    return _cpp.geometry.squared_distance(mesh, dim, entities, points)
++    return _cpp.geometry.squared_distance(mesh._mesh, dim, entities, points)
+diff --git a/python/dolfinx/io/utils.py b/python/dolfinx/io/utils.py
+index a7a4278994e..6d7fc008449 100644
+--- a/python/dolfinx/io/utils.py
++++ b/python/dolfinx/io/utils.py
+@@ -69,8 +69,8 @@ def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, ty
+             """
+             try:
+                 # Input is a mesh
+-                super().__init__(comm, filename, output)
+-            except (NotImplementedError, TypeError):
++                super().__init__(comm, filename, output._mesh)
++            except (NotImplementedError, TypeError, AttributeError):
+                 # Input is a single function or a list of functions
+                 super().__init__(comm, filename, _extract_cpp_functions(output))
+ 
+@@ -107,8 +107,8 @@ def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, ty
+ 
+             """
+             try:
+-                super().__init__(comm, filename, output)
+-            except (NotImplementedError, TypeError):
++                super().__init__(comm, filename, output._mesh)
++            except (NotImplementedError, TypeError, AttributeError):
+                 super().__init__(comm, filename, _extract_cpp_functions(output))
+ 
+         def __enter__(self):
+@@ -135,7 +135,7 @@ def __exit__(self, exception_type, exception_value, traceback):
+ 
+     def write_mesh(self, mesh: Mesh, t: float = 0.0) -> None:
+         """Write mesh to file for a given time (default 0.0)"""
+-        self.write(mesh, t)
++        self.write(mesh._mesh, t)
+ 
+     def write_function(self, u: typing.Union[typing.List[Function], Function], t: float = 0.0) -> None:
+         """Write a single function or a list of functions to file for a given time (default 0.0)"""
+@@ -164,19 +164,19 @@ def read_mesh(self, ghost_mode=GhostMode.shared_facet, name="mesh", xpath="/Xdmf
+ 
+         # Build the mesh
+         cmap = _cpp.fem.CoordinateElement(cell_shape, cell_degree)
+-        mesh = _cpp.mesh.create_mesh(self.comm(), _cpp.graph.AdjacencyList_int64(cells),
+-                                     cmap, x, _cpp.mesh.create_cell_partitioner(ghost_mode))
+-        mesh.name = name
++        msh = _cpp.mesh.create_mesh(self.comm(), _cpp.graph.AdjacencyList_int64(cells),
++                                    cmap, x, _cpp.mesh.create_cell_partitioner(ghost_mode))
++        msh.name = name
+ 
+         domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element(
+             "Lagrange", cell_shape.name, cell_degree, basix.LagrangeVariant.equispaced, dim=x.shape[1],
+             gdim=x.shape[1]))
+-        return Mesh(mesh, domain)
++        return Mesh(msh, domain)
+ 
+     def read_meshtags(self, mesh, name, xpath="/Xdmf/Domain"):
+-        return super().read_meshtags(mesh, name, xpath)
++        return super().read_meshtags(mesh._mesh, name, xpath)
+ 
+ 
+ def distribute_entity_data(mesh: Mesh, entity_dim: int, entities: npt.NDArray[np.int64],
+                            values: npt.NDArray[np.int32]) -> typing.Tuple[npt.NDArray[np.int64], npt.NDArray[np.int32]]:
+-    return _cpp.io.distribute_entity_data(mesh, entity_dim, entities, values)
++    return _cpp.io.distribute_entity_data(mesh._mesh, entity_dim, entities, values)
+diff --git a/python/dolfinx/mesh.py b/python/dolfinx/mesh.py
+index 266f6b39f9a..b1adb016107 100644
+--- a/python/dolfinx/mesh.py
++++ b/python/dolfinx/mesh.py
+@@ -16,7 +16,6 @@
+ import ufl
+ from dolfinx.cpp.mesh import (CellType, DiagonalType, GhostMode,
+                               build_dual_graph, cell_dim,
+-                              compute_incident_entities,
+                               create_cell_partitioner, exterior_facet_indices,
+                               to_string, to_type)
+ from mpi4py import MPI as _MPI
+@@ -25,12 +24,16 @@
+ 
+ __all__ = ["meshtags_from_entities", "locate_entities", "locate_entities_boundary",
+            "refine", "create_mesh", "Mesh", "MeshTagsMetaClass", "meshtags", "CellType",
+-           "GhostMode", "build_dual_graph", "cell_dim",
++           "GhostMode", "build_dual_graph", "cell_dim", "compute_midpoints",
+            "exterior_facet_indices", "compute_incident_entities", "create_cell_partitioner",
+            "create_interval", "create_unit_interval", "create_rectangle", "create_unit_square",
+            "create_box", "create_unit_cube", "to_type", "to_string"]
+ 
+ 
++def compute_incident_entities(mesh, entities, d0: int, d1: int):
++    return _cpp.mesh.compute_incident_entities(mesh._mesh, entities, d0, d1)
++
++
+ def compute_midpoints(mesh, dim: int, entities):
+     return _cpp.mesh.compute_midpoints(mesh._mesh, dim, entities)
+ 
+@@ -67,6 +70,14 @@ def __init__(self, mesh, domain: ufl.Mesh):
+     def comm(self):
+         return self._mesh.comm
+ 
++    @property
++    def name(self):
++        return self._mesh.name
++
++    @name.setter
++    def name(self, value):
++        self._mesh.name = value
++
+     def ufl_cell(self) -> ufl.Cell:
+         """Return the UFL cell type"""
+         return ufl.Cell(self.topology.cell_name(), geometric_dimension=self.geometry.dim)
+@@ -176,28 +187,28 @@ def locate_entities_boundary(mesh: Mesh, dim: int, marker: typing.Callable) -> n
+ }
+ 
+ 
+-# def refine(mesh: Mesh, edges: typing.Optional[np.ndarray] = None, redistribute: bool = True) -> Mesh:
+-#     """Refine a mesh
++def refine(mesh: Mesh, edges: typing.Optional[np.ndarray] = None, redistribute: bool = True) -> Mesh:
++    """Refine a mesh
+ 
+-#     Args:
+-#         mesh: The mesh from which to build a refined mesh
+-#         edges: Optional argument to specify which edges should be refined. If
+-#             not supplied uniform refinement is applied.
+-#         redistribute:
+-#             Optional argument to redistribute the refined mesh if mesh is a
+-#             distributed mesh.
++    Args:
++        mesh: The mesh from which to build a refined mesh
++        edges: Optional argument to specify which edges should be refined. If
++            not supplied uniform refinement is applied.
++        redistribute:
++            Optional argument to redistribute the refined mesh if mesh is a
++            distributed mesh.
+ 
+-#     Returns:
+-#         A refined mesh
+-#     """
+-#     if edges is None:
+-#         mesh_refined = _cpp.refinement.refine(mesh, redistribute)
+-#     else:
+-#         mesh_refined = _cpp.refinement.refine(mesh, edges, redistribute)
++    Returns:
++        A refined mesh
++    """
++    if edges is None:
++        mesh_refined = _cpp.refinement.refine(mesh._mesh, redistribute)
++    else:
++        mesh_refined = _cpp.refinement.refine(mesh._mesh, edges, redistribute)
+ 
+-#     coordinate_element = mesh._ufl_domain.ufl_coordinate_element()
+-#     domain = ufl.Mesh(coordinate_element)
+-#     return Mesh.from_cpp(mesh_refined, domain)
++    coordinate_element = mesh._ufl_domain.ufl_coordinate_element()
++    domain = ufl.Mesh(coordinate_element)
++    return Mesh(mesh_refined, domain)
+ 
+ 
+ def create_mesh(comm: _MPI.Comm, cells: typing.Union[np.ndarray, _cpp.graph.AdjacencyList_int64],
+@@ -234,14 +245,13 @@ def create_mesh(comm: _MPI.Comm, cells: typing.Union[np.ndarray, _cpp.graph.Adja
+     return Mesh(mesh, domain)
+ 
+ 
+-def create_submesh(mesh, dim, entities):
+-    submesh, entity_map, vertex_map, geom_map = _cpp.mesh.create_submesh(mesh, dim, entities)
+-    submesh_ufl_cell = ufl.Cell(submesh.topology.cell_name(),
+-                                geometric_dimension=submesh.geometry.dim)
+-    submesh_domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element(
+-        "Lagrange", submesh_ufl_cell.cellname(), submesh.geometry.cmap.degree, submesh.geometry.cmap.variant,
+-        dim=submesh.geometry.dim, gdim=submesh.geometry.dim))
+-    return (Mesh(submesh._mesh, submesh_domain), entity_map, vertex_map, geom_map)
++def create_submesh(msh, dim, entities):
++    submsh, entity_map, vertex_map, geom_map = _cpp.mesh.create_submesh(msh._mesh, dim, entities)
++    submsh_ufl_cell = ufl.Cell(submsh.topology.cell_name(), geometric_dimension=submsh.geometry.dim)
++    submsh_domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element(
++        "Lagrange", submsh_ufl_cell.cellname(), submsh.geometry.cmap.degree, submsh.geometry.cmap.variant,
++        dim=submsh.geometry.dim, gdim=submsh.geometry.dim))
++    return (Mesh(submsh, submsh_domain), entity_map, vertex_map, geom_map)
+ 
+ 
+ # Add attribute to MeshTags
+@@ -362,7 +372,7 @@ def meshtags_from_entities(mesh: Mesh, dim: int, entities: _cpp.graph.AdjacencyL
+         values = np.full(entities.num_nodes, values, dtype=np.double)
+ 
+     values = np.asarray(values)
+-    return _cpp.mesh.create_meshtags(mesh, dim, entities, values)
++    return _cpp.mesh.create_meshtags(mesh._mesh, dim, entities, values)
+ 
+ 
+ def create_interval(comm: _MPI.Comm, nx: int, points: numpy.typing.ArrayLike,
+diff --git a/python/dolfinx/plot.py b/python/dolfinx/plot.py
+index b0246494949..e1bb25bb03f 100644
+--- a/python/dolfinx/plot.py
++++ b/python/dolfinx/plot.py
+@@ -55,7 +55,7 @@ def create_vtk_mesh(msh: mesh.Mesh, dim: typing.Optional[int] = None, entities=N
+         num_nodes_per_cell = vtk_topology.shape[1]
+     else:
+         # NOTE: This linearizes higher order geometries
+-        geometry_entities = _cpp.mesh.entities_to_geometry(msh, dim, entities, False)
++        geometry_entities = _cpp.mesh.entities_to_geometry(msh._mesh, dim, entities, False)
+         if degree > 1:
+             warnings.warn("Linearizing topology for higher order sub entities.")
+ 
+diff --git a/python/test/unit/fem/test_custom_assembler.py b/python/test/unit/fem/test_custom_assembler.py
+index add296ba8fb..b0c4692d9f3 100644
+--- a/python/test/unit/fem/test_custom_assembler.py
++++ b/python/test/unit/fem/test_custom_assembler.py
+@@ -5,6 +5,7 @@
+ # SPDX-License-Identifier:    LGPL-3.0-or-later
+ """Tests for custom Python assemblers"""
+ 
++# FoodImports
+ import ctypes
+ import ctypes.util
+ import importlib
+@@ -12,14 +13,9 @@
+ import os
+ import pathlib
+ import time
+-
+ import cffi
+-import numba
+-import numba.core.typing.cffi_utils as cffi_support
+ import numpy as np
+ import numpy.typing
+-import pytest
+-
+ import dolfinx
+ import dolfinx.pkgconfig
+ import ufl
+@@ -27,12 +23,15 @@
+ from dolfinx.fem.petsc import assemble_matrix, load_petsc_lib
+ from dolfinx.mesh import create_unit_square
+ from ufl import dx, inner
+-
+ import petsc4py.lib
+ from mpi4py import MPI
+ from petsc4py import PETSc
+ from petsc4py import get_config as PETSc_get_config
+ 
++import pytest
++numba = pytest.importorskip("numba")
++import numba.core.typing.cffi_utils as cffi_support
++
+ # Get details of PETSc install
+ petsc_dir = PETSc_get_config()['PETSC_DIR']
+ petsc_arch = petsc4py.lib.getPathArchPETSc()[1]
+diff --git a/python/test/unit/fem/test_custom_jit_kernels.py b/python/test/unit/fem/test_custom_jit_kernels.py
+index 745a8e92f14..09572b3846e 100644
+--- a/python/test/unit/fem/test_custom_jit_kernels.py
++++ b/python/test/unit/fem/test_custom_jit_kernels.py
+@@ -9,19 +9,19 @@
+ import os
+ import sys
+ 
+-import numba
+ import numpy as np
+ import pytest
++from dolfinx.fem import Function, FunctionSpace, IntegralType
++from dolfinx.mesh import create_unit_square, meshtags
++from mpi4py import MPI
++from petsc4py import PETSc
+ 
+ import dolfinx
+ from dolfinx import TimingType
+ from dolfinx import cpp as _cpp
+ from dolfinx import fem, la, list_timings
+-from dolfinx.fem import Function, FunctionSpace, IntegralType
+-from dolfinx.mesh import create_unit_square, meshtags
+ 
+-from mpi4py import MPI
+-from petsc4py import PETSc
++numba = pytest.importorskip("numba")
+ 
+ # Add current directory - required for some Python versions to find cffi
+ # compiled modules
+diff --git a/python/test/unit/fem/test_expression.py b/python/test/unit/fem/test_expression.py
+index b764b9657ec..96662040696 100644
+--- a/python/test/unit/fem/test_expression.py
++++ b/python/test/unit/fem/test_expression.py
+@@ -8,8 +8,6 @@
+ import ctypes.util
+ 
+ import cffi
+-import numba
+-import numba.core.typing.cffi_utils as cffi_support
+ import numpy as np
+ 
+ import basix
+@@ -24,6 +22,11 @@
+ from mpi4py import MPI
+ from petsc4py import PETSc
+ 
++import pytest
++numba = pytest.importorskip("numba")
++import numba.core.typing.cffi_utils as cffi_support
++
++
+ dolfinx.cpp.common.init_logging(["-v"])
+ 
+ # Get PETSc int and scalar types
+diff --git a/python/test/unit/fem/test_interpolation.py b/python/test/unit/fem/test_interpolation.py
+index 54aefd04978..3b0a8969067 100644
+--- a/python/test/unit/fem/test_interpolation.py
++++ b/python/test/unit/fem/test_interpolation.py
+@@ -7,18 +7,15 @@
+ 
+ import random
+ 
+-import numba
+-import numpy as np
+-import pytest
+-
+ import basix
+ import basix.ufl_wrapper
++import numpy as np
++import pytest
+ import ufl
+ from dolfinx.fem import (Expression, Function, FunctionSpace,
+                          VectorFunctionSpace, assemble_scalar, form)
+ from dolfinx.mesh import (CellType, create_mesh, create_unit_cube,
+                           create_unit_square, locate_entities, meshtags)
+-
+ from mpi4py import MPI
+ 
+ parametrize_cell_types = pytest.mark.parametrize(
+@@ -611,6 +608,7 @@ def test_interpolate_callable():
+     V = FunctionSpace(mesh, ("Lagrange", 2))
+     u0, u1 = Function(V), Function(V)
+ 
++    numba = pytest.importorskip("numba")
+     @numba.njit
+     def f(x):
+         return x[0]
+diff --git a/python/test/unit/geometry/test_bounding_box_tree.py b/python/test/unit/geometry/test_bounding_box_tree.py
+index a5758189298..14d8e1a17ab 100644
+--- a/python/test/unit/geometry/test_bounding_box_tree.py
++++ b/python/test/unit/geometry/test_bounding_box_tree.py
+@@ -25,9 +25,7 @@ def extract_geometricial_data(mesh, dim, entities):
+     vertices"""
+     mesh_nodes = []
+     geom = mesh.geometry
+-    g_indices = _cpp.mesh.entities_to_geometry(mesh, dim,
+-                                               np.array(entities, dtype=np.int32),
+-                                               False)
++    g_indices = _cpp.mesh.entities_to_geometry(mesh._mesh, dim, np.array(entities, dtype=np.int32), False)
+     for cell in g_indices:
+         nodes = np.zeros((len(cell), 3), dtype=np.float64)
+         for j, entity in enumerate(cell):
+@@ -55,8 +53,8 @@ def find_colliding_cells(mesh, bbox):
+     # Find actual cells using known bounding box tree
+     colliding_cells = []
+     num_cells = mesh.topology.index_map(mesh.topology.dim).size_local
+-    x_indices = _cpp.mesh.entities_to_geometry(
+-        mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32), False)
++    x_indices = _cpp.mesh.entities_to_geometry(mesh._mesh, mesh.topology.dim,
++                                               np.arange(num_cells, dtype=np.int32), False)
+     points = mesh.geometry.x
+     bounding_box = expand_bbox(bbox)
+     for cell in range(num_cells):
+@@ -148,7 +146,7 @@ def test_compute_collisions_point_1d():
+     assert len(entities.array) == 1
+ 
+     # Get the vertices of the geometry
+-    geom_entities = _cpp.mesh.entities_to_geometry(mesh, tdim, entities.array, False)[0]
++    geom_entities = _cpp.mesh.entities_to_geometry(mesh._mesh, tdim, entities.array, False)[0]
+     x = mesh.geometry.x
+     cell_vertices = x[geom_entities]
+     # Check that we get the cell with correct vertices
+diff --git a/python/test/unit/io/test_xdmf_mesh.py b/python/test/unit/io/test_xdmf_mesh.py
+index a10112c3d35..9fe332fb484 100644
+--- a/python/test/unit/io/test_xdmf_mesh.py
++++ b/python/test/unit/io/test_xdmf_mesh.py
+@@ -64,9 +64,9 @@ def test_save_and_load_2d_mesh(tempdir, encoding, cell_type):
+         mesh2 = file.read_mesh(name="square")
+ 
+     assert mesh2.name == mesh.name
+-    assert mesh.topology.index_map(0).size_global == mesh2.topology.index_map(0).size_global
+-    assert mesh.topology.index_map(mesh.topology.dim).size_global == mesh2.topology.index_map(
+-        mesh.topology.dim).size_global
++    topology, topology2 = mesh.topology, mesh2.topology
++    assert topology.index_map(0).size_global == topology2.index_map(0).size_global
++    assert topology.index_map(topology.dim).size_global == topology2.index_map(topology.dim).size_global
+ 
+ 
+ @pytest.mark.parametrize("cell_type", celltypes_3D)
+@@ -80,9 +80,9 @@ def test_save_and_load_3d_mesh(tempdir, encoding, cell_type):
+     with XDMFFile(MPI.COMM_WORLD, filename, "r", encoding=encoding) as file:
+         mesh2 = file.read_mesh()
+ 
+-    assert mesh.topology.index_map(0).size_global == mesh2.topology.index_map(0).size_global
+-    assert mesh.topology.index_map(mesh.topology.dim).size_global == mesh2.topology.index_map(
+-        mesh.topology.dim).size_global
++    topology, topology2 = mesh.topology, mesh2.topology
++    assert topology.index_map(0).size_global == topology2.index_map(0).size_global
++    assert topology.index_map(topology.dim).size_global == topology2.index_map(topology.dim).size_global
+ 
+ 
+ @pytest.mark.parametrize("encoding", encodings)
+@@ -131,9 +131,9 @@ def test_read_write_p2_mesh(tempdir, encoding):
+     with XDMFFile(mesh.comm, filename, "r", encoding=encoding) as xdmf:
+         mesh2 = xdmf.read_mesh()
+ 
+-    assert mesh.topology.index_map(0).size_global == mesh2.topology.index_map(0).size_global
+-    assert mesh.topology.index_map(mesh.topology.dim).size_global == mesh2.topology.index_map(
+-        mesh.topology.dim).size_global
++    topology, topology2 = mesh.topology, mesh2.topology
++    assert topology.index_map(0).size_global == topology2.index_map(0).size_global
++    assert topology.index_map(topology.dim).size_global == topology2.index_map(topology.dim).size_global
+ 
+ 
+ @pytest.mark.parametrize("d", [2, 3])
+diff --git a/python/test/unit/mesh/test_face.py b/python/test/unit/mesh/test_face.py
+index b393c0dd4cc..a1b64dcca2a 100644
+--- a/python/test/unit/mesh/test_face.py
++++ b/python/test/unit/mesh/test_face.py
+@@ -49,10 +49,10 @@ def left_side(x):
+         return np.isclose(x[0], 0)
+     fdim = cube.topology.dim - 1
+     facets = locate_entities_boundary(cube, fdim, left_side)
+-    normals = cell_normals(cube, fdim, facets)
++    normals = cell_normals(cube._mesh, fdim, facets)
+     assert np.allclose(normals, [-1, 0, 0])
+ 
+     fdim = square.topology.dim - 1
+     facets = locate_entities_boundary(square, fdim, left_side)
+-    normals = cell_normals(square, fdim, facets)
++    normals = cell_normals(square._mesh, fdim, facets)
+     assert np.allclose(normals, [-1, 0, 0])
+diff --git a/python/test/unit/mesh/test_manifold_point_search.py b/python/test/unit/mesh/test_manifold_point_search.py
+index 67d0f4e9d4b..da36dc34c28 100644
+--- a/python/test/unit/mesh/test_manifold_point_search.py
++++ b/python/test/unit/mesh/test_manifold_point_search.py
+@@ -25,7 +25,7 @@ def test_manifold_point_search():
+     colliding_cells = geometry.compute_colliding_cells(mesh, cell_candidates, points)
+ 
+     # Extract vertices of cell
+-    indices = _cpp.mesh.entities_to_geometry(mesh, mesh.topology.dim, [colliding_cells.links(0)[
++    indices = _cpp.mesh.entities_to_geometry(mesh._mesh, mesh.topology.dim, [colliding_cells.links(0)[
+         0], colliding_cells.links(1)[0]], False)
+     cell_vertices = mesh.geometry.x[indices]
+ 
+diff --git a/python/test/unit/mesh/test_mesh.py b/python/test/unit/mesh/test_mesh.py
+index 38ab131cca4..561f34f6205 100644
+--- a/python/test/unit/mesh/test_mesh.py
++++ b/python/test/unit/mesh/test_mesh.py
+@@ -65,7 +65,7 @@ def submesh_geometry_test(mesh, submesh, entity_map, geom_map, entity_dim):
+     if len(entity_map) > 0:
+         assert mesh.geometry.dim == submesh.geometry.dim
+ 
+-        e_to_g = entities_to_geometry(mesh, entity_dim, entity_map, False)
++        e_to_g = entities_to_geometry(mesh._mesh, entity_dim, entity_map, False)
+         for submesh_entity in range(len(entity_map)):
+             submesh_x_dofs = submesh.geometry.dofmap.links(submesh_entity)
+             # e_to_g[i] gets the mesh x_dofs of entities[i], which should
+@@ -312,7 +312,7 @@ def test_cell_circumradius(c0, c1, c5):
+ @pytest.mark.skip_in_parallel
+ def test_cell_h(c0, c1, c5):
+     for c in [c0, c1, c5]:
+-        assert _cpp.mesh.h(c[0], c[1], [c[2]]) == pytest.approx(math.sqrt(2.0))
++        assert _cpp.mesh.h(c[0]._mesh, c[1], [c[2]]) == pytest.approx(math.sqrt(2.0))
+ 
+ 
+ def test_cell_h_prism():
+@@ -321,7 +321,7 @@ def test_cell_h_prism():
+     tdim = mesh.topology.dim
+     num_cells = mesh.topology.index_map(tdim).size_local
+     cells = np.arange(num_cells, dtype=np.int32)
+-    h = _cpp.mesh.h(mesh, tdim, cells)
++    h = _cpp.mesh.h(mesh._mesh, tdim, cells)
+     assert np.allclose(h, np.sqrt(3 / (N**2)))
+ 
+ 
+@@ -330,7 +330,7 @@ def test_facet_h(ct):
+     N = 3
+     mesh = create_unit_cube(MPI.COMM_WORLD, N, N, N, ct)
+     left_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, lambda x: np.isclose(x[0], 0))
+-    h = _cpp.mesh.h(mesh, mesh.topology.dim - 1, left_facets)
++    h = _cpp.mesh.h(mesh._mesh, mesh.topology.dim - 1, left_facets)
+     assert np.allclose(h, np.sqrt(2 / (N**2)))
+ 
+ 
+@@ -358,7 +358,7 @@ def test_hmin_hmax(_mesh, hmin, hmax):
+     mesh = _mesh()
+     tdim = mesh.topology.dim
+     num_cells = mesh.topology.index_map(tdim).size_local
+-    h = _cpp.mesh.h(mesh, tdim, range(num_cells))
++    h = _cpp.mesh.h(mesh._mesh, tdim, range(num_cells))
+     assert h.min() == pytest.approx(hmin)
+     assert h.max() == pytest.approx(hmax)
+ 
+diff --git a/python/test/unit/mesh/test_refinement.py b/python/test/unit/mesh/test_refinement.py
+index 21ed639c3eb..52ebff7db5f 100644
+--- a/python/test/unit/mesh/test_refinement.py
++++ b/python/test/unit/mesh/test_refinement.py
+@@ -139,7 +139,7 @@ def test_refine_facet_meshtag(tdim):
+                        numpy.arange(len(facet_indices), dtype=numpy.int32))
+ 
+     fine_mesh, parent_cell, parent_facet = _cpp.refinement.plaza_refine_data(
+-        mesh, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
++        mesh._mesh, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
+     fine_mesh.topology.create_entities(tdim - 1)
+ 
+     new_meshtag = _cpp.refinement.transfer_facet_meshtag(meshtag, fine_mesh, parent_cell, parent_facet)
+@@ -177,7 +177,7 @@ def test_refine_cell_meshtag(tdim):
+                        numpy.arange(len(cell_indices), dtype=numpy.int32))
+ 
+     fine_mesh, parent_cell, parent_facet = _cpp.refinement.plaza_refine_data(
+-        mesh, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
++        mesh._mesh, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
+ 
+     new_meshtag = _cpp.refinement.transfer_cell_meshtag(meshtag, fine_mesh, parent_cell)
+ 
+
+From 06a955d8fa6e4bf3a3989275c2d85e96233d4687 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 15:20:58 +0000
+Subject: [PATCH 03/25] flake8 fixes
+
+---
+ python/test/unit/fem/test_custom_assembler.py | 14 ++++++++------
+ python/test/unit/fem/test_expression.py       | 11 +++++------
+ python/test/unit/fem/test_interpolation.py    |  1 +
+ 3 files changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/python/test/unit/fem/test_custom_assembler.py b/python/test/unit/fem/test_custom_assembler.py
+index b0c4692d9f3..77fdce1e931 100644
+--- a/python/test/unit/fem/test_custom_assembler.py
++++ b/python/test/unit/fem/test_custom_assembler.py
+@@ -13,24 +13,26 @@
+ import os
+ import pathlib
+ import time
++
+ import cffi
++import dolfinx.pkgconfig
+ import numpy as np
+ import numpy.typing
+-import dolfinx
+-import dolfinx.pkgconfig
++import petsc4py.lib
++import pytest
+ import ufl
+ from dolfinx.fem import Function, FunctionSpace, form
+ from dolfinx.fem.petsc import assemble_matrix, load_petsc_lib
+ from dolfinx.mesh import create_unit_square
+-from ufl import dx, inner
+-import petsc4py.lib
+ from mpi4py import MPI
+ from petsc4py import PETSc
+ from petsc4py import get_config as PETSc_get_config
++from ufl import dx, inner
++
++import dolfinx
+ 
+-import pytest
+ numba = pytest.importorskip("numba")
+-import numba.core.typing.cffi_utils as cffi_support
++cffi_support = pytest.importorskip("numba.core.typing.cffi_utils")
+ 
+ # Get details of PETSc install
+ petsc_dir = PETSc_get_config()['PETSC_DIR']
+diff --git a/python/test/unit/fem/test_expression.py b/python/test/unit/fem/test_expression.py
+index 96662040696..3e58cbe89c5 100644
+--- a/python/test/unit/fem/test_expression.py
++++ b/python/test/unit/fem/test_expression.py
+@@ -7,24 +7,23 @@
+ import ctypes
+ import ctypes.util
+ 
++import basix
+ import cffi
+ import numpy as np
+-
+-import basix
+-import dolfinx.cpp
++import pytest
+ import ufl
+ from dolfinx.cpp.la.petsc import create_matrix
+ from dolfinx.fem import (Constant, Expression, Function, FunctionSpace,
+                          VectorFunctionSpace, create_sparsity_pattern, form)
+ from dolfinx.fem.petsc import load_petsc_lib
+ from dolfinx.mesh import create_unit_square
+-
+ from mpi4py import MPI
+ from petsc4py import PETSc
+ 
+-import pytest
++import dolfinx.cpp
++
+ numba = pytest.importorskip("numba")
+-import numba.core.typing.cffi_utils as cffi_support
++cffi_support = pytest.importorskip("numba.core.typing.cffi_utils")
+ 
+ 
+ dolfinx.cpp.common.init_logging(["-v"])
+diff --git a/python/test/unit/fem/test_interpolation.py b/python/test/unit/fem/test_interpolation.py
+index 3b0a8969067..134f05aadfe 100644
+--- a/python/test/unit/fem/test_interpolation.py
++++ b/python/test/unit/fem/test_interpolation.py
+@@ -609,6 +609,7 @@ def test_interpolate_callable():
+     u0, u1 = Function(V), Function(V)
+ 
+     numba = pytest.importorskip("numba")
++
+     @numba.njit
+     def f(x):
+         return x[0]
+
+From a64a6f8934b2f0813baa2e3dead70dacd2e04fd0 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 15:31:49 +0000
+Subject: [PATCH 04/25] Update for gmsh interface
+
+---
+ python/dolfinx/io/gmshio.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/python/dolfinx/io/gmshio.py b/python/dolfinx/io/gmshio.py
+index 45f3134c3cc..4110f9f0409 100644
+--- a/python/dolfinx/io/gmshio.py
++++ b/python/dolfinx/io/gmshio.py
+@@ -250,7 +250,7 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int,
+         mesh = create_mesh(comm, cells, x[:, :gdim], ufl_domain, partitioner)
+ 
+         # Create MeshTags for cells
+-        local_entities, local_values = _cpp.io.distribute_entity_data(mesh, mesh.topology.dim, cells, cell_values)
++        local_entities, local_values = _cpp.io.distribute_entity_data(mesh._mesh, mesh.topology.dim, cells, cell_values)
+         mesh.topology.create_connectivity(mesh.topology.dim, 0)
+         adj = _cpp.graph.AdjacencyList_int32(local_entities)
+         ct = meshtags_from_entities(mesh, mesh.topology.dim, adj, local_values.astype(np.int32, copy=False))
+@@ -269,7 +269,7 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int,
+             marked_facets = marked_facets[:, gmsh_facet_perm]
+ 
+             local_entities, local_values = _cpp.io.distribute_entity_data(
+-                mesh, mesh.topology.dim - 1, marked_facets, facet_values)
++                mesh._mesh, mesh.topology.dim - 1, marked_facets, facet_values)
+             mesh.topology.create_connectivity(topology.dim - 1, topology.dim)
+             adj = _cpp.graph.AdjacencyList_int32(local_entities)
+             ft = meshtags_from_entities(mesh, topology.dim - 1, adj, local_values.astype(np.int32, copy=False))
+
+From 71582774fe74a5c2fed8e60701b4eaf0f250918c Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 15:39:20 +0000
+Subject: [PATCH 05/25] Code improvement
+
+---
+ python/dolfinx/io/gmshio.py | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/python/dolfinx/io/gmshio.py b/python/dolfinx/io/gmshio.py
+index 4110f9f0409..f6932a5098c 100644
+--- a/python/dolfinx/io/gmshio.py
++++ b/python/dolfinx/io/gmshio.py
+@@ -232,7 +232,6 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int,
+ 
+             cells = np.asarray(topologies[cell_id]["topology"], dtype=np.int64)
+             cell_values = np.asarray(topologies[cell_id]["cell_data"], dtype=np.int32)
+-
+         else:
+             cell_id, num_nodes = comm.bcast([None, None], root=rank)
+             cells, x = np.empty([0, num_nodes], dtype=np.int32), np.empty([0, gdim])
+@@ -259,7 +258,7 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int,
+         # Create MeshTags for facets
+         topology = mesh.topology
+         if has_facet_data:
+-            # Permute facets from MSH to Dolfin-X ordering
++            # Permute facets from MSH to DOLFINx ordering
+             # FIXME: This does not work for prism meshes
+             if topology.cell_type == CellType.prism or topology.cell_type == CellType.pyramid:
+                 raise RuntimeError(f"Unsupported cell type {topology.cell_type}")
+@@ -305,12 +304,11 @@ def read_from_msh(
+             gmsh.initialize()
+             gmsh.model.add("Mesh from file")
+             gmsh.merge(filename)
+-
+-        output = model_to_mesh(gmsh.model, comm, rank, gdim=gdim, partitioner=partitioner)
+-
+-        if comm.rank == rank:
++            msh = model_to_mesh(gmsh.model, comm, rank, gdim=gdim, partitioner=partitioner)
+             gmsh.finalize()
+-        return output
++            return msh
++        else:
++            return model_to_mesh(gmsh.model, comm, rank, gdim=gdim, partitioner=partitioner)
+ 
+     # Map from Gmsh cell type identifier (integer) to DOLFINx cell type
+     # and degree http://gmsh.info//doc/texinfo/gmsh.html#MSH-file-format
+
+From 08216c322bdd48661f5ab689127c69c5511c60bc Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 18:58:05 +0000
+Subject: [PATCH 06/25] Fix function space clone
+
+---
+ python/dolfinx/fem/function.py                      | 2 +-
+ python/test/unit/geometry/test_bounding_box_tree.py | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index 0914938aa48..9124906dd82 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -515,7 +515,7 @@ def clone(self) -> FunctionSpace:
+ 
+         """
+         Vcpp = _cpp.fem.FunctionSpace(self._cpp_object.mesh, self._cpp_object.element, self._cpp_object.dofmap)
+-        return FunctionSpace(None, self.ufl_element(), Vcpp)
++        return FunctionSpace(self._mesh, self.ufl_element(), Vcpp)
+ 
+     @property
+     def num_sub_spaces(self) -> int:
+diff --git a/python/test/unit/geometry/test_bounding_box_tree.py b/python/test/unit/geometry/test_bounding_box_tree.py
+index 14d8e1a17ab..120e581642d 100644
+--- a/python/test/unit/geometry/test_bounding_box_tree.py
++++ b/python/test/unit/geometry/test_bounding_box_tree.py
+@@ -162,7 +162,7 @@ def test_compute_collisions_tree_1d(point):
+     def locator_A(x):
+         return x[0] >= point[0]
+     # Locate all vertices of mesh A that should collide
+-    vertices_A = _cpp.mesh.locate_entities(mesh_A, 0, locator_A)
++    vertices_A = _cpp.mesh.locate_entities(mesh_A._mesh, 0, locator_A)
+     mesh_A.topology.create_connectivity(0, mesh_A.topology.dim)
+     v_to_c = mesh_A.topology.connectivity(0, mesh_A.topology.dim)
+ 
+@@ -177,7 +177,7 @@ def locator_B(x):
+         return x[0] <= 1
+ 
+     # Locate all vertices of mesh B that should collide
+-    vertices_B = _cpp.mesh.locate_entities(mesh_B, 0, locator_B)
++    vertices_B = _cpp.mesh.locate_entities(mesh_B._mesh, 0, locator_B)
+     mesh_B.topology.create_connectivity(0, mesh_B.topology.dim)
+     v_to_c = mesh_B.topology.connectivity(0, mesh_B.topology.dim)
+ 
+
+From 40a004d5ceff4a0cfc69d02c1eccae019f4f29b3 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 19:19:02 +0000
+Subject: [PATCH 07/25] Various fixes
+
+---
+ python/dolfinx/fem/function.py |  2 +-
+ python/dolfinx/geometry.py     | 12 ++++++++++--
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index 9124906dd82..fddf0a120f3 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -562,7 +562,7 @@ def __ne__(self, other):
+         return super().__ne__(other) or self._cpp_object != other._cpp_object
+ 
+     def ufl_cell(self):
+-        return self._cpp_object.mesh.ufl_cell()
++        return self._mesh.ufl_cell()
+ 
+     def ufl_function_space(self) -> ufl.FunctionSpace:
+         """UFL function space"""
+diff --git a/python/dolfinx/geometry.py b/python/dolfinx/geometry.py
+index 45c941e4bdb..51596239e7f 100644
+--- a/python/dolfinx/geometry.py
++++ b/python/dolfinx/geometry.py
+@@ -14,10 +14,10 @@
+     from dolfinx.cpp.graph import AdjacencyList_int32
+ 
+ import numpy
++from dolfinx.cpp.geometry import (compute_closest_entity, compute_collisions,
++                                  compute_distance_gjk)
+ 
+ from dolfinx import cpp as _cpp
+-from dolfinx.cpp.geometry import (compute_closest_entity, compute_collisions,
+-                                  compute_distance_gjk, create_midpoint_tree)
+ 
+ __all__ = ["compute_colliding_cells", "squared_distance", "compute_closest_entity", "compute_collisions",
+            "compute_distance_gjk", "create_midpoint_tree"]
+@@ -47,6 +47,14 @@ def __init__(self, mesh: Mesh, dim: int, entities=None, padding: float = 0.0):
+         super().__init__(mesh._mesh, dim, entities, padding)
+ 
+ 
++def compute_closest_entity(tree, midpoint_tree, mesh, points):
++    return _cpp.geometry.compute_closest_entity(tree, midpoint_tree, mesh._mesh, points)
++
++
++def create_midpoint_tree(mesh, dim, entities):
++    return _cpp.geometry.create_midpoint_tree(mesh._mesh, dim, entities)
++
++
+ def compute_colliding_cells(mesh: Mesh, candidates: AdjacencyList_int32, x: numpy.ndarray):
+     """From a mesh, find which cells collide with a set of points.
+ 
+
+From b2121e771e32aad8dc1fb46bf29e06eb5fe70fa3 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 19:31:55 +0000
+Subject: [PATCH 08/25] Flake8 fix
+
+---
+ python/dolfinx/geometry.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/python/dolfinx/geometry.py b/python/dolfinx/geometry.py
+index 51596239e7f..37c80cab8b2 100644
+--- a/python/dolfinx/geometry.py
++++ b/python/dolfinx/geometry.py
+@@ -14,8 +14,7 @@
+     from dolfinx.cpp.graph import AdjacencyList_int32
+ 
+ import numpy
+-from dolfinx.cpp.geometry import (compute_closest_entity, compute_collisions,
+-                                  compute_distance_gjk)
++from dolfinx.cpp.geometry import compute_collisions, compute_distance_gjk
+ 
+ from dolfinx import cpp as _cpp
+ 
+
+From bb68a99b7e0c5beb49471efeb08dffc38f16857e Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 19:59:34 +0000
+Subject: [PATCH 09/25] Re-enable mypy checks
+
+---
+ .github/workflows/ccpp.yml                       | 14 +++++++-------
+ python/demo/demo_lagrange_variants.py            | 10 +++++-----
+ python/dolfinx/fem/function.py                   | 16 +++++++---------
+ python/dolfinx/io/utils.py                       |  2 +-
+ .../test/unit/geometry/test_bounding_box_tree.py |  5 ++---
+ 5 files changed, 22 insertions(+), 25 deletions(-)
+
+diff --git a/.github/workflows/ccpp.yml b/.github/workflows/ccpp.yml
+index d44c9e30dba..75ec7edda85 100644
+--- a/.github/workflows/ccpp.yml
++++ b/.github/workflows/ccpp.yml
+@@ -74,13 +74,13 @@ jobs:
+         run: |
+           cd python/
+           python3 -m isort --check .
+-      # - name: mypy checks
+-      #   run: |
+-      #     python3 -m pip install types-setuptools
+-      #     cd python/
+-      #     mypy dolfinx
+-      #     mypy demo
+-      #     mypy test
++      - name: mypy checks
++        run: |
++          python3 -m pip install types-setuptools
++          cd python/
++          mypy dolfinx
++          mypy demo
++          mypy test
+       - name: clang-format C++ checks (non-blocking)
+         continue-on-error: true
+         run: |
+diff --git a/python/demo/demo_lagrange_variants.py b/python/demo/demo_lagrange_variants.py
+index 109540514e9..6cc0874d87f 100644
+--- a/python/demo/demo_lagrange_variants.py
++++ b/python/demo/demo_lagrange_variants.py
+@@ -163,15 +163,15 @@ def saw_tooth(x):
+ # elements, and plot the finite element interpolation.
+ 
+ # +
+-mesh = mesh.create_unit_interval(MPI.COMM_WORLD, 10)
++msh = mesh.create_unit_interval(MPI.COMM_WORLD, 10)
+ 
+-x = ufl.SpatialCoordinate(mesh)
++x = ufl.SpatialCoordinate(msh)
+ u_exact = saw_tooth(x[0])
+ 
+ for variant in [basix.LagrangeVariant.equispaced, basix.LagrangeVariant.gll_warped]:
+     element = basix.create_element(basix.ElementFamily.P, basix.CellType.interval, 10, variant)
+     ufl_element = basix.ufl_wrapper.BasixElement(element)
+-    V = fem.FunctionSpace(mesh, ufl_element)
++    V = fem.FunctionSpace(msh, ufl_element)
+ 
+     uh = fem.Function(V)
+     uh.interpolate(lambda x: saw_tooth(x[0]))
+@@ -216,12 +216,12 @@ def saw_tooth(x):
+ for variant in [basix.LagrangeVariant.equispaced, basix.LagrangeVariant.gll_warped]:
+     element = basix.create_element(basix.ElementFamily.P, basix.CellType.interval, 10, variant)
+     ufl_element = basix.ufl_wrapper.BasixElement(element)
+-    V = fem.FunctionSpace(mesh, ufl_element)
++    V = fem.FunctionSpace(msh, ufl_element)
+ 
+     uh = fem.Function(V)
+     uh.interpolate(lambda x: saw_tooth(x[0]))
+     M = fem.form((u_exact - uh)**2 * dx)
+-    error = mesh.comm.allreduce(fem.assemble_scalar(M), op=MPI.SUM)
++    error = msh.comm.allreduce(fem.assemble_scalar(M), op=MPI.SUM)
+ 
+     print(f"Computed L2 interpolation error ({variant.name}):", error ** 0.5)
+ # -
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index fddf0a120f3..07bcb1e5942 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -14,19 +14,19 @@
+ 
+ from functools import singledispatch
+ 
+-import numpy as np
+-import numpy.typing as npt
+-from dolfinx.fem import dofmap
+-from petsc4py import PETSc
+-
+ import basix
+ import basix.ufl_wrapper
++import numpy as np
++import numpy.typing as npt
+ import ufl
+ import ufl.algorithms
+ import ufl.algorithms.analysis
++from dolfinx.fem import dofmap
++from petsc4py import PETSc
++from ufl.domain import extract_unique_domain
++
+ from dolfinx import cpp as _cpp
+ from dolfinx import jit, la
+-from ufl.domain import extract_unique_domain
+ 
+ 
+ class Constant(ufl.Constant):
+@@ -454,7 +454,7 @@ class ElementMetaData(typing.NamedTuple):
+ class FunctionSpace(ufl.FunctionSpace):
+     """A space on which Functions (fields) can be defined."""
+ 
+-    def __init__(self, mesh: typing.Union[None, Mesh],
++    def __init__(self, mesh: Mesh,
+                  element: typing.Union[ufl.FiniteElementBase, ElementMetaData, typing.Tuple[str, int]],
+                  cppV: typing.Optional[_cpp.fem.FunctionSpace] = None,
+                  form_compiler_options: dict[str, typing.Any] = {}, jit_options: dict[str, typing.Any] = {}):
+@@ -463,8 +463,6 @@ def __init__(self, mesh: typing.Union[None, Mesh],
+         # Create function space from a UFL element and existing cpp
+         # FunctionSpace
+         if cppV is not None:
+-            # assert mesh is None
+-            # ufl_domain = cppV.mesh.ufl_domain()
+             ufl_domain = mesh.ufl_domain()
+             super().__init__(ufl_domain, element)
+             self._cpp_object = cppV
+diff --git a/python/dolfinx/io/utils.py b/python/dolfinx/io/utils.py
+index 6d7fc008449..e266e5675a0 100644
+--- a/python/dolfinx/io/utils.py
++++ b/python/dolfinx/io/utils.py
+@@ -52,7 +52,7 @@ class VTXWriter(_cpp.io.VTXWriter):
+ 
+         """
+ 
+-        def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, typing.List[Function], Function]):
++        def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, Function. typing.List[Function]]):
+             """Initialize a writer for outputting data in the VTX format.
+ 
+             Args:
+diff --git a/python/test/unit/geometry/test_bounding_box_tree.py b/python/test/unit/geometry/test_bounding_box_tree.py
+index 120e581642d..9d4976448be 100644
+--- a/python/test/unit/geometry/test_bounding_box_tree.py
++++ b/python/test/unit/geometry/test_bounding_box_tree.py
+@@ -7,8 +7,6 @@
+ 
+ import numpy as np
+ import pytest
+-
+-from dolfinx import cpp as _cpp
+ from dolfinx.geometry import (BoundingBoxTree, compute_closest_entity,
+                               compute_colliding_cells, compute_collisions,
+                               compute_distance_gjk, create_midpoint_tree)
+@@ -16,9 +14,10 @@
+                           create_unit_interval, create_unit_square,
+                           exterior_facet_indices, locate_entities,
+                           locate_entities_boundary)
+-
+ from mpi4py import MPI
+ 
++from dolfinx import cpp as _cpp
++
+ 
+ def extract_geometricial_data(mesh, dim, entities):
+     """For a set of entities in a mesh, return the coordinates of the
+
+From bf8fe1d8b1496ae0b87675e8adff3f7243fa75ab Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 20:08:12 +0000
+Subject: [PATCH 10/25] Small edit
+
+---
+ python/dolfinx/io/utils.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/dolfinx/io/utils.py b/python/dolfinx/io/utils.py
+index e266e5675a0..3ace471429e 100644
+--- a/python/dolfinx/io/utils.py
++++ b/python/dolfinx/io/utils.py
+@@ -52,7 +52,7 @@ class VTXWriter(_cpp.io.VTXWriter):
+ 
+         """
+ 
+-        def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, Function. typing.List[Function]]):
++        def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, Function, typing.List[Function]]):
+             """Initialize a writer for outputting data in the VTX format.
+ 
+             Args:
+
+From 465ea3858ae5288b18afcb6bc62258a8f30af0bb Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Thu, 5 Jan 2023 21:35:20 +0000
+Subject: [PATCH 11/25] mypy work-around
+
+---
+ python/dolfinx/io/utils.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/python/dolfinx/io/utils.py b/python/dolfinx/io/utils.py
+index 3ace471429e..2b462ba22f3 100644
+--- a/python/dolfinx/io/utils.py
++++ b/python/dolfinx/io/utils.py
+@@ -69,10 +69,10 @@ def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, Fu
+             """
+             try:
+                 # Input is a mesh
+-                super().__init__(comm, filename, output._mesh)
++                super().__init__(comm, filename, output._mesh)  # type: ignore[union-attr]
+             except (NotImplementedError, TypeError, AttributeError):
+                 # Input is a single function or a list of functions
+-                super().__init__(comm, filename, _extract_cpp_functions(output))
++                super().__init__(comm, filename, _extract_cpp_functions(output))   # type: ignore[arg-type]
+ 
+         def __enter__(self):
+             return self
+@@ -107,9 +107,9 @@ def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, ty
+ 
+             """
+             try:
+-                super().__init__(comm, filename, output._mesh)
++                super().__init__(comm, filename, output._mesh)  # type: ignore[union-attr]
+             except (NotImplementedError, TypeError, AttributeError):
+-                super().__init__(comm, filename, _extract_cpp_functions(output))
++                super().__init__(comm, filename, _extract_cpp_functions(output))  # type: ignore[arg-type]
+ 
+         def __enter__(self):
+             return self
+
+From d67dba32fea17257c9b017fdf97435e8a2f73ebb Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 09:11:29 +0000
+Subject: [PATCH 12/25] Merge fix
+
+---
+ python/demo/demo_lagrange_variants.py | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/python/demo/demo_lagrange_variants.py b/python/demo/demo_lagrange_variants.py
+index 498b0a7daef..dbd6908cb0f 100644
+--- a/python/demo/demo_lagrange_variants.py
++++ b/python/demo/demo_lagrange_variants.py
+@@ -165,12 +165,7 @@ def saw_tooth(x):
+ for variant in [basix.LagrangeVariant.equispaced, basix.LagrangeVariant.gll_warped]:
+     element = basix.create_element(basix.ElementFamily.P, basix.CellType.interval, 10, variant)
+     ufl_element = basix.ufl_wrapper.BasixElement(element)
+-<<<<<<< HEAD
+-    V = fem.FunctionSpace(msh, ufl_element)
+-
+-=======
+     V = fem.FunctionSpace(mesh, ufl_element)
+->>>>>>> origin/main
+     uh = fem.Function(V)
+     uh.interpolate(lambda x: saw_tooth(x[0]))
+     if MPI.COMM_WORLD.size == 1:  # Skip this plotting in parallel
+
+From ff1df807f01fb7109fc5383b3108072572686255 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 09:18:12 +0000
+Subject: [PATCH 13/25] flake8 fixes
+
+---
+ python/demo/demo_types.py      | 1 -
+ python/dolfinx/fem/function.py | 7 -------
+ 2 files changed, 8 deletions(-)
+
+diff --git a/python/demo/demo_types.py b/python/demo/demo_types.py
+index 684c0618589..3ccfbb18ca5 100644
+--- a/python/demo/demo_types.py
++++ b/python/demo/demo_types.py
+@@ -26,7 +26,6 @@
+ from dolfinx import fem, la, mesh, plot
+ 
+ from mpi4py import MPI
+-
+ # -
+ 
+ # SciPy solvers do not support MPI, so all computations will be
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index f1e393f5f21..f33faa70d31 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -14,9 +14,6 @@
+ 
+ from functools import singledispatch
+ 
+-import numpy as np
+-import numpy.typing as npt
+-
+ import basix
+ import basix.ufl_wrapper
+ import numpy as np
+@@ -30,10 +27,6 @@
+ 
+ from dolfinx import cpp as _cpp
+ from dolfinx import jit, la
+-from dolfinx.fem import dofmap
+-from ufl.domain import extract_unique_domain
+-
+-from petsc4py import PETSc
+ 
+ 
+ class Constant(ufl.Constant):
+
+From a5de73774429af66c0a51826a23d1110686f6332 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 09:28:53 +0000
+Subject: [PATCH 14/25] Syntax fixes
+
+---
+ python/demo/demo_lagrange_variants.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/python/demo/demo_lagrange_variants.py b/python/demo/demo_lagrange_variants.py
+index dbd6908cb0f..be3d812342e 100644
+--- a/python/demo/demo_lagrange_variants.py
++++ b/python/demo/demo_lagrange_variants.py
+@@ -165,7 +165,7 @@ def saw_tooth(x):
+ for variant in [basix.LagrangeVariant.equispaced, basix.LagrangeVariant.gll_warped]:
+     element = basix.create_element(basix.ElementFamily.P, basix.CellType.interval, 10, variant)
+     ufl_element = basix.ufl_wrapper.BasixElement(element)
+-    V = fem.FunctionSpace(mesh, ufl_element)
++    V = fem.FunctionSpace(msh, ufl_element)
+     uh = fem.Function(V)
+     uh.interpolate(lambda x: saw_tooth(x[0]))
+     if MPI.COMM_WORLD.size == 1:  # Skip this plotting in parallel
+@@ -205,11 +205,11 @@ def saw_tooth(x):
+ for variant in [basix.LagrangeVariant.equispaced, basix.LagrangeVariant.gll_warped]:
+     element = basix.create_element(basix.ElementFamily.P, basix.CellType.interval, 10, variant)
+     ufl_element = basix.ufl_wrapper.BasixElement(element)
+-    V = fem.FunctionSpace(mesh, ufl_element)
++    V = fem.FunctionSpace(msh, ufl_element)
+     uh = fem.Function(V)
+     uh.interpolate(lambda x: saw_tooth(x[0]))
+     M = fem.form((u_exact - uh)**2 * dx)
+-    error = mesh.comm.allreduce(fem.assemble_scalar(M), op=MPI.SUM)
++    error = msh.comm.allreduce(fem.assemble_scalar(M), op=MPI.SUM)
+     print(f"Computed L2 interpolation error ({variant.name}):", error ** 0.5)
+ # -
+ 
+
+From 7036a7468e386f5481a46d98277123b57a3d2131 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 11:03:51 +0000
+Subject: [PATCH 15/25] _mesh -> _cpp_object
+
+---
+ python/dolfinx/fem/function.py                |  6 ++--
+ python/dolfinx/geometry.py                    | 10 +++---
+ python/dolfinx/io/gmshio.py                   |  4 +--
+ python/dolfinx/io/utils.py                    | 12 +++----
+ python/dolfinx/mesh.py                        | 32 +++++++++----------
+ python/dolfinx/plot.py                        |  4 +--
+ .../unit/geometry/test_bounding_box_tree.py   | 10 +++---
+ python/test/unit/mesh/test_face.py            |  4 +--
+ .../unit/mesh/test_manifold_point_search.py   |  2 +-
+ python/test/unit/mesh/test_mesh.py            | 10 +++---
+ python/test/unit/mesh/test_refinement.py      |  4 +--
+ python/test/unit/nls/test_newton.py           |  3 +-
+ 12 files changed, 50 insertions(+), 51 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index f33faa70d31..6c1e0f2c821 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -372,7 +372,7 @@ def _(expr: Expression, cells: typing.Optional[np.ndarray] = None):
+         except TypeError:
+             # u is callable
+             assert callable(u)
+-            x = _cpp.fem.interpolation_coords(self._V.element, self._V.mesh._mesh, cells)
++            x = _cpp.fem.interpolation_coords(self._V.element, self._V.mesh._cpp_object, cells)
+             self._cpp_object.interpolate(np.asarray(u(x), dtype=self.dtype), cells)
+ 
+     def copy(self) -> Function:
+@@ -495,7 +495,7 @@ def __init__(self, mesh: Mesh,
+             try:
+                 self._cpp_object = _cpp.fem.FunctionSpace(mesh, cpp_element, cpp_dofmap)
+             except TypeError:
+-                self._cpp_object = _cpp.fem.FunctionSpace(mesh._mesh, cpp_element, cpp_dofmap)
++                self._cpp_object = _cpp.fem.FunctionSpace(mesh._cpp_object, cpp_element, cpp_dofmap)
+ 
+             self._mesh = mesh
+ 
+@@ -577,7 +577,7 @@ def dofmap(self) -> dofmap.DofMap:
+         return dofmap.DofMap(self._cpp_object.dofmap)
+ 
+     @property
+-    def mesh(self) -> _cpp.mesh.Mesh:
++    def mesh(self) -> Mesh:
+         """Return the mesh on which the function space is defined."""
+         return self._mesh
+ 
+diff --git a/python/dolfinx/geometry.py b/python/dolfinx/geometry.py
+index 37c80cab8b2..4ac5db7a837 100644
+--- a/python/dolfinx/geometry.py
++++ b/python/dolfinx/geometry.py
+@@ -43,15 +43,15 @@ def __init__(self, mesh: Mesh, dim: int, entities=None, padding: float = 0.0):
+         if entities is None:
+             entities = range(0, map.size_local + map.num_ghosts)
+ 
+-        super().__init__(mesh._mesh, dim, entities, padding)
++        super().__init__(mesh._cpp_object, dim, entities, padding)
+ 
+ 
+ def compute_closest_entity(tree, midpoint_tree, mesh, points):
+-    return _cpp.geometry.compute_closest_entity(tree, midpoint_tree, mesh._mesh, points)
++    return _cpp.geometry.compute_closest_entity(tree, midpoint_tree, mesh._cpp_object, points)
+ 
+ 
+ def create_midpoint_tree(mesh, dim, entities):
+-    return _cpp.geometry.create_midpoint_tree(mesh._mesh, dim, entities)
++    return _cpp.geometry.create_midpoint_tree(mesh._cpp_object, dim, entities)
+ 
+ 
+ def compute_colliding_cells(mesh: Mesh, candidates: AdjacencyList_int32, x: numpy.ndarray):
+@@ -67,7 +67,7 @@ def compute_colliding_cells(mesh: Mesh, candidates: AdjacencyList_int32, x: nump
+         Adjacency list where the ith node is the list of entities that
+         collide with the ith point
+     """
+-    return _cpp.geometry.compute_colliding_cells(mesh._mesh, candidates, x)
++    return _cpp.geometry.compute_colliding_cells(mesh._cpp_object, candidates, x)
+ 
+ 
+ def squared_distance(mesh: Mesh, dim: int, entities: typing.List[int], points: numpy.ndarray):
+@@ -87,4 +87,4 @@ def squared_distance(mesh: Mesh, dim: int, entities: typing.List[int], points: n
+         Squared shortest distance from points[i] to entities[i]
+ 
+     """
+-    return _cpp.geometry.squared_distance(mesh._mesh, dim, entities, points)
++    return _cpp.geometry.squared_distance(mesh._cpp_object, dim, entities, points)
+diff --git a/python/dolfinx/io/gmshio.py b/python/dolfinx/io/gmshio.py
+index 872507e84e0..564bc0a723b 100644
+--- a/python/dolfinx/io/gmshio.py
++++ b/python/dolfinx/io/gmshio.py
+@@ -247,7 +247,7 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int, gdim: int = 3,
+         mesh = create_mesh(comm, cells, x[:, :gdim], ufl_domain, partitioner)
+ 
+         # Create MeshTags for cells
+-        local_entities, local_values = _cpp.io.distribute_entity_data(mesh._mesh, mesh.topology.dim, cells, cell_values)
++        local_entities, local_values = _cpp.io.distribute_entity_data(mesh._cpp_object, mesh.topology.dim, cells, cell_values)
+         mesh.topology.create_connectivity(mesh.topology.dim, 0)
+         adj = _cpp.graph.AdjacencyList_int32(local_entities)
+         ct = meshtags_from_entities(mesh, mesh.topology.dim, adj, local_values.astype(np.int32, copy=False))
+@@ -266,7 +266,7 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int, gdim: int = 3,
+             marked_facets = marked_facets[:, gmsh_facet_perm]
+ 
+             local_entities, local_values = _cpp.io.distribute_entity_data(
+-                mesh._mesh, mesh.topology.dim - 1, marked_facets, facet_values)
++                mesh._cpp_object, mesh.topology.dim - 1, marked_facets, facet_values)
+             mesh.topology.create_connectivity(topology.dim - 1, topology.dim)
+             adj = _cpp.graph.AdjacencyList_int32(local_entities)
+             ft = meshtags_from_entities(mesh, topology.dim - 1, adj, local_values.astype(np.int32, copy=False))
+diff --git a/python/dolfinx/io/utils.py b/python/dolfinx/io/utils.py
+index aa1ce96fc59..ede06c5400e 100644
+--- a/python/dolfinx/io/utils.py
++++ b/python/dolfinx/io/utils.py
+@@ -67,7 +67,7 @@ def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, Fu
+             """
+             try:
+                 # Input is a mesh
+-                super().__init__(comm, filename, output._mesh)  # type: ignore[union-attr]
++                super().__init__(comm, filename, output._cpp_object)  # type: ignore[union-attr]
+             except (NotImplementedError, TypeError, AttributeError):
+                 # Input is a single function or a list of functions
+                 super().__init__(comm, filename, _extract_cpp_functions(output))   # type: ignore[arg-type]
+@@ -105,7 +105,7 @@ def __init__(self, comm: _MPI.Comm, filename: str, output: typing.Union[Mesh, ty
+ 
+             """
+             try:
+-                super().__init__(comm, filename, output._mesh)  # type: ignore[union-attr]
++                super().__init__(comm, filename, output._cpp_object)  # type: ignore[union-attr]
+             except (NotImplementedError, TypeError, AttributeError):
+                 super().__init__(comm, filename, _extract_cpp_functions(output))  # type: ignore[arg-type]
+ 
+@@ -133,7 +133,7 @@ def __exit__(self, exception_type, exception_value, traceback):
+ 
+     def write_mesh(self, mesh: Mesh, t: float = 0.0) -> None:
+         """Write mesh to file for a given time (default 0.0)"""
+-        self.write(mesh._mesh, t)
++        self.write(mesh._cpp_object, t)
+ 
+     def write_function(self, u: typing.Union[typing.List[Function], Function], t: float = 0.0) -> None:
+         """Write a single function or a list of functions to file for a given time (default 0.0)"""
+@@ -149,7 +149,7 @@ def __exit__(self, exception_type, exception_value, traceback):
+ 
+     def write_mesh(self, mesh: Mesh) -> None:
+         """Write mesh to file for a given time (default 0.0)"""
+-        super().write_mesh(mesh._mesh)
++        super().write_mesh(mesh._cpp_object)
+ 
+     def write_function(self, u, t: float = 0.0, mesh_xpath="/Xdmf/Domain/Grid[@GridType='Uniform'][1]"):
+         super().write_function(getattr(u, "_cpp_object", u), t, mesh_xpath)
+@@ -172,9 +172,9 @@ def read_mesh(self, ghost_mode=GhostMode.shared_facet, name="mesh", xpath="/Xdmf
+         return Mesh(msh, domain)
+ 
+     def read_meshtags(self, mesh, name, xpath="/Xdmf/Domain"):
+-        return super().read_meshtags(mesh._mesh, name, xpath)
++        return super().read_meshtags(mesh._cpp_object, name, xpath)
+ 
+ 
+ def distribute_entity_data(mesh: Mesh, entity_dim: int, entities: npt.NDArray[np.int64],
+                            values: npt.NDArray[np.int32]) -> typing.Tuple[npt.NDArray[np.int64], npt.NDArray[np.int32]]:
+-    return _cpp.io.distribute_entity_data(mesh._mesh, entity_dim, entities, values)
++    return _cpp.io.distribute_entity_data(mesh._cpp_object, entity_dim, entities, values)
+diff --git a/python/dolfinx/mesh.py b/python/dolfinx/mesh.py
+index b1adb016107..8560927a433 100644
+--- a/python/dolfinx/mesh.py
++++ b/python/dolfinx/mesh.py
+@@ -31,11 +31,11 @@
+ 
+ 
+ def compute_incident_entities(mesh, entities, d0: int, d1: int):
+-    return _cpp.mesh.compute_incident_entities(mesh._mesh, entities, d0, d1)
++    return _cpp.mesh.compute_incident_entities(mesh._cpp_object, entities, d0, d1)
+ 
+ 
+ def compute_midpoints(mesh, dim: int, entities):
+-    return _cpp.mesh.compute_midpoints(mesh._mesh, dim, entities)
++    return _cpp.mesh.compute_midpoints(mesh._cpp_object, dim, entities)
+ 
+ 
+ class Mesh:
+@@ -53,9 +53,9 @@ def __init__(self, mesh, domain: ufl.Mesh):
+ 
+         """
+         # super().__init__(comm, topology, geometry)
+-        self._mesh = mesh
++        self._cpp_object = mesh
+         self._ufl_domain = domain
+-        self._ufl_domain._ufl_cargo = self._mesh
++        self._ufl_domain._ufl_cargo = self._cpp_object
+         # domain._ufl_cargo = self
+ 
+     # @classmethod
+@@ -68,15 +68,15 @@ def __init__(self, mesh, domain: ufl.Mesh):
+ 
+     @property
+     def comm(self):
+-        return self._mesh.comm
++        return self._cpp_object.comm
+ 
+     @property
+     def name(self):
+-        return self._mesh.name
++        return self._cpp_object.name
+ 
+     @name.setter
+     def name(self, value):
+-        self._mesh.name = value
++        self._cpp_object.name = value
+ 
+     def ufl_cell(self) -> ufl.Cell:
+         """Return the UFL cell type"""
+@@ -88,11 +88,11 @@ def ufl_domain(self) -> ufl.Mesh:
+ 
+     @property
+     def topology(self):
+-        return self._mesh.topology
++        return self._cpp_object.topology
+ 
+     @property
+     def geometry(self):
+-        return self._mesh.geometry
++        return self._cpp_object.geometry
+ 
+ # class Mesh(_cpp.mesh.Mesh):
+ #     def __init__(self, comm: _MPI.Comm, topology: _cpp.mesh.Topology,
+@@ -144,7 +144,7 @@ def locate_entities(mesh: Mesh, dim: int, marker: typing.Callable) -> np.ndarray
+         Indices (local to the process) of marked mesh entities.
+ 
+     """
+-    return _cpp.mesh.locate_entities(mesh._mesh, dim, marker)
++    return _cpp.mesh.locate_entities(mesh._cpp_object, dim, marker)
+ 
+ 
+ def locate_entities_boundary(mesh: Mesh, dim: int, marker: typing.Callable) -> np.ndarray:
+@@ -171,7 +171,7 @@ def locate_entities_boundary(mesh: Mesh, dim: int, marker: typing.Callable) -> n
+         Indices (local to the process) of marked mesh entities.
+ 
+     """
+-    return _cpp.mesh.locate_entities_boundary(mesh._mesh, dim, marker)
++    return _cpp.mesh.locate_entities_boundary(mesh._cpp_object, dim, marker)
+ 
+ 
+ _uflcell_to_dolfinxcell = {
+@@ -202,9 +202,9 @@ def refine(mesh: Mesh, edges: typing.Optional[np.ndarray] = None, redistribute:
+         A refined mesh
+     """
+     if edges is None:
+-        mesh_refined = _cpp.refinement.refine(mesh._mesh, redistribute)
++        mesh_refined = _cpp.refinement.refine(mesh._cpp_object, redistribute)
+     else:
+-        mesh_refined = _cpp.refinement.refine(mesh._mesh, edges, redistribute)
++        mesh_refined = _cpp.refinement.refine(mesh._cpp_object, edges, redistribute)
+ 
+     coordinate_element = mesh._ufl_domain.ufl_coordinate_element()
+     domain = ufl.Mesh(coordinate_element)
+@@ -246,7 +246,7 @@ def create_mesh(comm: _MPI.Comm, cells: typing.Union[np.ndarray, _cpp.graph.Adja
+ 
+ 
+ def create_submesh(msh, dim, entities):
+-    submsh, entity_map, vertex_map, geom_map = _cpp.mesh.create_submesh(msh._mesh, dim, entities)
++    submsh, entity_map, vertex_map, geom_map = _cpp.mesh.create_submesh(msh._cpp_object, dim, entities)
+     submsh_ufl_cell = ufl.Cell(submsh.topology.cell_name(), geometric_dimension=submsh.geometry.dim)
+     submsh_domain = ufl.Mesh(basix.ufl_wrapper.create_vector_element(
+         "Lagrange", submsh_ufl_cell.cellname(), submsh.geometry.cmap.degree, submsh.geometry.cmap.variant,
+@@ -286,7 +286,7 @@ def __init__(self, mesh: Mesh, dim: int, entities: numpy.typing.NDArray[typing.A
+             directly.
+ 
+         """
+-        super().__init__(mesh._mesh, dim, np.asarray(entities, dtype=np.int32), values)  # type: ignore
++        super().__init__(mesh._cpp_object, dim, np.asarray(entities, dtype=np.int32), values)  # type: ignore
+ 
+     def ufl_id(self) -> int:
+         """Object identifier.
+@@ -372,7 +372,7 @@ def meshtags_from_entities(mesh: Mesh, dim: int, entities: _cpp.graph.AdjacencyL
+         values = np.full(entities.num_nodes, values, dtype=np.double)
+ 
+     values = np.asarray(values)
+-    return _cpp.mesh.create_meshtags(mesh._mesh, dim, entities, values)
++    return _cpp.mesh.create_meshtags(mesh._cpp_object, dim, entities, values)
+ 
+ 
+ def create_interval(comm: _MPI.Comm, nx: int, points: numpy.typing.ArrayLike,
+diff --git a/python/dolfinx/plot.py b/python/dolfinx/plot.py
+index e1bb25bb03f..d6b029cae45 100644
+--- a/python/dolfinx/plot.py
++++ b/python/dolfinx/plot.py
+@@ -51,11 +51,11 @@ def create_vtk_mesh(msh: mesh.Mesh, dim: typing.Optional[int] = None, entities=N
+         entities = range(msh.topology.index_map(dim).size_local)
+ 
+     if dim == tdim:
+-        vtk_topology = _cpp.io.extract_vtk_connectivity(msh._mesh)[entities]
++        vtk_topology = _cpp.io.extract_vtk_connectivity(msh._cpp_object)[entities]
+         num_nodes_per_cell = vtk_topology.shape[1]
+     else:
+         # NOTE: This linearizes higher order geometries
+-        geometry_entities = _cpp.mesh.entities_to_geometry(msh._mesh, dim, entities, False)
++        geometry_entities = _cpp.mesh.entities_to_geometry(msh._cpp_object, dim, entities, False)
+         if degree > 1:
+             warnings.warn("Linearizing topology for higher order sub entities.")
+ 
+diff --git a/python/test/unit/geometry/test_bounding_box_tree.py b/python/test/unit/geometry/test_bounding_box_tree.py
+index 9d4976448be..0e754fcf666 100644
+--- a/python/test/unit/geometry/test_bounding_box_tree.py
++++ b/python/test/unit/geometry/test_bounding_box_tree.py
+@@ -24,7 +24,7 @@ def extract_geometricial_data(mesh, dim, entities):
+     vertices"""
+     mesh_nodes = []
+     geom = mesh.geometry
+-    g_indices = _cpp.mesh.entities_to_geometry(mesh._mesh, dim, np.array(entities, dtype=np.int32), False)
++    g_indices = _cpp.mesh.entities_to_geometry(mesh._cpp_object, dim, np.array(entities, dtype=np.int32), False)
+     for cell in g_indices:
+         nodes = np.zeros((len(cell), 3), dtype=np.float64)
+         for j, entity in enumerate(cell):
+@@ -52,7 +52,7 @@ def find_colliding_cells(mesh, bbox):
+     # Find actual cells using known bounding box tree
+     colliding_cells = []
+     num_cells = mesh.topology.index_map(mesh.topology.dim).size_local
+-    x_indices = _cpp.mesh.entities_to_geometry(mesh._mesh, mesh.topology.dim,
++    x_indices = _cpp.mesh.entities_to_geometry(mesh._cpp_object, mesh.topology.dim,
+                                                np.arange(num_cells, dtype=np.int32), False)
+     points = mesh.geometry.x
+     bounding_box = expand_bbox(bbox)
+@@ -145,7 +145,7 @@ def test_compute_collisions_point_1d():
+     assert len(entities.array) == 1
+ 
+     # Get the vertices of the geometry
+-    geom_entities = _cpp.mesh.entities_to_geometry(mesh._mesh, tdim, entities.array, False)[0]
++    geom_entities = _cpp.mesh.entities_to_geometry(mesh._cpp_object, tdim, entities.array, False)[0]
+     x = mesh.geometry.x
+     cell_vertices = x[geom_entities]
+     # Check that we get the cell with correct vertices
+@@ -161,7 +161,7 @@ def test_compute_collisions_tree_1d(point):
+     def locator_A(x):
+         return x[0] >= point[0]
+     # Locate all vertices of mesh A that should collide
+-    vertices_A = _cpp.mesh.locate_entities(mesh_A._mesh, 0, locator_A)
++    vertices_A = _cpp.mesh.locate_entities(mesh_A._cpp_object, 0, locator_A)
+     mesh_A.topology.create_connectivity(0, mesh_A.topology.dim)
+     v_to_c = mesh_A.topology.connectivity(0, mesh_A.topology.dim)
+ 
+@@ -176,7 +176,7 @@ def locator_B(x):
+         return x[0] <= 1
+ 
+     # Locate all vertices of mesh B that should collide
+-    vertices_B = _cpp.mesh.locate_entities(mesh_B._mesh, 0, locator_B)
++    vertices_B = _cpp.mesh.locate_entities(mesh_B._cpp_object, 0, locator_B)
+     mesh_B.topology.create_connectivity(0, mesh_B.topology.dim)
+     v_to_c = mesh_B.topology.connectivity(0, mesh_B.topology.dim)
+ 
+diff --git a/python/test/unit/mesh/test_face.py b/python/test/unit/mesh/test_face.py
+index a1b64dcca2a..b665ca04280 100644
+--- a/python/test/unit/mesh/test_face.py
++++ b/python/test/unit/mesh/test_face.py
+@@ -49,10 +49,10 @@ def left_side(x):
+         return np.isclose(x[0], 0)
+     fdim = cube.topology.dim - 1
+     facets = locate_entities_boundary(cube, fdim, left_side)
+-    normals = cell_normals(cube._mesh, fdim, facets)
++    normals = cell_normals(cube._cpp_object, fdim, facets)
+     assert np.allclose(normals, [-1, 0, 0])
+ 
+     fdim = square.topology.dim - 1
+     facets = locate_entities_boundary(square, fdim, left_side)
+-    normals = cell_normals(square._mesh, fdim, facets)
++    normals = cell_normals(square._cpp_object, fdim, facets)
+     assert np.allclose(normals, [-1, 0, 0])
+diff --git a/python/test/unit/mesh/test_manifold_point_search.py b/python/test/unit/mesh/test_manifold_point_search.py
+index da36dc34c28..395600f526f 100644
+--- a/python/test/unit/mesh/test_manifold_point_search.py
++++ b/python/test/unit/mesh/test_manifold_point_search.py
+@@ -25,7 +25,7 @@ def test_manifold_point_search():
+     colliding_cells = geometry.compute_colliding_cells(mesh, cell_candidates, points)
+ 
+     # Extract vertices of cell
+-    indices = _cpp.mesh.entities_to_geometry(mesh._mesh, mesh.topology.dim, [colliding_cells.links(0)[
++    indices = _cpp.mesh.entities_to_geometry(mesh._cpp_object, mesh.topology.dim, [colliding_cells.links(0)[
+         0], colliding_cells.links(1)[0]], False)
+     cell_vertices = mesh.geometry.x[indices]
+ 
+diff --git a/python/test/unit/mesh/test_mesh.py b/python/test/unit/mesh/test_mesh.py
+index 561f34f6205..67c7bf5fb85 100644
+--- a/python/test/unit/mesh/test_mesh.py
++++ b/python/test/unit/mesh/test_mesh.py
+@@ -65,7 +65,7 @@ def submesh_geometry_test(mesh, submesh, entity_map, geom_map, entity_dim):
+     if len(entity_map) > 0:
+         assert mesh.geometry.dim == submesh.geometry.dim
+ 
+-        e_to_g = entities_to_geometry(mesh._mesh, entity_dim, entity_map, False)
++        e_to_g = entities_to_geometry(mesh._cpp_object, entity_dim, entity_map, False)
+         for submesh_entity in range(len(entity_map)):
+             submesh_x_dofs = submesh.geometry.dofmap.links(submesh_entity)
+             # e_to_g[i] gets the mesh x_dofs of entities[i], which should
+@@ -312,7 +312,7 @@ def test_cell_circumradius(c0, c1, c5):
+ @pytest.mark.skip_in_parallel
+ def test_cell_h(c0, c1, c5):
+     for c in [c0, c1, c5]:
+-        assert _cpp.mesh.h(c[0]._mesh, c[1], [c[2]]) == pytest.approx(math.sqrt(2.0))
++        assert _cpp.mesh.h(c[0]._cpp_object, c[1], [c[2]]) == pytest.approx(math.sqrt(2.0))
+ 
+ 
+ def test_cell_h_prism():
+@@ -321,7 +321,7 @@ def test_cell_h_prism():
+     tdim = mesh.topology.dim
+     num_cells = mesh.topology.index_map(tdim).size_local
+     cells = np.arange(num_cells, dtype=np.int32)
+-    h = _cpp.mesh.h(mesh._mesh, tdim, cells)
++    h = _cpp.mesh.h(mesh._cpp_object, tdim, cells)
+     assert np.allclose(h, np.sqrt(3 / (N**2)))
+ 
+ 
+@@ -330,7 +330,7 @@ def test_facet_h(ct):
+     N = 3
+     mesh = create_unit_cube(MPI.COMM_WORLD, N, N, N, ct)
+     left_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, lambda x: np.isclose(x[0], 0))
+-    h = _cpp.mesh.h(mesh._mesh, mesh.topology.dim - 1, left_facets)
++    h = _cpp.mesh.h(mesh._cpp_object, mesh.topology.dim - 1, left_facets)
+     assert np.allclose(h, np.sqrt(2 / (N**2)))
+ 
+ 
+@@ -358,7 +358,7 @@ def test_hmin_hmax(_mesh, hmin, hmax):
+     mesh = _mesh()
+     tdim = mesh.topology.dim
+     num_cells = mesh.topology.index_map(tdim).size_local
+-    h = _cpp.mesh.h(mesh._mesh, tdim, range(num_cells))
++    h = _cpp.mesh.h(mesh._cpp_object, tdim, range(num_cells))
+     assert h.min() == pytest.approx(hmin)
+     assert h.max() == pytest.approx(hmax)
+ 
+diff --git a/python/test/unit/mesh/test_refinement.py b/python/test/unit/mesh/test_refinement.py
+index 52ebff7db5f..589903d7a7a 100644
+--- a/python/test/unit/mesh/test_refinement.py
++++ b/python/test/unit/mesh/test_refinement.py
+@@ -139,7 +139,7 @@ def test_refine_facet_meshtag(tdim):
+                        numpy.arange(len(facet_indices), dtype=numpy.int32))
+ 
+     fine_mesh, parent_cell, parent_facet = _cpp.refinement.plaza_refine_data(
+-        mesh._mesh, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
++        mesh._cpp_object, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
+     fine_mesh.topology.create_entities(tdim - 1)
+ 
+     new_meshtag = _cpp.refinement.transfer_facet_meshtag(meshtag, fine_mesh, parent_cell, parent_facet)
+@@ -177,7 +177,7 @@ def test_refine_cell_meshtag(tdim):
+                        numpy.arange(len(cell_indices), dtype=numpy.int32))
+ 
+     fine_mesh, parent_cell, parent_facet = _cpp.refinement.plaza_refine_data(
+-        mesh._mesh, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
++        mesh._cpp_object, False, _cpp.refinement.RefinementOptions.parent_cell_and_facet)
+ 
+     new_meshtag = _cpp.refinement.transfer_cell_meshtag(meshtag, fine_mesh, parent_cell)
+ 
+diff --git a/python/test/unit/nls/test_newton.py b/python/test/unit/nls/test_newton.py
+index 25b66c56f23..78f014433ea 100644
+--- a/python/test/unit/nls/test_newton.py
++++ b/python/test/unit/nls/test_newton.py
+@@ -159,8 +159,7 @@ def test_nonlinear_pde_snes():
+     V = FunctionSpace(mesh, ("Lagrange", 1))
+     u = Function(V)
+     v = TestFunction(V)
+-    F = inner(5.0, v) * dx - ufl.sqrt(u * u) * inner(
+-        grad(u), grad(v)) * dx - inner(u, v) * dx
++    F = inner(5.0, v) * dx - ufl.sqrt(u * u) * inner(grad(u), grad(v)) * dx - inner(u, v) * dx
+ 
+     u_bc = Function(V)
+     u_bc.x.array[:] = 1.0
+
+From 5932e0a0653e67e10a381e5c432a320779ed5db1 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 11:08:23 +0000
+Subject: [PATCH 16/25] Small fixes
+
+---
+ python/dolfinx/io/gmshio.py         |  3 +-
+ python/dolfinx/mesh.py              | 59 +++--------------------------
+ python/test/unit/nls/test_newton.py |  2 -
+ 3 files changed, 8 insertions(+), 56 deletions(-)
+
+diff --git a/python/dolfinx/io/gmshio.py b/python/dolfinx/io/gmshio.py
+index 564bc0a723b..4572a980067 100644
+--- a/python/dolfinx/io/gmshio.py
++++ b/python/dolfinx/io/gmshio.py
+@@ -247,7 +247,8 @@ def model_to_mesh(model: gmsh.model, comm: _MPI.Comm, rank: int, gdim: int = 3,
+         mesh = create_mesh(comm, cells, x[:, :gdim], ufl_domain, partitioner)
+ 
+         # Create MeshTags for cells
+-        local_entities, local_values = _cpp.io.distribute_entity_data(mesh._cpp_object, mesh.topology.dim, cells, cell_values)
++        local_entities, local_values = _cpp.io.distribute_entity_data(
++            mesh._cpp_object, mesh.topology.dim, cells, cell_values)
+         mesh.topology.create_connectivity(mesh.topology.dim, 0)
+         adj = _cpp.graph.AdjacencyList_int32(local_entities)
+         ct = meshtags_from_entities(mesh, mesh.topology.dim, adj, local_values.astype(np.int32, copy=False))
+diff --git a/python/dolfinx/mesh.py b/python/dolfinx/mesh.py
+index 8560927a433..5501dc17963 100644
+--- a/python/dolfinx/mesh.py
++++ b/python/dolfinx/mesh.py
+@@ -30,41 +30,29 @@
+            "create_box", "create_unit_cube", "to_type", "to_string"]
+ 
+ 
+-def compute_incident_entities(mesh, entities, d0: int, d1: int):
++def compute_incident_entities(mesh: Mesh, entities, d0: int, d1: int):
+     return _cpp.mesh.compute_incident_entities(mesh._cpp_object, entities, d0, d1)
+ 
+ 
+-def compute_midpoints(mesh, dim: int, entities):
++def compute_midpoints(mesh: Mesh, dim: int, entities):
+     return _cpp.mesh.compute_midpoints(mesh._cpp_object, dim, entities)
+ 
+ 
+ class Mesh:
+-    def __init__(self, mesh, domain: ufl.Mesh):
++    def __init__(self, mesh: _cpp.mesh.Mesh, domain: ufl.Mesh):
+         """A class for representing meshes
+ 
+         Args:
+-            comm: The MPI communicator
+-            topology: The mesh topology
+-            geometry: The mesh geometry
+-            domain: The MPI communicator
++            mesh: The C++ mesh object
++            domain: The UFL domain
+ 
+         Note:
+-            Mesh objects are not generally created using this class directly.
++            Mesh objects should not usually be created using this class directly.
+ 
+         """
+-        # super().__init__(comm, topology, geometry)
+         self._cpp_object = mesh
+         self._ufl_domain = domain
+         self._ufl_domain._ufl_cargo = self._cpp_object
+-        # domain._ufl_cargo = self
+-
+-    # @classmethod
+-    # def from_cpp(cls, obj: _cpp.mesh.Mesh, domain: ufl.Mesh) -> Mesh:
+-    #     """Create Mesh object from a C++ Mesh object"""
+-    #     obj._ufl_domain = domain
+-    #     obj.__class__ = Mesh
+-    #     domain._ufl_cargo = obj
+-    #     return obj
+ 
+     @property
+     def comm(self):
+@@ -94,41 +82,6 @@ def topology(self):
+     def geometry(self):
+         return self._cpp_object.geometry
+ 
+-# class Mesh(_cpp.mesh.Mesh):
+-#     def __init__(self, comm: _MPI.Comm, topology: _cpp.mesh.Topology,
+-#                  geometry: _cpp.mesh.Geometry, domain: ufl.Mesh):
+-#         """A class for representing meshes
+-
+-#         Args:
+-#             comm: The MPI communicator
+-#             topology: The mesh topology
+-#             geometry: The mesh geometry
+-#             domain: The MPI communicator
+-
+-#         Note:
+-#             Mesh objects are not generally created using this class directly.
+-
+-#         """
+-#         super().__init__(comm, topology, geometry)
+-#         self._ufl_domain = domain
+-#         domain._ufl_cargo = self
+-
+-#     @classmethod
+-#     def from_cpp(cls, obj: _cpp.mesh.Mesh, domain: ufl.Mesh) -> Mesh:
+-#         """Create Mesh object from a C++ Mesh object"""
+-#         obj._ufl_domain = domain
+-#         obj.__class__ = Mesh
+-#         domain._ufl_cargo = obj
+-#         return obj
+-
+-#     def ufl_cell(self) -> ufl.Cell:
+-#         """Return the UFL cell type"""
+-#         return ufl.Cell(self.topology.cell_name(), geometric_dimension=self.geometry.dim)
+-
+-#     def ufl_domain(self) -> ufl.Mesh:
+-#         """Return the ufl domain corresponding to the mesh."""
+-#         return self._ufl_domain
+-
+ 
+ def locate_entities(mesh: Mesh, dim: int, marker: typing.Callable) -> np.ndarray:
+     """Compute mesh entities satisfying a geometric marking function
+diff --git a/python/test/unit/nls/test_newton.py b/python/test/unit/nls/test_newton.py
+index 78f014433ea..4bf843c8552 100644
+--- a/python/test/unit/nls/test_newton.py
++++ b/python/test/unit/nls/test_newton.py
+@@ -120,7 +120,6 @@ def test_linear_pde():
+ 
+ def test_nonlinear_pde():
+     """Test Newton solver for a simple nonlinear PDE"""
+-    # Create mesh and function space
+     mesh = create_unit_square(MPI.COMM_WORLD, 12, 5)
+     V = FunctionSpace(mesh, ("Lagrange", 1))
+     u = Function(V)
+@@ -154,7 +153,6 @@ def test_nonlinear_pde():
+ 
+ def test_nonlinear_pde_snes():
+     """Test Newton solver for a simple nonlinear PDE"""
+-    # Create mesh and function space
+     mesh = create_unit_square(MPI.COMM_WORLD, 12, 15)
+     V = FunctionSpace(mesh, ("Lagrange", 1))
+     u = Function(V)
+
+From a8df1c8c099843d2b50fd71b6767251778e2d34f Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 11:33:34 +0000
+Subject: [PATCH 17/25] Updates
+
+---
+ python/dolfinx/mesh.py | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/python/dolfinx/mesh.py b/python/dolfinx/mesh.py
+index 5501dc17963..e367385fd6c 100644
+--- a/python/dolfinx/mesh.py
++++ b/python/dolfinx/mesh.py
+@@ -12,7 +12,7 @@
+ import basix
+ import basix.ufl_wrapper
+ import numpy as np
+-import numpy.typing
++import numpy.typing as npt
+ import ufl
+ from dolfinx.cpp.mesh import (CellType, DiagonalType, GhostMode,
+                               build_dual_graph, cell_dim,
+@@ -30,11 +30,11 @@
+            "create_box", "create_unit_cube", "to_type", "to_string"]
+ 
+ 
+-def compute_incident_entities(mesh: Mesh, entities, d0: int, d1: int):
++def compute_incident_entities(mesh: Mesh, entities: npt.NDArray[np.int32], d0: int, d1: int):
+     return _cpp.mesh.compute_incident_entities(mesh._cpp_object, entities, d0, d1)
+ 
+ 
+-def compute_midpoints(mesh: Mesh, dim: int, entities):
++def compute_midpoints(mesh: Mesh, dim: int, entities: npt.NDArray[np.int32]):
+     return _cpp.mesh.compute_midpoints(mesh._cpp_object, dim, entities)
+ 
+ 
+@@ -221,8 +221,8 @@ def _ufl_id(self) -> int:
+ 
+ 
+ class MeshTagsMetaClass:
+-    def __init__(self, mesh: Mesh, dim: int, entities: numpy.typing.NDArray[typing.Any],
+-                 values: numpy.typing.NDArray[typing.Any]):
++    def __init__(self, mesh: Mesh, dim: int, entities: npt.NDArray[typing.Any],
++                 values: npt.NDArray[typing.Any]):
+         """A distributed sparse matrix that uses compressed sparse row storage.
+ 
+         Args:
+@@ -254,7 +254,7 @@ def ufl_id(self) -> int:
+         return id(self)
+ 
+ 
+-def meshtags(mesh: Mesh, dim: int, entities: np.ndarray,
++def meshtags(mesh: Mesh, dim: int, entities: npt.NDArray[np.int64],
+              values: typing.Union[np.ndarray, int, float]) -> MeshTagsMetaClass:
+     """Create a MeshTags object that associates data with a subset of mesh entities.
+ 
+@@ -298,7 +298,7 @@ def meshtags(mesh: Mesh, dim: int, entities: np.ndarray,
+ 
+ 
+ def meshtags_from_entities(mesh: Mesh, dim: int, entities: _cpp.graph.AdjacencyList_int32,
+-                           values: numpy.typing.NDArray[typing.Any]):
++                           values: npt.NDArray[typing.Any]):
+     """Create a MeshTags object that associates data with a subset of
+     mesh entities, where the entities are defined by their vertices.
+ 
+@@ -328,7 +328,7 @@ def meshtags_from_entities(mesh: Mesh, dim: int, entities: _cpp.graph.AdjacencyL
+     return _cpp.mesh.create_meshtags(mesh._cpp_object, dim, entities, values)
+ 
+ 
+-def create_interval(comm: _MPI.Comm, nx: int, points: numpy.typing.ArrayLike,
++def create_interval(comm: _MPI.Comm, nx: int, points: npt.ArrayLike,
+                     ghost_mode=GhostMode.shared_facet, partitioner=None) -> Mesh:
+     """Create an interval mesh
+ 
+@@ -374,7 +374,7 @@ def create_unit_interval(comm: _MPI.Comm, nx: int, ghost_mode=GhostMode.shared_f
+     return create_interval(comm, nx, [0.0, 1.0], ghost_mode, partitioner)
+ 
+ 
+-def create_rectangle(comm: _MPI.Comm, points: numpy.typing.ArrayLike, n: numpy.typing.ArrayLike,
++def create_rectangle(comm: _MPI.Comm, points: npt.ArrayLike, n: npt.ArrayLike,
+                      cell_type=CellType.triangle, ghost_mode=GhostMode.shared_facet,
+                      partitioner=None,
+                      diagonal: DiagonalType = DiagonalType.right) -> Mesh:
+@@ -431,7 +431,7 @@ def create_unit_square(comm: _MPI.Comm, nx: int, ny: int, cell_type=CellType.tri
+                             partitioner, diagonal)
+ 
+ 
+-def create_box(comm: _MPI.Comm, points: typing.List[numpy.typing.ArrayLike], n: list,
++def create_box(comm: _MPI.Comm, points: typing.List[npt.ArrayLike], n: list,
+                cell_type=CellType.tetrahedron,
+                ghost_mode=GhostMode.shared_facet,
+                partitioner=None) -> Mesh:
+
+From 3610349fffd1030be020fb601eb152021abbeb9f Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 12:16:09 +0000
+Subject: [PATCH 18/25] Add a hint
+
+---
+ python/dolfinx/geometry.py | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/python/dolfinx/geometry.py b/python/dolfinx/geometry.py
+index 4ac5db7a837..25786777c8f 100644
+--- a/python/dolfinx/geometry.py
++++ b/python/dolfinx/geometry.py
+@@ -9,6 +9,8 @@
+ 
+ import typing
+ 
++import numpy.typing as npt
++
+ if typing.TYPE_CHECKING:
+     from dolfinx.mesh import Mesh
+     from dolfinx.cpp.graph import AdjacencyList_int32
+@@ -46,11 +48,26 @@ def __init__(self, mesh: Mesh, dim: int, entities=None, padding: float = 0.0):
+         super().__init__(mesh._cpp_object, dim, entities, padding)
+ 
+ 
+-def compute_closest_entity(tree, midpoint_tree, mesh, points):
++def compute_closest_entity(tree: BoundingBoxTree, midpoint_tree: BoundingBoxTree, mesh: Mesh,
++                           points: numpy.ndarray) -> npt.NDArray[np.int32]:
++    """Compute closest mesh entity to a point.
++
++        Args:
++            tree: bounding box tree for the entities
++            midpoint_tree: A bounding box tree with the midpoints of all
++                the mesh entities. This is used to accelerate the search.
++            mesh: The mesh
++            points: The points to check for collision, shape=(num_points, 3)
++
++        Returns:
++            Mesh entity index for each point in `points`. Returns -1 for
++            a point if the bounding box tree is empty.
++
++    """
+     return _cpp.geometry.compute_closest_entity(tree, midpoint_tree, mesh._cpp_object, points)
+ 
+ 
+-def create_midpoint_tree(mesh, dim, entities):
++def create_midpoint_tree(mesh: Mesh, dim: int, entities: numpy.ndarray):
+     return _cpp.geometry.create_midpoint_tree(mesh._cpp_object, dim, entities)
+ 
+ 
+
+From 21881ab35f974742c83a55704d5bcc90b8a95071 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 12:25:16 +0000
+Subject: [PATCH 19/25] Simplifications
+
+---
+ python/dolfinx/fem/function.py              | 21 +++++++++------------
+ python/test/unit/fem/test_function_space.py |  4 ++--
+ 2 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index 6c1e0f2c821..3d9333e8598 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -376,7 +376,7 @@ def _(expr: Expression, cells: typing.Optional[np.ndarray] = None):
+             self._cpp_object.interpolate(np.asarray(u(x), dtype=self.dtype), cells)
+ 
+     def copy(self) -> Function:
+-        """Return a copy of the Function. The FunctionSpace is shared and the
++        """Create a copy of the Function. The FunctionSpace is shared and the
+         degree-of-freedom vector is copied.
+ 
+         """
+@@ -472,6 +472,8 @@ def __init__(self, mesh: Mesh,
+ 
+         if mesh is not None:
+             assert cppV is None
++            self._mesh = mesh
++
+             # Initialise the ufl.FunctionSpace
+             if isinstance(element, ufl.FiniteElementBase):
+                 super().__init__(mesh.ufl_domain(), element)
+@@ -492,15 +494,10 @@ def __init__(self, mesh: Mesh,
+                 "uintptr_t", ffi.addressof(self._ufcx_dofmap)), mesh.topology, cpp_element)
+ 
+             # Initialize the cpp.FunctionSpace
+-            try:
+-                self._cpp_object = _cpp.fem.FunctionSpace(mesh, cpp_element, cpp_dofmap)
+-            except TypeError:
+-                self._cpp_object = _cpp.fem.FunctionSpace(mesh._cpp_object, cpp_element, cpp_dofmap)
+-
+-            self._mesh = mesh
++            self._cpp_object = _cpp.fem.FunctionSpace(mesh._cpp_object, cpp_element, cpp_dofmap)
+ 
+     def clone(self) -> FunctionSpace:
+-        """Return a new FunctionSpace :math:`W` which shares data with this
++        """Create a new FunctionSpace :math:`W` which shares data with this
+         FunctionSpace :math:`V`, but with a different unique integer ID.
+ 
+         This function is helpful for defining mixed problems and using
+@@ -512,6 +509,9 @@ def clone(self) -> FunctionSpace:
+         diagonal blocks. This is relevant for the handling of boundary
+         conditions.
+ 
++        Returns:
++            A new function space that shares data
++
+         """
+         Vcpp = _cpp.fem.FunctionSpace(self._cpp_object.mesh, self._cpp_object.element, self._cpp_object.dofmap)
+         return FunctionSpace(self._mesh, self.ufl_element(), Vcpp)
+@@ -560,9 +560,6 @@ def __ne__(self, other):
+         """Comparison for inequality."""
+         return super().__ne__(other) or self._cpp_object != other._cpp_object
+ 
+-    def ufl_cell(self):
+-        return self._mesh.ufl_cell()
+-
+     def ufl_function_space(self) -> ufl.FunctionSpace:
+         """UFL function space"""
+         return self
+@@ -578,7 +575,7 @@ def dofmap(self) -> dofmap.DofMap:
+ 
+     @property
+     def mesh(self) -> Mesh:
+-        """Return the mesh on which the function space is defined."""
++        """Mesh on which the function space is defined."""
+         return self._mesh
+ 
+     def collapse(self) -> tuple[FunctionSpace, np.ndarray]:
+diff --git a/python/test/unit/fem/test_function_space.py b/python/test/unit/fem/test_function_space.py
+index a12ab18b84b..fd1cc39a1d1 100644
+--- a/python/test/unit/fem/test_function_space.py
++++ b/python/test/unit/fem/test_function_space.py
+@@ -65,8 +65,8 @@ def test_python_interface(V, V2, W, W2, Q):
+     assert isinstance(V2, FunctionSpace)
+     assert isinstance(W2, FunctionSpace)
+ 
+-    assert V.ufl_cell() == V2.ufl_cell()
+-    assert W.ufl_cell() == W2.ufl_cell()
++    assert V.mesh.ufl_cell() == V2.mesh.ufl_cell()
++    assert W.mesh.ufl_cell() == W2.mesh.ufl_cell()
+     assert V.element == V2.element
+     assert W.element == W2.element
+     assert V.ufl_element() == V2.ufl_element()
+
+From 86bd7bdd21f194a509a4576327ecc3fa9831054f Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 12:28:13 +0000
+Subject: [PATCH 20/25] Add missing import
+
+---
+ python/dolfinx/geometry.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/python/dolfinx/geometry.py b/python/dolfinx/geometry.py
+index 25786777c8f..71b552c931a 100644
+--- a/python/dolfinx/geometry.py
++++ b/python/dolfinx/geometry.py
+@@ -9,6 +9,7 @@
+ 
+ import typing
+ 
++import numpy as np
+ import numpy.typing as npt
+ 
+ if typing.TYPE_CHECKING:
+
+From fb3541ce5d77dee16b99452ad45a2f8d4bb97b37 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 14:06:47 +0000
+Subject: [PATCH 21/25] Tidy up
+
+---
+ python/test/unit/fem/test_custom_assembler.py       | 1 -
+ python/test/unit/mesh/test_manifold_point_search.py | 5 +++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/python/test/unit/fem/test_custom_assembler.py b/python/test/unit/fem/test_custom_assembler.py
+index 77fdce1e931..63c02c13b23 100644
+--- a/python/test/unit/fem/test_custom_assembler.py
++++ b/python/test/unit/fem/test_custom_assembler.py
+@@ -5,7 +5,6 @@
+ # SPDX-License-Identifier:    LGPL-3.0-or-later
+ """Tests for custom Python assemblers"""
+ 
+-# FoodImports
+ import ctypes
+ import ctypes.util
+ import importlib
+diff --git a/python/test/unit/mesh/test_manifold_point_search.py b/python/test/unit/mesh/test_manifold_point_search.py
+index 395600f526f..8f8b10d7f87 100644
+--- a/python/test/unit/mesh/test_manifold_point_search.py
++++ b/python/test/unit/mesh/test_manifold_point_search.py
+@@ -25,8 +25,9 @@ def test_manifold_point_search():
+     colliding_cells = geometry.compute_colliding_cells(mesh, cell_candidates, points)
+ 
+     # Extract vertices of cell
+-    indices = _cpp.mesh.entities_to_geometry(mesh._cpp_object, mesh.topology.dim, [colliding_cells.links(0)[
+-        0], colliding_cells.links(1)[0]], False)
++    indices = _cpp.mesh.entities_to_geometry(mesh._cpp_object, mesh.topology.dim,
++                                             [colliding_cells.links(0)[0],
++                                              colliding_cells.links(1)[0]], False)
+     cell_vertices = mesh.geometry.x[indices]
+ 
+     # Compare vertices with input
+
+From 04fecb8a26b2b5b5724180c957c46c49a331105e Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 15:34:48 +0000
+Subject: [PATCH 22/25] Simplifications
+
+---
+ python/dolfinx/fem/function.py | 54 +++++++++++++++++++---------------
+ 1 file changed, 30 insertions(+), 24 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index 3d9333e8598..6993d22ccdf 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -461,19 +461,7 @@ def __init__(self, mesh: Mesh,
+                  form_compiler_options: dict[str, typing.Any] = {}, jit_options: dict[str, typing.Any] = {}):
+         """Create a finite element function space."""
+ 
+-        # Create function space from a UFL element and existing cpp
+-        # FunctionSpace
+-        if cppV is not None:
+-            ufl_domain = mesh.ufl_domain()
+-            super().__init__(ufl_domain, element)
+-            self._cpp_object = cppV
+-            self._mesh = mesh
+-            return
+-
+-        if mesh is not None:
+-            assert cppV is None
+-            self._mesh = mesh
+-
++        if cppV is None:
+             # Initialise the ufl.FunctionSpace
+             if isinstance(element, ufl.FiniteElementBase):
+                 super().__init__(mesh.ufl_domain(), element)
+@@ -493,8 +481,19 @@ def __init__(self, mesh: Mesh,
+             cpp_dofmap = _cpp.fem.create_dofmap(mesh.comm, ffi.cast(
+                 "uintptr_t", ffi.addressof(self._ufcx_dofmap)), mesh.topology, cpp_element)
+ 
+-            # Initialize the cpp.FunctionSpace
++            # Initialize the cpp.FunctionSpace and store mesh
+             self._cpp_object = _cpp.fem.FunctionSpace(mesh._cpp_object, cpp_element, cpp_dofmap)
++            self._mesh = mesh
++        else:
++            # Create function space from a UFL element and an existing
++            # C++ FunctionSpace
++            if mesh._cpp_object is not cppV.mesh:
++                raise RecursionError("Meshes do not match in FunctionSpace initialisation.")
++            ufl_domain = mesh.ufl_domain()
++            super().__init__(ufl_domain, element)
++            self._cpp_object = cppV
++            self._mesh = mesh
++            return
+ 
+     def clone(self) -> FunctionSpace:
+         """Create a new FunctionSpace :math:`W` which shares data with this
+@@ -566,6 +565,7 @@ def ufl_function_space(self) -> ufl.FunctionSpace:
+ 
+     @property
+     def element(self):
++        """Function space finite element."""
+         return self._cpp_object.element
+ 
+     @property
+@@ -590,28 +590,34 @@ def collapse(self) -> tuple[FunctionSpace, np.ndarray]:
+         V = FunctionSpace(self._mesh, self.ufl_element(), cpp_space)
+         return V, dofs
+ 
+-    def tabulate_dof_coordinates(self) -> np.ndarray:
++    def tabulate_dof_coordinates(self) -> npt.NDArray[np.float64]:
++        """Tabulate the coordinates of the degrees-of-freedom in the function space.
++
++            Returns:
++                Coordinates of the degrees-of-freedom.
++
++            Notes:
++                The methods should be used only for elements with point
++                evaluation degrees-of-freedom.
++
++         """
+         return self._cpp_object.tabulate_dof_coordinates()
+ 
+ 
+ def VectorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]], dim=None,
+                         restriction=None) -> FunctionSpace:
+     """Create vector finite element (composition of scalar elements) function space."""
+-
+     e = ElementMetaData(*element)
+-    ufl_element = basix.ufl_wrapper.create_vector_element(
+-        e.family, mesh.ufl_cell().cellname(), e.degree, dim=dim,
+-        gdim=mesh.geometry.dim)
+-
++    ufl_element = basix.ufl_wrapper.create_vector_element(e.family, mesh.ufl_cell().cellname(), e.degree,
++                                                          dim=dim, gdim=mesh.geometry.dim)
+     return FunctionSpace(mesh, ufl_element)
+ 
+ 
+ def TensorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]], shape=None,
+                         symmetry: typing.Optional[bool] = None, restriction=None) -> FunctionSpace:
+     """Create tensor finite element (composition of scalar elements) function space."""
+-
+     e = ElementMetaData(*element)
+-    ufl_element = basix.ufl_wrapper.create_tensor_element(
+-        e.family, mesh.ufl_cell().cellname(), e.degree, shape=shape, symmetry=symmetry,
+-        gdim=mesh.geometry.dim)
++    ufl_element = basix.ufl_wrapper.create_tensor_element(e.family, mesh.ufl_cell().cellname(),
++                                                          e.degree, shape=shape, symmetry=symmetry,
++                                                          gdim=mesh.geometry.dim)
+     return FunctionSpace(mesh, ufl_element)
+
+From d3af783dc3ca98b7fc24cf8500ebb90e20cc9e0d Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 15:35:48 +0000
+Subject: [PATCH 23/25] Tidy up
+
+---
+ python/dolfinx/fem/function.py | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index 6993d22ccdf..fff6469677f 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -604,8 +604,7 @@ def tabulate_dof_coordinates(self) -> npt.NDArray[np.float64]:
+         return self._cpp_object.tabulate_dof_coordinates()
+ 
+ 
+-def VectorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]], dim=None,
+-                        restriction=None) -> FunctionSpace:
++def VectorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]], dim=None) -> FunctionSpace:
+     """Create vector finite element (composition of scalar elements) function space."""
+     e = ElementMetaData(*element)
+     ufl_element = basix.ufl_wrapper.create_vector_element(e.family, mesh.ufl_cell().cellname(), e.degree,
+@@ -614,7 +613,7 @@ def VectorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typin
+ 
+ 
+ def TensorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]], shape=None,
+-                        symmetry: typing.Optional[bool] = None, restriction=None) -> FunctionSpace:
++                        symmetry: typing.Optional[bool] = None) -> FunctionSpace:
+     """Create tensor finite element (composition of scalar elements) function space."""
+     e = ElementMetaData(*element)
+     ufl_element = basix.ufl_wrapper.create_tensor_element(e.family, mesh.ufl_cell().cellname(),
+
+From 9fcd70bbea4dc265148fdda41bb78faa979cfcfd Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 15:38:08 +0000
+Subject: [PATCH 24/25] Flake8 fixes
+
+---
+ python/dolfinx/fem/function.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/python/dolfinx/fem/function.py b/python/dolfinx/fem/function.py
+index fff6469677f..79b12976fbc 100644
+--- a/python/dolfinx/fem/function.py
++++ b/python/dolfinx/fem/function.py
+@@ -1,9 +1,9 @@
+-# Copyright (C) 2009-2022 Chris N. Richardson, Garth N. Wells and Michal Habera
++# Copyright (C) 2009-2023 Chris N. Richardson, Garth N. Wells and Michal Habera
+ #
+ # This file is part of DOLFINx (https://www.fenicsproject.org)
+ #
+ # SPDX-License-Identifier:    LGPL-3.0-or-later
+-"""Collection of functions and function spaces"""
++"""Finite element function spaces and functions"""
+ 
+ from __future__ import annotations
+ 
+@@ -40,7 +40,6 @@ def __init__(self, domain, c: typing.Union[np.ndarray, typing.Sequence, float]):
+         """
+         c = np.asarray(c)
+         super().__init__(domain, c.shape)
+-
+         try:
+             if c.dtype == np.complex64:
+                 self._cpp_object = _cpp.fem.Constant_complex64(c)
+@@ -597,14 +596,15 @@ def tabulate_dof_coordinates(self) -> npt.NDArray[np.float64]:
+                 Coordinates of the degrees-of-freedom.
+ 
+             Notes:
+-                The methods should be used only for elements with point
++                This method should be used only for elements with point
+                 evaluation degrees-of-freedom.
+ 
+          """
+         return self._cpp_object.tabulate_dof_coordinates()
+ 
+ 
+-def VectorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]], dim=None) -> FunctionSpace:
++def VectorFunctionSpace(mesh: Mesh, element: typing.Union[ElementMetaData, typing.Tuple[str, int]],
++                        dim=None) -> FunctionSpace:
+     """Create vector finite element (composition of scalar elements) function space."""
+     e = ElementMetaData(*element)
+     ufl_element = basix.ufl_wrapper.create_vector_element(e.family, mesh.ufl_cell().cellname(), e.degree,
+
+From 4985de579657131b676bd4a41b977339b9bbb941 Mon Sep 17 00:00:00 2001
+From: "Garth N. Wells" <gnw20@cam.ac.uk>
+Date: Fri, 27 Jan 2023 16:40:39 +0000
+Subject: [PATCH 25/25] Eliminate test warning
+
+---
+ python/test/unit/io/test_adios2.py | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/python/test/unit/io/test_adios2.py b/python/test/unit/io/test_adios2.py
+index 73db08adc59..a8df9a71bc0 100644
+--- a/python/test/unit/io/test_adios2.py
++++ b/python/test/unit/io/test_adios2.py
+@@ -93,12 +93,19 @@ def test_findes_single_function(tempdir, dim, simplex):
+ @pytest.mark.parametrize("simplex", [True, False])
+ def test_fides_function_at_nodes(tempdir, dim, simplex):
+     """Test saving P1 functions with Fides (with changing geometry)"""
++    from petsc4py import PETSc
++    dtype = PETSc.ScalarType
+     mesh = generate_mesh(dim, simplex)
+-    v = Function(VectorFunctionSpace(mesh, ("Lagrange", 1)))
++    v = Function(VectorFunctionSpace(mesh, ("Lagrange", 1)), dtype=dtype)
+     v.name = "v"
+     q = Function(FunctionSpace(mesh, ("Lagrange", 1)))
+     q.name = "q"
+     filename = Path(tempdir, "v.bp")
++    if np.issubdtype(dtype, np.complexfloating):
++        alpha = 1j
++    else:
++        alpha = 0
++
+     with FidesWriter(mesh.comm, filename, [v, q]) as f:
+         for t in [0.1, 0.5, 1]:
+             # Only change one function
+@@ -107,9 +114,9 @@ def test_fides_function_at_nodes(tempdir, dim, simplex):
+ 
+             mesh.geometry.x[:, :2] += 0.1
+             if mesh.geometry.dim == 2:
+-                v.interpolate(lambda x: np.vstack((t * x[0], x[1] + x[1] * 1j)))
++                v.interpolate(lambda x: np.vstack((t * x[0], x[1] + x[1] * alpha)))
+             elif mesh.geometry.dim == 3:
+-                v.interpolate(lambda x: np.vstack((t * x[2], x[0] + x[2] * 2j, x[1])))
++                v.interpolate(lambda x: np.vstack((t * x[2], x[0] + x[2] * 2 * alpha, x[1])))
+             f.write(t)
+ 
+ 
