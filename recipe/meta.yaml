@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2023.1" %}
 
-{% set build = 0 %}
+{% set build = 1 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -122,7 +122,9 @@ outputs:
         - slepc
         - slepc4py
       run:
-        - {{ compiler("cxx") }}  # [linux]
+        # remove version pin from runtime compiler dep
+        # we need _a_ compiler, we don't want version pinning
+        - {{ compiler("cxx").split()[0] }}  # [linux]
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
