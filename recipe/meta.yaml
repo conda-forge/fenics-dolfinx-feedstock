@@ -29,10 +29,6 @@ build:
     - OMPI_MCA_plm=isolated
     - OMPI_MCA_btl_vader_single_copy_mechanism=none
 
-requirements:
-  build:
-    - python  # not used, just for build matrix
-
 outputs:
   - name: fenics-libdolfinx
     script: build-libdolfinx.sh
@@ -42,6 +38,11 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
+      ignore_run_exports:
+        - python
+        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+      force_use_keys:
+        - python
     requirements:
       build:
         - {{ compiler("c") }}
