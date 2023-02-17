@@ -52,10 +52,11 @@ outputs:
         - pkg-config
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
         # python is unconditionally used to check for basix
-        # even if it doens't find it, dolfinx doesn't handle python itself being unavailable
+        # even if it doesn't find it, dolfinx doesn't handle python itself being unavailable
         - python
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
       host:
+        - python
         - {{ mpi }}
         - libadios2
         - libadios2 * mpi_{{ mpi }}_*
