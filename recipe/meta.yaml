@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2023.1" %}
 
-{% set build = 0 %}
+{% set build = 1 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -29,10 +29,6 @@ build:
     - OMPI_MCA_plm=isolated
     - OMPI_MCA_btl_vader_single_copy_mechanism=none
 
-requirements:
-  build:
-    - python  # not used, just for build matrix
-
 outputs:
   - name: fenics-libdolfinx
     script: build-libdolfinx.sh
@@ -42,6 +38,11 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
+      ignore_run_exports:
+        - python
+        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+      force_use_keys:
+        - python
     requirements:
       build:
         - {{ compiler("c") }}
@@ -51,10 +52,11 @@ outputs:
         - pkg-config
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
         # python is unconditionally used to check for basix
-        # even if it doens't find it, dolfinx doesn't handle python itself being unavailable
+        # even if it doesn't find it, dolfinx doesn't handle python itself being unavailable
         - python
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
       host:
+        - python
         - {{ mpi }}
         - libadios2
         - libadios2 * mpi_{{ mpi }}_*
@@ -122,7 +124,9 @@ outputs:
         - slepc
         - slepc4py
       run:
-        - {{ compiler("cxx") }}  # [linux]
+        # remove version pin from runtime compiler dep
+        # we need _a_ compiler, we don't want version pinning
+        - {{ compiler("cxx").split()[0] }}  # [linux]
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
