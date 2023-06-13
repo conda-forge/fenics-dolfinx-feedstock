@@ -12,6 +12,11 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
   # needed for cross-compile openmpi
   export OPAL_CC="$CC"
   export OPAL_PREFIX="$PREFIX"
+
+  # find cross-python
+  # specifically Python3_INCLUDE_DIR
+  PY_INC=$( "${PYTHON}" -c 'import sysconfig; print(sysconfig.get_path("include"))' )
+  export CMAKE_ARGS="${CMAKE_ARGS} -DPython3_INCLUDE_DIR=${PY_INC}"
 fi
 
-$PYTHON -m pip install -vv --no-deps ./python
+$PYTHON -m pip install -vv --no-deps --no-build-isolation ./python
