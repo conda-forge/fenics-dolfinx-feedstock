@@ -147,6 +147,7 @@ outputs:
       requires:
         - pip
         - pytest >=6
+        - python-gmsh
 
 about:
   home: https://fenicsproject.org
