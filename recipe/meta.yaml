@@ -38,7 +38,7 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*
-      ignore_run_exports:
+      ignore_run_exports_from:
         - python
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
       force_use_keys:
