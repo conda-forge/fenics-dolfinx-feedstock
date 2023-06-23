@@ -127,6 +127,7 @@ outputs:
         - slepc4py
       run:
         - {{ compiler("cxx") }}  # [linux]
+        - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
