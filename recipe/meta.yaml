@@ -31,8 +31,8 @@ build:
 
 outputs:
   - name: fenics-libdolfinx
-    script: build-libdolfinx.sh
     build:
+      script: bash -ex ${RECIPE_DIR}/build-libdolfinx.sh
       skip_compile_pyc:
         - '*'  # [build_platform != target_platform]
       run_exports:
@@ -95,7 +95,8 @@ outputs:
         - make
         - fenics-ffcx {{ major_minor }}.*
   - name: fenics-dolfinx
-    script: build-dolfinx.sh
+    build:
+      script: bash -ex ${RECIPE_DIR}/build-dolfinx.sh
     requirements:
       build:
         - {{ compiler("c") }}
