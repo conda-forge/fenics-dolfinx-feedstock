@@ -125,10 +125,7 @@ outputs:
         - slepc
         - slepc4py
       run:
-        # remove version pin from runtime compiler dep
-        # we need _a_ compiler, we don't want version pinning
-        - {{ compiler("cxx").split()[0] }}  # [linux]
-        - pkg-config
+        - {{ compiler("cxx") }}  # [linux]
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
