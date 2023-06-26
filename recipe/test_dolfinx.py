@@ -1,6 +1,6 @@
 import os
 
-import dolfinx
+import dolfinx  # noqa
 import gmsh
 import numpy as np
 import pytest
@@ -25,7 +25,7 @@ def test_petsc_scalar():
         "adios2",
         "parmetis",
         "slepc",
-        # kahip, # not yet
+        "kahip",
     ],
 )
 def test_has(feature):
