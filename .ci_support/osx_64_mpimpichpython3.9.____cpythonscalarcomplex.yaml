@@ -15,7 +15,7 @@ cxx_compiler:
 cxx_compiler_version:
 - '15'
 hdf5:
-- 1.14.0
+- 1.14.1
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
@@ -25,9 +25,9 @@ mpich:
 openmpi:
 - '4'
 petsc:
-- '3.18'
+- '3.19'
 petsc4py:
-- '3.18'
+- '3.19'
 pin_run_as_build:
   boost-cpp:
     max_pin: x.x.x
@@ -43,9 +43,9 @@ python:
 scalar:
 - complex
 slepc:
-- '3.18'
+- '3.19'
 slepc4py:
-- '3.18'
+- '3.19'
 target_platform:
 - osx-64
 zip_keys:

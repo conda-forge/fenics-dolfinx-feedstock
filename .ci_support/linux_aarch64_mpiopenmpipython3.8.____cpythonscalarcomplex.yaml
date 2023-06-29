@@ -21,7 +21,7 @@ cxx_compiler_version:
 docker_image:
 - quay.io/condaforge/linux-anvil-cos7-x86_64
 hdf5:
-- 1.14.0
+- 1.14.1
 mpi:
 - openmpi
 mpich:
@@ -29,9 +29,9 @@ mpich:
 openmpi:
 - '4'
 petsc:
-- '3.18'
+- '3.19'
 petsc4py:
-- '3.18'
+- '3.19'
 pin_run_as_build:
   boost-cpp:
     max_pin: x.x.x
@@ -47,9 +47,9 @@ python:
 scalar:
 - complex
 slepc:
-- '3.18'
+- '3.19'
 slepc4py:
-- '3.18'
+- '3.19'
 target_platform:
 - linux-aarch64
 zip_keys:
