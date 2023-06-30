@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2023.1" %}
 
-{% set build = 6 %}
+{% set build = 7 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
