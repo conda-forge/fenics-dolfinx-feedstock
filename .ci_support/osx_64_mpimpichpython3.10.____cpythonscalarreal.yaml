@@ -36,6 +36,8 @@ pin_run_as_build:
     max_pin: x.x
 ptscotch:
 - 6.0.9
+pugixml:
+- '1.13'
 pybind11_abi:
 - '4'
 python:

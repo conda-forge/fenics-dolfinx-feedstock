@@ -16,14 +16,6 @@ jobs:
         CONFIG: linux_64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpimpichpython3.11.____cpythonscalarcomplex:
-        CONFIG: linux_64_mpimpichpython3.11.____cpythonscalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpimpichpython3.11.____cpythonscalarreal:
-        CONFIG: linux_64_mpimpichpython3.11.____cpythonscalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_64_mpimpichpython3.8.____cpythonscalarcomplex:
         CONFIG: linux_64_mpimpichpython3.8.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -46,14 +38,6 @@ jobs:
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_64_mpiopenmpipython3.10.____cpythonscalarreal:
         CONFIG: linux_64_mpiopenmpipython3.10.____cpythonscalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpiopenmpipython3.11.____cpythonscalarcomplex:
-        CONFIG: linux_64_mpiopenmpipython3.11.____cpythonscalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_64_mpiopenmpipython3.11.____cpythonscalarreal:
-        CONFIG: linux_64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_64_mpiopenmpipython3.8.____cpythonscalarcomplex:
@@ -80,14 +64,6 @@ jobs:
         CONFIG: linux_aarch64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_aarch64_mpimpichpython3.11.____cpythonscalarcomplex:
-        CONFIG: linux_aarch64_mpimpichpython3.11.____cpythonscalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_aarch64_mpimpichpython3.11.____cpythonscalarreal:
-        CONFIG: linux_aarch64_mpimpichpython3.11.____cpythonscalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_aarch64_mpimpichpython3.8.____cpythonscalarcomplex:
         CONFIG: linux_aarch64_mpimpichpython3.8.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -110,14 +86,6 @@ jobs:
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal:
         CONFIG: linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_aarch64_mpiopenmpipython3.11.____cpythonscalarcomplex:
-        CONFIG: linux_aarch64_mpiopenmpipython3.11.____cpythonscalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_aarch64_mpiopenmpipython3.11.____cpythonscalarreal:
-        CONFIG: linux_aarch64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_aarch64_mpiopenmpipython3.8.____cpythonscalarcomplex:
@@ -144,14 +112,6 @@ jobs:
         CONFIG: linux_ppc64le_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_ppc64le_mpimpichpython3.11.____cpythonscalarcomplex:
-        CONFIG: linux_ppc64le_mpimpichpython3.11.____cpythonscalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_ppc64le_mpimpichpython3.11.____cpythonscalarreal:
-        CONFIG: linux_ppc64le_mpimpichpython3.11.____cpythonscalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_ppc64le_mpimpichpython3.8.____cpythonscalarcomplex:
         CONFIG: linux_ppc64le_mpimpichpython3.8.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -176,14 +136,6 @@ jobs:
         CONFIG: linux_ppc64le_mpiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_ppc64le_mpiopenmpipython3.11.____cpythonscalarcomplex:
-        CONFIG: linux_ppc64le_mpiopenmpipython3.11.____cpythonscalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-      linux_ppc64le_mpiopenmpipython3.11.____cpythonscalarreal:
-        CONFIG: linux_ppc64le_mpiopenmpipython3.11.____cpythonscalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_ppc64le_mpiopenmpipython3.8.____cpythonscalarcomplex:
         CONFIG: linux_ppc64le_mpiopenmpipython3.8.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -204,11 +156,6 @@ jobs:
   timeoutInMinutes: 360
 
   steps:
-  - script: |
-         rm -rf /opt/ghc
-         df -h
-    displayName: Manage disk space
-
   # configure qemu binfmt-misc running.  This allows us to run docker containers
   # embedded qemu-static
   - script: |
