@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2023.1" %}
 
-{% set build = 8 %}
+{% set build = 9 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -130,7 +130,9 @@ outputs:
         - slepc
         - slepc4py
       run:
-        - {{ compiler("cxx") }}  # [linux]
+        # we shouldn't need to depend on compiler version,
+        # but pybind11 includes compiler version in the ABI
+        - {{ compiler("cxx") }}
         - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
