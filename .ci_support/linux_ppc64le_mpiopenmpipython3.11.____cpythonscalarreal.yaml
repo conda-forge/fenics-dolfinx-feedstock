@@ -1,15 +1,9 @@
-BUILD:
-- aarch64-conda_cos7-linux-gnu
 boost_cpp:
 - 1.78.0
 c_compiler:
 - gcc
 c_compiler_version:
 - '12'
-cairo:
-- '1'
-cdt_arch:
-- aarch64
 cdt_name:
 - cos7
 channel_sources:
@@ -47,7 +41,7 @@ pugixml:
 pybind11_abi:
 - '4'
 python:
-- 3.8.* *_cpython
+- 3.11.* *_cpython
 scalar:
 - real
 slepc:
@@ -55,7 +49,7 @@ slepc:
 slepc4py:
 - '3.19'
 target_platform:
-- linux-aarch64
+- linux-ppc64le
 zip_keys:
 - - c_compiler_version
   - cxx_compiler_version

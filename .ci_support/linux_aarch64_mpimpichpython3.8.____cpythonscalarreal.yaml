@@ -6,6 +6,8 @@ c_compiler:
 - gcc
 c_compiler_version:
 - '12'
+cairo:
+- '1'
 cdt_arch:
 - aarch64
 cdt_name:
