@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2023.1" %}
 
-{% set build = 7 %}
+{% set build = 8 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -21,7 +21,7 @@ source:
   sha256: eb8ac2bb2f032b0d393977993e1ab6b4101a84d54023a67206e3eac1a8d79b80
 build:
   number: {{ build }}
-  skip: true  # [win or py==37]
+  skip: true  # [win or py<=37 or py>=311]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
@@ -153,6 +153,9 @@ outputs:
         - pip
         - pytest >=6
         - python-gmsh
+        # linux-aarch64 getting old gmsh with missing cairo
+        # unclear what pin is holding it back
+        - cairo  # [linux and aarch64]
 
 about:
   home: https://fenicsproject.org
