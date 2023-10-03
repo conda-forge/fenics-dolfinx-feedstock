@@ -84,6 +84,8 @@ outputs:
         # but are needed at runtime for code generation
         - fenics-ufcx
         - parmetis
+        # needs boost metadata just to CMake-load fenix-libdolfinx
+        - libboost-devel
     test:
       script: test-libdolfinx.sh
       source_files:
@@ -111,7 +113,6 @@ outputs:
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
-        - libboost-devel
         # hdf5 shouldn't be needed here, but solver fails without it
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
