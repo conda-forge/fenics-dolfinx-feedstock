@@ -130,7 +130,9 @@ outputs:
         - slepc
         - slepc4py
       run:
-        - {{ compiler("cxx") }}  # [linux]
+        # we shouldn't need to depend on compiler version,
+        # but pybind11 includes compiler version in the ABI
+        - {{ compiler("cxx") }}
         - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
