@@ -5,7 +5,7 @@
 # pins are usually updated on minor bumps:
 # basix is currently co-versioned with ffcx
 {% set major_minor = version.rsplit(".", 1)[0] %}
-{% set ufl_version = "2023.1" %}
+{% set ufl_version = "2023.2" %}
 
 {% set build = 0 %}
 {% if scalar == "real" %}
@@ -21,7 +21,7 @@ source:
   sha256: 9245e457a03c37983337456c0835263b7be083c5bf2978738b4e462ee5e83cde
 build:
   number: {{ build }}
-  skip: true  # [win or py<=37 or py>=311]
+  skip: true  # [win or py<=37]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
@@ -139,7 +139,7 @@ outputs:
         - cffi
         - kahip-python
         - mpi4py
-        - numpy
+        - numpy >=1.21
         - petsc4py
         - slepc4py
         - fenics-basix {{ major_minor }}.*
