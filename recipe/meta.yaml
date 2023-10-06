@@ -94,7 +94,7 @@ outputs:
         - {{ compiler("cxx") }}
         - pkg-config
         - cmake
-        - catch2 2.*
+        - catch2 3.*
         - make
         - fenics-ffcx {{ major_minor }}.*
   - name: fenics-dolfinx
