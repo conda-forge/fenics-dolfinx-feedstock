@@ -82,7 +82,7 @@ outputs:
         - fenics-libbasix
         # these don't have run_exports
         # but are needed at runtime for code generation
-        - fenics-ufcx
+        - fenics-ufcx  {{ major_minor }}.*
         - parmetis
         # needs boost metadata just to CMake-load fenix-libdolfinx
         - libboost-devel
@@ -123,6 +123,7 @@ outputs:
         - wheel
         - pybind11
         - pybind11-abi
+        - fenics-basix {{ major_minor }}.*
         - fenics-basix-pybind11-abi
         - mpi4py
         - petsc * {{ scalar }}_*
