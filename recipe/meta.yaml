@@ -21,6 +21,7 @@ source:
   sha256: 9245e457a03c37983337456c0835263b7be083c5bf2978738b4e462ee5e83cde
   patches:
     - annotations.patch
+    - test-functional.patch
 
 build:
   number: {{ build }}
