@@ -1,0 +1,53 @@
+MACOSX_DEPLOYMENT_TARGET:
+- '11.0'
+c_compiler:
+- clang
+c_compiler_version:
+- '16'
+channel_sources:
+- conda-forge
+channel_targets:
+- conda-forge main
+cxx_compiler:
+- clangxx
+cxx_compiler_version:
+- '16'
+hdf5:
+- 1.14.2
+libboost_devel:
+- '1.82'
+macos_machine:
+- arm64-apple-darwin20.0.0
+mpi:
+- mpich
+mpich:
+- '4'
+openmpi:
+- '4'
+petsc:
+- '3.19'
+petsc4py:
+- '3.19'
+pin_run_as_build:
+  python:
+    min_pin: x.x
+    max_pin: x.x
+ptscotch:
+- 6.0.9
+pugixml:
+- '1.13'
+pybind11_abi:
+- '4'
+python:
+- 3.11.* *_cpython
+scalar:
+- complex
+slepc:
+- '3.19'
+slepc4py:
+- '3.19'
+target_platform:
+- osx-arm64
+zip_keys:
+- - c_compiler_version
+  - cxx_compiler_version
