@@ -6,14 +6,15 @@ scalar:
   - real
   - complex
 
+c_compiler_version:  # [osx]
+  - 15  # [osx]
+cxx_compiler_version:  # [osx]
+  - 15  # [osx]
+
 pin_run_as_build:
-  boost-cpp:
-    max_pin: x.x.x
   parmetis:
     max_pin: x.x
   pybind11:
     max_pin: x.x.x
   fenics-ufcx:
     max_pin: x.x.x
-  xtensor:
-    max_pin: x.x
