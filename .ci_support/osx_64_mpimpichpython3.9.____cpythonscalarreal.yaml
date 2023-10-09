@@ -25,9 +25,9 @@ mpich:
 openmpi:
 - '4'
 petsc:
-- '3.19'
+- '3.20'
 petsc4py:
-- '3.19'
+- '3.20'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -43,9 +43,9 @@ python:
 scalar:
 - real
 slepc:
-- '3.19'
+- '3.20'
 slepc4py:
-- '3.19'
+- '3.20'
 target_platform:
 - osx-64
 zip_keys:
