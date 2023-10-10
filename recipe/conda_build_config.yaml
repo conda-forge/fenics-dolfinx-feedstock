@@ -6,11 +6,6 @@ scalar:
   - real
   - complex
 
-c_compiler_version:  # [osx]
-  - 15  # [osx]
-cxx_compiler_version:  # [osx]
-  - 15  # [osx]
-
 pin_run_as_build:
   parmetis:
     max_pin: x.x
