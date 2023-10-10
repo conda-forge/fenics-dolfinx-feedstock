@@ -4,7 +4,6 @@ import dolfinx  # noqa
 import gmsh
 import numpy as np
 import pytest
-import pyvista
 from dolfinx.fem import Function, FunctionSpace
 from dolfinx.mesh import (
     CellType,
@@ -65,6 +64,11 @@ def test_gmshio():
 
 
 def test_pyvista():
+    import pyvista
+
+    # can't actually run this on headless CI
+    return
+
     # from https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_pyvista.html
     msh = create_unit_square(MPI.COMM_WORLD, 12, 12, cell_type=CellType.quadrilateral)
     V = FunctionSpace(msh, ("Lagrange", 1))
