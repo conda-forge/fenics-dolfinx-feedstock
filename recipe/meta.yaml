@@ -19,9 +19,6 @@ package:
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   sha256: ed701830506aa5a0b32e13cb055156505f1f2fe2f90b82486115248300c4a82a
-  patches:
-    - annotations.patch
-    - test-functional.patch
 
 build:
   number: {{ build }}
