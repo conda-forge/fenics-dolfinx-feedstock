@@ -1,5 +1,5 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.7.1" %}
+{% set version = "0.7.2" %}
 {% set extra = "" %}
 
 # pins are usually updated on minor bumps:
@@ -18,7 +18,7 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: ed701830506aa5a0b32e13cb055156505f1f2fe2f90b82486115248300c4a82a
+  sha256: 7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b
 
 build:
   number: {{ build }}
