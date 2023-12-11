@@ -40,6 +40,8 @@ python:
 - 3.8.* *_cpython
 scalar:
 - complex
+scotch:
+- 7.0.2
 slepc:
 - '3.20'
 slepc4py:
