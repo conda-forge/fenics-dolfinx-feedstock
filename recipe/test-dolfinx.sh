@@ -17,4 +17,4 @@ export OMPI_MCA_btl_vader_single_copy_mechanism=none
 pytest -vs test_dolfinx.py
 
 cd python/demo
-pytest -vs -k poisson test.py
+pytest -vs -k demo_poisson test.py
