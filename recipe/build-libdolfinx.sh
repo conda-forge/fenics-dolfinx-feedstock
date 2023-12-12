@@ -10,10 +10,6 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
   export OPAL_PREFIX="$PREFIX"
 fi
 
-# dead strip seems to break linking in scotch 7.0.2
-# I _think_ this is fixed in 7.0.4
-export LDFLAGS=$(echo "${LDFLAGS}" | sed "s|-Wl,-dead_strip_dylibs||g")
-
 cmake \
   ${CMAKE_ARGS} \
   -DDOLFINX_UFCX_PYTHON=OFF \

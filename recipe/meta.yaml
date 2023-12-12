@@ -19,8 +19,6 @@ package:
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   sha256: 7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b
-  patches:
-    - libscotcherr.patch
 
 build:
   number: {{ build }}
