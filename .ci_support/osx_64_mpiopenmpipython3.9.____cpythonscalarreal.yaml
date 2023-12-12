@@ -13,9 +13,13 @@ cxx_compiler:
 cxx_compiler_version:
 - '16'
 hdf5:
-- 1.14.2
+- 1.14.3
 libboost_devel:
 - '1.82'
+libptscotch:
+- 7.0.4
+libscotch:
+- 7.0.4
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
@@ -32,8 +36,6 @@ pin_run_as_build:
   python:
     min_pin: x.x
     max_pin: x.x
-ptscotch:
-- 6.0.9
 pugixml:
 - '1.14'
 pybind11_abi:
@@ -42,6 +44,8 @@ python:
 - 3.9.* *_cpython
 scalar:
 - real
+scotch:
+- 7.0.4
 slepc:
 - '3.20'
 slepc4py:

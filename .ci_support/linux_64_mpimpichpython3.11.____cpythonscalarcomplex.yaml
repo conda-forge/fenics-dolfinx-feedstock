@@ -15,9 +15,13 @@ cxx_compiler_version:
 docker_image:
 - quay.io/condaforge/linux-anvil-cos7-x86_64
 hdf5:
-- 1.14.2
+- 1.14.3
 libboost_devel:
 - '1.82'
+libptscotch:
+- 7.0.4
+libscotch:
+- 7.0.4
 mpi:
 - mpich
 mpich:
@@ -32,8 +36,6 @@ pin_run_as_build:
   python:
     min_pin: x.x
     max_pin: x.x
-ptscotch:
-- 6.0.9
 pugixml:
 - '1.14'
 pybind11_abi:
@@ -42,6 +44,8 @@ python:
 - 3.11.* *_cpython
 scalar:
 - complex
+scotch:
+- 7.0.4
 slepc:
 - '3.20'
 slepc4py:
