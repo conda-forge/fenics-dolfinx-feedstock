@@ -13,7 +13,7 @@ cxx_compiler:
 cxx_compiler_version:
 - '16'
 hdf5:
-- 1.14.2
+- 1.14.3
 libboost_devel:
 - '1.82'
 macos_machine:
@@ -33,7 +33,7 @@ pin_run_as_build:
     min_pin: x.x
     max_pin: x.x
 ptscotch:
-- 6.0.9
+- 7.0.4
 pugixml:
 - '1.14'
 pybind11_abi:
