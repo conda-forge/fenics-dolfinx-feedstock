@@ -1,5 +1,5 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.7.2" %}
+{% set version = "0.7.3" %}
 {% set extra = "" %}
 
 # pins are usually updated on minor bumps:
@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2023.2" %}
 
-{% set build = 3 %}
+{% set build = 0 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -18,7 +18,7 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: 7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b
+  sha256: e47f6fc072a314b4a13054793f361e91f8f71cb2e3ad96c9b5e5ed8f1610116b
 
 build:
   number: {{ build }}
