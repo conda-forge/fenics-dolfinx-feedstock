@@ -18,5 +18,10 @@ cmake \
   -B build \
   cpp
 
+# show configure log for debugging
+echo "build/CMakeFiles/CMakeConfigureLog.yaml:"
+cat build/CMakeFiles/CMakeConfigureLog.yaml
+exit 1
+
 cmake --build build --parallel "${CPU_COUNT}" --verbose
 cmake --install build
