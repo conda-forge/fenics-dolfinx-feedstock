@@ -159,7 +159,9 @@ outputs:
       requires:
         - pip
         - pytest >=6
+        # make sure we're compatible with common but not required packages
         - python-gmsh
+        - pyvista
         # linux-aarch64 getting old gmsh with missing cairo
         # unclear what pin is holding it back
         - cairo  # [linux and aarch64]
