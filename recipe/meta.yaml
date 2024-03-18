@@ -158,10 +158,13 @@ outputs:
         - test_dolfinx.py
       source_files:
         - python/demo
+        - python/test
       requires:
+        - cppimport
         - pip
         - pytest >=6
         - python-gmsh
+        - scipy
         # linux-aarch64 getting old gmsh with missing cairo
         # unclear what pin is holding it back
         - cairo  # [linux and aarch64]

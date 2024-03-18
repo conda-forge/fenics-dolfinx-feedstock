@@ -16,5 +16,18 @@ export OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 pytest -vs test_dolfinx.py
 
-cd python/demo
+pushd python/demo
 pytest -vs -k demo_poisson test.py
+popd
+
+pushd python/test
+
+export PYTEST_ADDOPTS="${PYTEST_ADDOPTS:-} -v --maxfail 3 --durations 30"
+
+# skip the slowest tests that aren't relevant to whether it was built right
+export PYTEST_ADDOPTS="${PYTEST_ADDOPTS} --ignore unit/fem/test_dof_permuting.py --ignore unit/fem/test_element_integrals.py"
+
+# run tests for n=1
+pytest
+# run tests for n=2
+mpiexec -n 2 pytest
