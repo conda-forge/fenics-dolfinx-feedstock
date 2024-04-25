@@ -30,6 +30,10 @@ build:
     - OMPI_MCA_plm=isolated
     - OMPI_MCA_btl=tcp,self
     - OMPI_MCA_btl_vader_single_copy_mechanism=none
+  force_use_keys:
+    # separate builds for each Python
+    # this duplicates libdolfinx outputs, but results in faster builds
+    - python
 
 outputs:
   - name: fenics-libdolfinx
