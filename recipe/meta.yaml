@@ -115,7 +115,7 @@ outputs:
         - pkg-config
         - python                                 # [build_platform != target_platform]
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-        - pybind11                               # [build_platform != target_platform]
+        - nanobind                               # [build_platform != target_platform]
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
@@ -125,17 +125,17 @@ outputs:
         - kahip-python
         - python
         - pip
-        - setuptools >=58
+        - scikit-build-core >=58
         - wheel
-        - pybind11
-        - pybind11-abi
+        - nanobind
         - fenics-basix {{ major_minor }}.*
-        - fenics-basix-pybind11-abi
         - mpi4py
         - petsc * {{ scalar }}_*
         - petsc4py
         - slepc
         - slepc4py
+      run_constrained:
+        - {{ pin_compatible("nanobind", max_pin="x.x") }}
       run:
         # we shouldn't need to depend on compiler version,
         # but pybind11 includes compiler version in the ABI
