@@ -1,3 +1,5 @@
+c_stdlib_version:       # [osx and x86]
+  - '10.13'             # [osx and x86]
 mpi:
   - mpich
   - openmpi
