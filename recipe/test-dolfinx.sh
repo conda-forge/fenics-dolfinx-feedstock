@@ -22,6 +22,9 @@ pytest -vs -k demo_poisson test.py
 
 # run tests
 cd ../test
-pytest -vs unit/fem
+pytest -vs unit/fem/test_fem_pipeline.py
+pytest -vs unit/mesh/test_mesh_partitioners.py
 
-mpiexec -n 2 pytest -vs unit/fem
+mpiexec -n 2 pytest -vs unit/fem/test_fem_pipeline.py
+mpiexec -n 2 pytest -vs unit/mesh/test_mesh_partitioners.py
+
