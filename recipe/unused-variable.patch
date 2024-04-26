@@ -1,0 +1,26 @@
+From 4956703be368d2195919c1932da17aafcd71c74e Mon Sep 17 00:00:00 2001
+From: Min RK <benjaminrk@gmail.com>
+Date: Fri, 26 Apr 2024 09:12:35 +0200
+Subject: [PATCH] avoid unused variable in assert
+
+CHECK appears to be the way checks are done elsewhere
+---
+ cpp/test/mesh/distributed_mesh.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cpp/test/mesh/distributed_mesh.cpp b/cpp/test/mesh/distributed_mesh.cpp
+index 8bbcf6596e..07e8f5a4b1 100644
+--- a/cpp/test/mesh/distributed_mesh.cpp
++++ b/cpp/test/mesh/distributed_mesh.cpp
+@@ -131,7 +131,7 @@ void test_distributed_mesh(mesh::CellPartitionFunction partitioner)
+     io::XDMFFile infile(subset_comm, "mesh.xdmf", "r");
+     auto [_cells, _cshape] = infile.read_topology_data("mesh");
+     auto [_x, _xshape] = infile.read_geometry_data("mesh");
+-    assert(_cshape[1] == cshape[1]);
++    CHECK(_cshape[1] == cshape[1]);
+     x = std::move(std::get<std::vector<T>>(_x));
+     cells = std::move(_cells);
+   }
+-- 
+2.42.0
+

@@ -10,9 +10,6 @@ if [[ "$target_platform" == "osx-*" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
 fi
 
-# Werror
-export CXXFLAGS="${CXXFLAGS} -Wno-error"
-
 export OMPI_ALLOW_RUN_AS_ROOT=1
 export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 export OMPI_MCA_rmaps_base_oversubscribe=1
