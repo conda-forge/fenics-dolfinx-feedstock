@@ -6,7 +6,7 @@ pkg-config --libs dolfinx
 ffcx cpp/test/poisson.py -o cpp/test
 
 # disable clang availability check
-if [[ "$target_platform" == "osx-*" ]]; then
+if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
 fi
 

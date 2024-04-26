@@ -3,7 +3,7 @@ set -ex
 pip check
 
 # disable clang availability check
-if [[ "$target_platform" == "osx-64" ]]; then
+if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
 fi
 
