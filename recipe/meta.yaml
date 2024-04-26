@@ -162,6 +162,7 @@ outputs:
         - test_dolfinx.py
       source_files:
         - python/demo
+        - python/test
       requires:
         - pip
         - pytest >=6
@@ -169,6 +170,9 @@ outputs:
         # linux-aarch64 getting old gmsh with missing cairo
         # unclear what pin is holding it back
         - cairo  # [linux and aarch64]
+        - sympy
+        - scipy
+        - matplotlib
 
 about:
   home: https://fenicsproject.org

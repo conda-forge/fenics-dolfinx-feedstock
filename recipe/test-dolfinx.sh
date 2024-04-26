@@ -14,7 +14,14 @@ export OMPI_MCA_plm=isolated
 export OMPI_MCA_btl=tcp,self
 export OMPI_MCA_btl_vader_single_copy_mechanism=none
 
+# test packaging
 pytest -vs test_dolfinx.py
 
 cd python/demo
 pytest -vs -k demo_poisson test.py
+
+# run tests
+cd ../test
+pytest -vs unit/fem
+
+mpiexec -n 2 pytest -vs unit/fem
