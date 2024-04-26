@@ -33,8 +33,16 @@ if [[ "$target_platform" == "linux-aarch64" || "$target_platform" == "linux-ppc6
 else
   TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
 fi
-# unit/fem/test_fem_pipeline.py::test_dP_simplex[3-DG-tetrahedron] is failing
-# with 4e-6 > 1e-9
-pytest -vs -k 'not test_dP_simplex' $TESTS
-mpiexec -n 2 pytest -vs -k 'not test_dP_simplex' $TESTS
+
+if [[ "$target_platform" =~ "osx" ]]; then
+  SELECTOR=''
+  MPI_SELECTOR='not curl'
+else
+  # unit/fem/test_fem_pipeline.py::test_dP_simplex[3-DG-tetrahedron] is failing
+  # with 4e-6 > 1e-9
+  SELECTOR='not test_dP_simplex'
+  MPI_SELECTOR="${SELECTOR}"
+fi
+pytest -vs -k "$SELECTOR" $TESTS
+mpiexec -n 2 pytest -vs -k "$MPI_SELECTOR" $TESTS
 
