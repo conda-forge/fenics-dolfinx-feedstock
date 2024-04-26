@@ -1,13 +1,13 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.7.3" %}
+{% set version = "0.8.0" %}
 {% set extra = "" %}
 
 # pins are usually updated on minor bumps:
 # basix is currently co-versioned with ffcx
 {% set major_minor = version.rsplit(".", 1)[0] %}
-{% set ufl_version = "2023.2" %}
+{% set ufl_version = "2024.1" %}
 
-{% set build = 2 %}
+{% set build = 0 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -18,11 +18,13 @@ package:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: 384a2429c2f240fffa67ffe3219770d062f8175577434c04d244246e4e668cb8
+  sha256: acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9
+  patches:
+    - unused-variable.patch
 
 build:
   number: {{ build }}
-  skip: true  # [win or py<=37]
+  skip: true  # [win or py<39]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
@@ -30,6 +32,10 @@ build:
     - OMPI_MCA_plm=isolated
     - OMPI_MCA_btl=tcp,self
     - OMPI_MCA_btl_vader_single_copy_mechanism=none
+  force_use_keys:
+    # separate builds for each Python
+    # this duplicates libdolfinx outputs, but results in faster builds
+    - python
 
 outputs:
   - name: fenics-libdolfinx
@@ -115,7 +121,7 @@ outputs:
         - pkg-config
         - python                                 # [build_platform != target_platform]
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-        - pybind11                               # [build_platform != target_platform]
+        - nanobind                               # [build_platform != target_platform]
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
         - {{ mpi }}
@@ -125,17 +131,17 @@ outputs:
         - kahip-python
         - python
         - pip
-        - setuptools >=58
+        - scikit-build-core
         - wheel
-        - pybind11
-        - pybind11-abi
+        - nanobind
         - fenics-basix {{ major_minor }}.*
-        - fenics-basix-pybind11-abi
         - mpi4py
         - petsc * {{ scalar }}_*
         - petsc4py
         - slepc
         - slepc4py
+      run_constrained:
+        - {{ pin_compatible("nanobind", max_pin="x.x") }}
       run:
         # we shouldn't need to depend on compiler version,
         # but pybind11 includes compiler version in the ABI
@@ -158,6 +164,7 @@ outputs:
         - test_dolfinx.py
       source_files:
         - python/demo
+        - python/test
       requires:
         - pip
         - pytest >=6
@@ -165,6 +172,9 @@ outputs:
         # linux-aarch64 getting old gmsh with missing cairo
         # unclear what pin is holding it back
         - cairo  # [linux and aarch64]
+        - sympy
+        - scipy
+        - matplotlib
 
 about:
   home: https://fenicsproject.org
