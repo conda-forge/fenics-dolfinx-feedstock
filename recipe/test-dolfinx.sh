@@ -44,5 +44,15 @@ else
   MPI_SELECTOR="${SELECTOR}"
 fi
 pytest -vs -k "$SELECTOR" $TESTS
-mpiexec -n 2 pytest -vs -k "$MPI_SELECTOR" $TESTS
+
+if [[ "${target_platform}-${mpi}" == "linux-aarch64-openmpi" ]]; then
+  # mpiexec seems to fail on emulated arm with
+  # ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+  # --------------------------------------------------------------------------
+  # WARNING: Open MPI failed to look up the peer IP address information of
+  # a TCP connection that it just accepted.  This should not happen.
+  echo "skipping emulated openmpi tests"
+else
+  mpiexec -n 2 pytest -vs -k "$MPI_SELECTOR" $TESTS
+fi
 
