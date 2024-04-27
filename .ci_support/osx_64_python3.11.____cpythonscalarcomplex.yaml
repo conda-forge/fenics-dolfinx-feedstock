@@ -27,15 +27,15 @@ libscotch:
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
-- openmpi
+- mpich
 mpich:
 - '4'
 openmpi:
 - '4'
 petsc:
-- '3.20'
+- '3.21'
 petsc4py:
-- '3.20'
+- '3.21'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -45,13 +45,13 @@ pugixml:
 python:
 - 3.11.* *_cpython
 scalar:
-- real
+- complex
 scotch:
 - 7.0.4
 slepc:
-- '3.20'
+- '3.21'
 slepc4py:
-- '3.20'
+- '3.21'
 target_platform:
 - osx-64
 zip_keys:

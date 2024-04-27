@@ -27,15 +27,15 @@ libscotch:
 macos_machine:
 - arm64-apple-darwin20.0.0
 mpi:
-- openmpi
+- mpich
 mpich:
 - '4'
 openmpi:
 - '4'
 petsc:
-- '3.20'
+- '3.21'
 petsc4py:
-- '3.20'
+- '3.21'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -49,9 +49,9 @@ scalar:
 scotch:
 - 7.0.4
 slepc:
-- '3.20'
+- '3.21'
 slepc4py:
-- '3.20'
+- '3.21'
 target_platform:
 - osx-arm64
 zip_keys:

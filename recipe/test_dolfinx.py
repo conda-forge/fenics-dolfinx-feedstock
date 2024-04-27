@@ -26,6 +26,7 @@ def test_petsc_scalar():
         "parmetis",
         "slepc",
         "kahip",
+        # "scotch",
     ],
 )
 def test_has(feature):
