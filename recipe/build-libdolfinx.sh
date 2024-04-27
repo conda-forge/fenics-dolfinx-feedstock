@@ -10,10 +10,22 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
   export OPAL_PREFIX="$PREFIX"
 fi
 
+if [[ "${target_platform}" == "osx-arm64" ]]; then
+  # scotch appears broken on mac-arm
+  # but arm builds can't be tested on CI
+  CMAKE_ARGS="${CMAKE_ARGS} -DDOLFINX_ENABLE_SCOTCH=OFF"
+else
+  CMAKE_ARGS="${CMAKE_ARGS} -DDOLFINX_ENABLE_SCOTCH=ON"
+fi
+
 cmake \
   ${CMAKE_ARGS} \
   -DDOLFINX_UFCX_PYTHON=OFF \
+  -DDOLFINX_ENABLE_ADIOS2=ON \
   -DDOLFINX_ENABLE_KAHIP=ON \
+  -DDOLFINX_ENABLE_PETSC=ON \
+  -DDOLFINX_ENABLE_SLEPC=ON \
+  -DDOLFINX_ENABLE_PARMETIS=ON \
   -DCMAKE_INSTALL_PREFIX=$PREFIX \
   -B build \
   cpp
