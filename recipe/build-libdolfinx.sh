@@ -10,8 +10,8 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
   export OPAL_PREFIX="$PREFIX"
 fi
 
-if [[ "${target_platform}" == "osx-arm64" ]]; then
-  # scotch appears broken on mac-arm
+if [[ "${target_platform}" == "osx-arm64" || "${mpi}" == "openmpi" ]]; then
+  # scotch appears broken on mac-arm and openmpi
   # but arm builds can't be tested on CI
   CMAKE_ARGS="${CMAKE_ARGS} -DDOLFINX_ENABLE_SCOTCH=OFF"
 else
