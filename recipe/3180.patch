@@ -1,0 +1,108 @@
+From a113d7b5c444fcf1112a04799ce09ec6744ce7b1 Mon Sep 17 00:00:00 2001
+From: "Jorgen S. Dokken" <dokken@simula.no>
+Date: Fri, 26 Apr 2024 13:10:15 +0000
+Subject: [PATCH 1/4] Try setting direct solver for dp_simplex
+
+---
+ python/test/unit/fem/test_fem_pipeline.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/python/test/unit/fem/test_fem_pipeline.py b/python/test/unit/fem/test_fem_pipeline.py
+index c99c407078..855c21a742 100644
+--- a/python/test/unit/fem/test_fem_pipeline.py
++++ b/python/test/unit/fem/test_fem_pipeline.py
+@@ -220,12 +220,16 @@ def run_dg_test(mesh, V, degree):
+ 
+     # Create linear solver
+     solver = PETSc.KSP().create(MPI.COMM_WORLD)
+-    solver.setTolerances(rtol=1e-12)
++    solver.setType("preonly")
++    pc = solver.getPC()
++    pc.setType("lu")
++    pc.setFactorSolverType("mumps")
+     solver.setOperators(A)
+ 
+     # Solve
+     uh = Function(V)
+     solver.solve(b, uh.x.petsc_vec)
++    assert solver.getConvergedReason() > 0
+     uh.x.scatter_forward()
+ 
+     # Calculate error
+
+From 739205016e5c035ba8017b77ad5c3a91b781015a Mon Sep 17 00:00:00 2001
+From: "Jorgen S. Dokken" <dokken@simula.no>
+Date: Fri, 26 Apr 2024 13:43:38 +0000
+Subject: [PATCH 2/4] Set petsc as backend
+
+---
+ python/test/unit/fem/test_fem_pipeline.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/test/unit/fem/test_fem_pipeline.py b/python/test/unit/fem/test_fem_pipeline.py
+index 855c21a742..36f338f7d6 100644
+--- a/python/test/unit/fem/test_fem_pipeline.py
++++ b/python/test/unit/fem/test_fem_pipeline.py
+@@ -223,7 +223,7 @@ def run_dg_test(mesh, V, degree):
+     solver.setType("preonly")
+     pc = solver.getPC()
+     pc.setType("lu")
+-    pc.setFactorSolverType("mumps")
++    pc.setFactorSolverType("petsc")
+     solver.setOperators(A)
+ 
+     # Solve
+
+From 6c1e067b0fa8bea8cc250c1386ad3b535a495fc0 Mon Sep 17 00:00:00 2001
+From: "Jorgen S. Dokken" <dokken@simula.no>
+Date: Fri, 26 Apr 2024 14:12:41 +0000
+Subject: [PATCH 3/4] Use Cg jacobi
+
+---
+ python/test/unit/fem/test_fem_pipeline.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/python/test/unit/fem/test_fem_pipeline.py b/python/test/unit/fem/test_fem_pipeline.py
+index 36f338f7d6..3f517e41af 100644
+--- a/python/test/unit/fem/test_fem_pipeline.py
++++ b/python/test/unit/fem/test_fem_pipeline.py
+@@ -220,9 +220,10 @@ def run_dg_test(mesh, V, degree):
+ 
+     # Create linear solver
+     solver = PETSc.KSP().create(MPI.COMM_WORLD)
+-    solver.setType("preonly")
++    solver.setType("cg")
+     pc = solver.getPC()
+-    pc.setType("lu")
++    pc.setType("jacobi")
++    solver.setTolerances(rtol=1e-12, atol=1e-12)
+     pc.setFactorSolverType("petsc")
+     solver.setOperators(A)
+ 
+
+From 26f9ad5478f9c9f89c9776938f857f2580b0935d Mon Sep 17 00:00:00 2001
+From: "Jorgen S. Dokken" <dokken@simula.no>
+Date: Fri, 26 Apr 2024 14:31:18 +0000
+Subject: [PATCH 4/4] Try gmres jacobi
+
+---
+ python/test/unit/fem/test_fem_pipeline.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/python/test/unit/fem/test_fem_pipeline.py b/python/test/unit/fem/test_fem_pipeline.py
+index 3f517e41af..b2cf725ac0 100644
+--- a/python/test/unit/fem/test_fem_pipeline.py
++++ b/python/test/unit/fem/test_fem_pipeline.py
+@@ -220,11 +220,10 @@ def run_dg_test(mesh, V, degree):
+ 
+     # Create linear solver
+     solver = PETSc.KSP().create(MPI.COMM_WORLD)
+-    solver.setType("cg")
++    solver.setType("gmres")
+     pc = solver.getPC()
+     pc.setType("jacobi")
+     solver.setTolerances(rtol=1e-12, atol=1e-12)
+-    pc.setFactorSolverType("petsc")
+     solver.setOperators(A)
+ 
+     # Solve
