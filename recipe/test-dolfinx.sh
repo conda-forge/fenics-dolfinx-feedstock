@@ -38,9 +38,7 @@ if [[ "$target_platform" =~ "osx" ]]; then
   SELECTOR=''
   MPI_SELECTOR='not curl'
 else
-  # unit/fem/test_fem_pipeline.py::test_dP_simplex[3-DG-tetrahedron] is failing
-  # with 4e-6 > 1e-9
-  SELECTOR='not test_dP_simplex'
+  SELECTOR=''
   MPI_SELECTOR="${SELECTOR}"
 fi
 pytest -vs -k "$SELECTOR" $TESTS
