@@ -8,55 +8,103 @@ jobs:
     vmImage: macOS-11
   strategy:
     matrix:
-      osx_64_python3.10.____cpythonscalarcomplex:
-        CONFIG: osx_64_python3.10.____cpythonscalarcomplex
+      osx_64_mpimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.10.____cpythonscalarreal:
-        CONFIG: osx_64_python3.10.____cpythonscalarreal
+      osx_64_mpimpichpython3.10.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.11.____cpythonscalarcomplex:
-        CONFIG: osx_64_python3.11.____cpythonscalarcomplex
+      osx_64_mpimpichpython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.11.____cpythonscalarreal:
-        CONFIG: osx_64_python3.11.____cpythonscalarreal
+      osx_64_mpimpichpython3.11.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.12.____cpythonscalarcomplex:
-        CONFIG: osx_64_python3.12.____cpythonscalarcomplex
+      osx_64_mpimpichpython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.12.____cpythonscalarreal:
-        CONFIG: osx_64_python3.12.____cpythonscalarreal
+      osx_64_mpimpichpython3.12.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.9.____cpythonscalarcomplex:
-        CONFIG: osx_64_python3.9.____cpythonscalarcomplex
+      osx_64_mpimpichpython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_64_python3.9.____cpythonscalarreal:
-        CONFIG: osx_64_python3.9.____cpythonscalarreal
+      osx_64_mpimpichpython3.9.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.10.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_python3.10.____cpythonscalarcomplex
+      osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.10.____cpythonscalarreal:
-        CONFIG: osx_arm64_python3.10.____cpythonscalarreal
+      osx_64_mpiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.11.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_python3.11.____cpythonscalarcomplex
+      osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.11.____cpythonscalarreal:
-        CONFIG: osx_arm64_python3.11.____cpythonscalarreal
+      osx_64_mpiopenmpipython3.11.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.12.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_python3.12.____cpythonscalarcomplex
+      osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.12.____cpythonscalarreal:
-        CONFIG: osx_arm64_python3.12.____cpythonscalarreal
+      osx_64_mpiopenmpipython3.12.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.9.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_python3.9.____cpythonscalarcomplex
+      osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-      osx_arm64_python3.9.____cpythonscalarreal:
-        CONFIG: osx_arm64_python3.9.____cpythonscalarreal
+      osx_64_mpiopenmpipython3.9.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-    maxParallel: 12
+      osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.10.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.11.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.12.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpichpython3.9.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+    maxParallel: 20
   timeoutInMinutes: 50
   variables: {}
 
