@@ -36,7 +36,7 @@ fi
 
 if [[ "$target_platform" =~ "osx" ]]; then
   SELECTOR=''
-  MPI_SELECTOR='not curl'
+  MPI_SELECTOR=''
 else
   SELECTOR=''
   MPI_SELECTOR="${SELECTOR}"
