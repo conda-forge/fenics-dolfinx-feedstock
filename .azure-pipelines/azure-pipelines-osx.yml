@@ -105,7 +105,7 @@ jobs:
         CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
     maxParallel: 20
-  timeoutInMinutes: 50
+  timeoutInMinutes: 90
   variables: {}
 
   steps:
