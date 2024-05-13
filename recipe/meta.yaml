@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 2 %}
+{% set build = 3 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -22,6 +22,7 @@ source:
   patches:
     - unused-variable.patch
     - 3180.patch
+    - 3190.patch
 
 build:
   number: {{ build }}
