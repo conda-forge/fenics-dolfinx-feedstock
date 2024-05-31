@@ -1,4 +1,5 @@
 import os
+import sys
 
 import dolfinx  # noqa
 import gmsh
@@ -7,28 +8,31 @@ import pytest
 from dolfinx.cpp import common
 from dolfinx.io import gmshio
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
+from dolfinx import default_scalar_type
 
 
 def test_petsc_scalar():
+    print(repr(default_scalar_type))
     scalar = os.environ["scalar"]
-    is_complex = issubclass(ScalarType, np.complexfloating)
+    is_complex = issubclass(default_scalar_type, np.complexfloating)
     if scalar == "complex":
         assert is_complex
     else:
         assert not is_complex
 
-
-@pytest.mark.parametrize(
-    "feature",
-    [
+if sys.platform == "win32":
+    features = ["scotch"]
+else:
+    features = [
         "adios2",
         "parmetis",
         "slepc",
         "kahip",
+        "petsc",
         # "scotch",
-    ],
-)
+    ]
+
+@pytest.mark.parametrize("feature", features)
 def test_has(feature):
     assert getattr(common, f"has_{feature}")
 
