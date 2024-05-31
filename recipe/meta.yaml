@@ -102,6 +102,8 @@ outputs:
       script: test-libdolfinx.bat  # [win]
       source_files:
         - cpp/test
+      files:
+        - impi-toolchain.cmake  # [win]
       requires:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
