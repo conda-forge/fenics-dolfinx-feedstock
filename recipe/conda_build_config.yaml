@@ -1,12 +1,16 @@
-c_stdlib_version:       # [osx and x86]
-  - '10.13'             # [osx and x86]
+c_compiler:    # [win]
+- vs2022       # [win]
+cxx_compiler:  # [win]
+- vs2022       # [win]
+
 mpi:
-  - mpich
-  - openmpi
+  - mpich  # [not win]
+  - openmpi  # [not win]
+  - impi  # [win]
 
 scalar:
-  - real
-  - complex
+  - real  # [not win]
+  - complex  # [not win]
 
 pin_run_as_build:
   parmetis:

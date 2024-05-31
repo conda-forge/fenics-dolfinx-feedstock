@@ -1,5 +1,5 @@
 {% set name = "fenics-dolfinx" %}
-{% set version = "0.8.0" %}
+{% set version = "0.9.0.dev" %}
 {% set extra = "" %}
 
 # pins are usually updated on minor bumps:
@@ -7,7 +7,12 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 3 %}
+{% set build = 0 %}
+
+{%- if scalar is not defined %}
+{%- set scalar = "" %}
+{%- endif %}
+
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -17,16 +22,18 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
-  sha256: acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9
+  # url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
+  # sha256: acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9
+  url: https://github.com/fenics/dolfinx/archive/jhale/windows-build.tar.gz
   patches:
-    - unused-variable.patch
-    - 3180.patch
-    - 3190.patch
+    - findscotch.patch
+  #   - unused-variable.patch
+  #   - 3180.patch
+  #   - 3190.patch
 
 build:
   number: {{ build }}
-  skip: true  # [win or py<39]
+  skip: true  # [py<39 or not win or py>39]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
@@ -41,13 +48,14 @@ build:
 
 outputs:
   - name: fenics-libdolfinx
+    script: build-libdolfinx.sh  # [not win]
+    script: build-libdolfinx.bat  # [win]
     build:
-      script: bash -ex ${RECIPE_DIR}/build-libdolfinx.sh
       skip_compile_pyc:
         - '*'  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
-        - petsc * {{ scalar }}_*
+        - petsc * {{ scalar }}_*  # [not win]
       ignore_run_exports_from:
         - python
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
@@ -59,78 +67,71 @@ outputs:
         - {{ stdlib("c") }}
         - {{ compiler("cxx") }}
         - cmake
-        - make
-        - pkg-config
+        - make  # [not win]
+        - ninja  # [win]
+        - pkg-config  # [not win]
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
-        # python is unconditionally used to check for basix
-        # even if it doesn't find it, dolfinx doesn't handle python itself being unavailable
-        - python
-        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
       host:
-        - python
-        - {{ mpi }}
-        - libadios2
-        - libadios2 * mpi_{{ mpi }}_*
-        - kahip
+        - {{ mpi | replace("impi", "impi-devel") }}
+        - libadios2  # [not win]
+        - libadios2 * mpi_{{ mpi }}_*  # [not win]
+        - kahip  # [not win]
         - libboost-devel
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
-        - parmetis
+        - parmetis  # [not win]
+        # scotch has cmake config files
+        - scotch {{ scotch }}
         - libscotch {{ scotch }}
         - libptscotch {{ scotch }}
-        - petsc
-        - petsc * {{ scalar }}_*
+        - petsc  # [not win]
+        - petsc * {{ scalar }}_*  # [not win]
         - pugixml
-        - slepc
+        - slepc  # [not win]
+        - spdlog
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
       run:
-        # host dependencies with run_exports
-        - {{ mpi }}
-        - hdf5
-        - kahip
-        - libscotch
-        - libptscotch
-        - petsc * {{ scalar }}_*
-        - slepc
-        - fenics-libbasix
         # these don't have run_exports
         # but are needed at runtime for code generation
         - fenics-ufcx  {{ major_minor }}.*
-        - parmetis
+        - parmetis  # [not win]
         # needs boost metadata just to CMake-load fenix-libdolfinx
         - libboost-devel
     test:
-      script: test-libdolfinx.sh
+      script: test-libdolfinx.sh  # [not win]
+      script: test-libdolfinx.bat  # [win]
       source_files:
         - cpp/test
       requires:
+        - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - pkg-config
         - cmake
         - catch2 3.*
-        - make
+        - make  # [not win]
+        - ninja  # [win]
         - fenics-ffcx {{ major_minor }}.*
   - name: fenics-dolfinx
-    build:
-      script: bash -ex ${RECIPE_DIR}/build-dolfinx.sh
+    script: build-dolfinx.sh  # [not win]
+    script: build-dolfinx.bat  # [win]
     requirements:
       build:
         - {{ compiler("c") }}
         - {{ stdlib("c") }}
         - {{ compiler("cxx") }}
         - cmake
-        - make
+        - ninja
         - pkg-config
         - python                                 # [build_platform != target_platform]
         - cross-python_{{ target_platform }}     # [build_platform != target_platform]
         - nanobind                               # [build_platform != target_platform]
         - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
       host:
-        - {{ mpi }}
+        - {{ mpi | replace("impi", "impi-devel") }}
         # hdf5 shouldn't be needed here, but solver fails without it
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
-        - kahip-python
+        - kahip-python  # [not win]
         - python
         - pip
         - scikit-build-core
@@ -138,10 +139,10 @@ outputs:
         - nanobind
         - fenics-basix {{ major_minor }}.*
         - mpi4py
-        - petsc * {{ scalar }}_*
-        - petsc4py
-        - slepc
-        - slepc4py
+        - petsc * {{ scalar }}_*  # [not win]
+        - petsc4py  # [not win]
+        - slepc  # [not win]
+        - slepc4py  # [not win]
       run_constrained:
         - {{ pin_compatible("nanobind", max_pin="x.x") }}
       run:
@@ -152,16 +153,17 @@ outputs:
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
-        - kahip-python
+        - kahip-python  # [not win]
         - mpi4py
         - numpy >=1.21
-        - petsc4py
-        - slepc4py
+        - petsc4py  # [not win]
+        - slepc4py  # [not win]
         - fenics-basix {{ major_minor }}.*
         - fenics-ffcx {{ major_minor }}.*
         - fenics-ufl {{ ufl_version }}.*
     test:
-      script: test-dolfinx.sh
+      script: test-dolfinx.sh  # [not win]
+      script: test-dolfinx.bat  # [win]
       files:
         - test_dolfinx.py
       source_files:

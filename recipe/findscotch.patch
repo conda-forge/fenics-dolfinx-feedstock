@@ -1,0 +1,51 @@
+From 09a455d841be363a89f4ca5ccccad3cf54c320de Mon Sep 17 00:00:00 2001
+From: Min RK <benjaminrk@gmail.com>
+Date: Thu, 30 May 2024 12:28:28 +0200
+Subject: [PATCH] find scotch with cmake config
+
+---
+ cpp/CMakeLists.txt | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
+index 8cd9d74482..db878e7c53 100644
+--- a/cpp/CMakeLists.txt
++++ b/cpp/CMakeLists.txt
+@@ -471,9 +471,32 @@ elseif(_REQUIRE_SLEPC AND NOT PETSC_FOUND)
+ endif()
+ 
+ if(DOLFINX_ENABLE_SCOTCH AND _REQUIRE_SCOTCH)
+-  find_package(SCOTCH REQUIRED)
++  if (MSVC)
++    find_package(SCOTCH CONFIG REQUIRED)
++  else()
++    find_package(SCOTCH REQUIRED)
++  endif()
+ elseif(DOLFINX_ENABLE_SCOTCH)
+-  find_package(SCOTCH)
++  if (MSVC)
++    find_package(SCOTCH CONFIG)
++  else()
++    find_package(SCOTCH)
++  endif()
++endif()
++  
++if(SCOTCH_FOUND AND TARGET SCOTCH::ptscotch)
++  message(STATUS "SCOTCH_LIBRARIES=${SCOTCH_LIBRARIES}")
++  get_target_property(PTSCOTCH_LIBRARIES SCOTCH::ptscotch INTERFACE_LINK_LIBRARIES)
++  message(STATUS "PTSCOTCH_LIBRARIES=${PTSCOTCH_LIBRARIES}")
++  get_target_property(PTSCOTCHERR_LIBRARIES SCOTCH::ptscotcherr INTERFACE_LINK_LIBRARIES)
++  message(STATUS "PTSCOTCHERR_LIBRARIES=${PTSCOTCHERR_LIBRARIES}")
++  get_target_property(PTESMUMPS_LIBRARIES SCOTCH::ptesmumps INTERFACE_LINK_LIBRARIES)
++  message(STATUS "PTESMUMPS_LIBRARIES=${PTESMUMPS_LIBRARIES}")
++  list(APPEND SCOTCH_LIBRARIES SCOTCH::ptscotch SCOTCH::ptscotcherr SCOTCH::ptesmumps)
++  message(STATUS "SCOTCH_LIBRARIES=${SCOTCH_LIBRARIES}")
++  get_target_property(SCOTCH_INCLUDE_DIRS SCOTCH::ptscotch INCLUDE_DIRECTORIES)
++  set(SCOTCH_INCLUDE_DIRS "${SCOTCH_INCLUDE_DIR}")
++  message(STATUS "SCOTCH_INCLUDE_DIRS=${SCOTCH_INCLUDE_DIRS}")
+ endif()
+ 
+ if(DOLFINX_ENABLE_PARMETIS AND _REQUIRE_PARMETIS)
+-- 
+2.42.0
+
