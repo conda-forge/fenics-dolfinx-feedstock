@@ -25,8 +25,7 @@ source:
   # url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   # sha256: acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9
   url: https://github.com/minrk/dolfinx/archive/jhale/windows-build.tar.gz
-  patches:
-    - findscotch.patch
+  # patches:
   #   - unused-variable.patch
   #   - 3180.patch
   #   - 3190.patch
