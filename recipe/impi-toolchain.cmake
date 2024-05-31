@@ -31,10 +31,10 @@ set(MPI_ASSUME_NO_BUILTIN_MPI
 )
 
 set(MPI_C_COMPILER
-    "${_LIBRARY_PREFIX}/mpicc.bat"
+    "${_LIBRARY_PREFIX}/bin/mpicc.bat"
     CACHE STRING "MPI C Compiler"
 )
 set(MPI_CXX_COMPILER
-    "${_LIBRARY_PREFIX}/mpicxx.bat"
+    "${_LIBRARY_PREFIX}/bin/mpicxx.bat"
     CACHE STRING "MPI C Compiler"
 )

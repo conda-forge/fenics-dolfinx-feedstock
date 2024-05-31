@@ -5,7 +5,7 @@ ffcx cpp/test/poisson.py -o cpp/test
 if errorlevel 1 exit 1
 
 cmake %CMAKE_ARGS% ^
-  -G ninja ^
+  -G Ninja ^
   --debug-output --debug-trycompile ^
   -D "CMAKE_TOOLCHAIN_FILE=%cd%\impi-toolchain.cmake" ^
   -B build-test/ ^
