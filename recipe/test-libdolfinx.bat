@@ -9,7 +9,7 @@ dir .
 
 cmake %CMAKE_ARGS% ^
   --debug-output --debug-trycompile ^
-  -D CMAKE_TOOLCHAIN_FILE=impi-toolchain.cmake ^
+  -D "CMAKE_TOOLCHAIN_FILE=%cd%\impi-toolchain.cmake" ^
   -D CMAKE_BUILD_TYPE=Developer ^
   -B build-test/ ^
   -S cpp/test/
