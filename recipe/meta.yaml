@@ -132,7 +132,6 @@ outputs:
         # hdf5 shouldn't be needed here, but solver fails without it
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
-        - kahip-python  # [not win]
         - python
         - pip
         - scikit-build-core
@@ -149,12 +148,12 @@ outputs:
       run:
         # we shouldn't need to depend on compiler version,
         # but pybind11 includes compiler version in the ABI
+        - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
-        - kahip-python  # [not win]
         - mpi4py
         - numpy >=1.21
         - petsc4py  # [not win]
