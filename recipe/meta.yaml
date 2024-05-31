@@ -105,6 +105,7 @@ outputs:
       requires:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
+        - impi-devel  # [win]
         - pkg-config
         - cmake
         - catch2 3.*
