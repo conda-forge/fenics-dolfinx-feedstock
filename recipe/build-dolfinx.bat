@@ -10,5 +10,5 @@ echo CXXFLAGS=!CXXFLAGS!
 echo CMAKE_ARGS=!CMAKE_ARGS!
 echo SKBUILD_CMAKE_ARGS=!SKBUILD_CMAKE_ARGS!
 
-%PYTHON% -m pip install -v --no-deps --no-build-isolation ./python --config-settings=cmake.verbose=true --config-settings=logging.level=DEBUG
+%PYTHON% -m pip install -v --no-deps --no-build-isolation ./python --config-settings=cmake.verbose=true
 if errorlevel 1 exit 1
