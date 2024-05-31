@@ -33,7 +33,7 @@ source:
 
 build:
   number: {{ build }}
-  skip: true  # [py<39 or not win or py>39]
+  skip: true  # [py<39 or not win]
   script_env:
     - OMPI_ALLOW_RUN_AS_ROOT=1
     - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
