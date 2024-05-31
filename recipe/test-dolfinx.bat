@@ -9,12 +9,12 @@ setlocal EnableDelayedExpansion
 :: if errorlevel 1 exit 1
 
 :: exercise a demo
-:: cd python/demo
+cd python/demo
 :: pytest --mpiexec=mpiexec -vs -k demo_poisson test.py
 :: if errorlevel 1 exit 1
 
 :: run some tests
-cd test
+cd ../test
 :: subset of tests should exercise dependencies, solvers, partitioners
 set TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
 pytest -vs %TESTS%
