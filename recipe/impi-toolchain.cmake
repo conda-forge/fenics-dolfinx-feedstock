@@ -30,11 +30,24 @@ set(MPI_ASSUME_NO_BUILTIN_MPI
     CACHE BOOL ""
 )
 
-set(MPI_C_COMPILER
-    "${_LIBRARY_PREFIX}/bin/mpicc.bat"
-    CACHE STRING "MPI C Compiler"
+set(MPI_SKIP_COMPILER_WRAPPER
+    TRUE
+    CACHE BOOL ""
 )
-set(MPI_CXX_COMPILER
-    "${_LIBRARY_PREFIX}/bin/mpicxx.bat"
-    CACHE STRING "MPI C Compiler"
+
+set(MPI_SKIP_GUESSING
+    TRUE
+    CACHE BOOL ""
 )
+
+# weirdly: setting these to the right path causes
+# failures without meaningful errors or debuggable output
+# setting them to _nonexistent_ paths, everything works!
+# set(MPI_C_COMPILER
+#     "${_LIBRARY_PREFIX}/bin/mpicc.bat"
+#     CACHE STRING "MPI C Compiler"
+# )
+# set(MPI_CXX_COMPILER
+#     "${_LIBRARY_PREFIX}/bin/mpicxx.bat"
+#     CACHE STRING "MPI C Compiler"
+# )

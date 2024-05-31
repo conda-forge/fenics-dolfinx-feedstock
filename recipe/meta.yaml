@@ -79,8 +79,6 @@ outputs:
         - libboost-devel
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - parmetis  # [not win]
-        # scotch has cmake config files
-        - scotch {{ scotch }}
         - libscotch {{ scotch }}
         - libptscotch {{ scotch }}
         - petsc  # [not win]
