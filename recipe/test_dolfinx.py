@@ -10,7 +10,9 @@ from dolfinx.io import gmshio
 from mpi4py import MPI
 from dolfinx import default_scalar_type
 
+skip_win = pytest.mark.skipif(sys.platform == "win32", reason="not on windows")
 
+@skip_win
 def test_petsc_scalar():
     print(repr(default_scalar_type))
     scalar = os.environ["scalar"]
@@ -20,19 +22,15 @@ def test_petsc_scalar():
     else:
         assert not is_complex
 
-if sys.platform == "win32":
-    features = ["scotch"]
-else:
-    features = [
+@skip_win
+@pytest.mark.parametrize("feature", [
         "adios2",
         "parmetis",
         "slepc",
         "kahip",
         "petsc",
         # "scotch",
-    ]
-
-@pytest.mark.parametrize("feature", features)
+    ])
 def test_has(feature):
     assert getattr(common, f"has_{feature}")
 
