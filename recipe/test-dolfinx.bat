@@ -16,10 +16,9 @@ cd python/demo
 :: run some tests
 cd ../test
 :: subset of tests should exercise dependencies, solvers, partitioners
-set TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
-pytest -vs %TESTS%
+pytest -vs unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py
 if errorlevel 1 exit 1
 
-mpiexec -n 2 pytest -vs %TESTS%
+mpiexec -n 2 pytest -vs unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py
 if errorlevel 1 exit 1
 
