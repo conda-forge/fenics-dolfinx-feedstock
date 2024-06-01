@@ -17,9 +17,9 @@ cd python/demo
 cd ../test
 :: subset of tests should exercise dependencies, solvers, partitioners
 set TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
-pytest -vs unit
+pytest -vs -m "not petsc4py and not adios2" unit
 if errorlevel 1 exit 1
 
-mpiexec -n 2 pytest -vs unit
+mpiexec -n 2 pytest -vs -m "not petsc4py and not adios2" unit
 if errorlevel 1 exit 1
 
