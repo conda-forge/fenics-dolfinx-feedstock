@@ -5,8 +5,8 @@ setlocal EnableDelayedExpansion
 :: if errorlevel 1 exit 1
 
 :: test packaging
-:: pytest -vs test_dolfinx.py
-:: if errorlevel 1 exit 1
+pytest -vs test_dolfinx.py
+if errorlevel 1 exit 1
 
 :: exercise a demo
 cd python/demo
@@ -16,9 +16,10 @@ cd python/demo
 :: run some tests
 cd ../test
 :: subset of tests should exercise dependencies, solvers, partitioners
-pytest -vs unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py
+set TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
+pytest -vs unit
 if errorlevel 1 exit 1
 
-mpiexec -n 2 pytest -vs unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py
+mpiexec -n 2 pytest -vs unit
 if errorlevel 1 exit 1
 
