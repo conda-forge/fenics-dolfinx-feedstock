@@ -31,7 +31,7 @@ source:
 build:
   number: {{ build }}
   skip: true  # [py<39 or not win]
-  string: {{ sha | truncate(7) }}_h{{ PKG_HASH }}_{{ build }}  # [win]
+  string: {{ sha | truncate(7) }}_py{{ py }}h{{ PKG_HASH }}_{{ build }}  # [win]
   script_env:
     - OMPI_MCA_rmaps_base_oversubscribe=1  # [mpi == 'openmpi']
     - OMPI_MCA_plm=isolated  # [mpi == 'openmpi']
