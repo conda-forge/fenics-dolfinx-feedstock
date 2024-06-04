@@ -17,6 +17,8 @@
 {%   set build = build + 100 %}
 {% endif %}
 
+{% set sha="f404b13d90fd5e45bd449c35130c25e550c41159" %}
+
 package:
   name: {{ name|lower }}-split
   version: {{ version }}
@@ -24,18 +26,17 @@ package:
 source:
   # url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   # sha256: acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9
-  url: https://github.com/fenics/dolfinx/archive/f404b13d90fd5e45bd449c35130c25e550c41159.tar.gz
+  url: https://github.com/fenics/dolfinx/archive/{{ sha }}.tar.gz
 
 build:
   number: {{ build }}
   skip: true  # [py<39 or not win]
+  string: {{ sha | truncate(7) }}_h{{ PKG_HASH }}_{{ build }}  # [win]
   script_env:
-    - OMPI_ALLOW_RUN_AS_ROOT=1
-    - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
-    - OMPI_MCA_rmaps_base_oversubscribe=1
-    - OMPI_MCA_plm=isolated
-    - OMPI_MCA_btl=tcp,self
-    - OMPI_MCA_btl_vader_single_copy_mechanism=none
+    - OMPI_MCA_rmaps_base_oversubscribe=1  # [mpi == 'openmpi']
+    - OMPI_MCA_plm=isolated  # [mpi == 'openmpi']
+    - OMPI_MCA_btl=tcp,self  # [mpi == 'openmpi']
+    - OMPI_MCA_btl_vader_single_copy_mechanism=none  # [mpi == 'openmpi']
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
