@@ -17,7 +17,7 @@
 {%   set build = build + 100 %}
 {% endif %}
 
-{% set sha="f404b13d90fd5e45bd449c35130c25e550c41159" %}
+{% set sha="634f51467624fff613b4b5a8dc3ee5d7454a7472" %}
 
 package:
   name: {{ name|lower }}-split
@@ -31,7 +31,6 @@ source:
 build:
   number: {{ build }}
   skip: true  # [py<39 or not win]
-  string: {{ sha | truncate(7) }}_py{{ py }}h{{ PKG_HASH }}_{{ build }}  # [win]
   script_env:
     - OMPI_MCA_rmaps_base_oversubscribe=1  # [mpi == 'openmpi']
     - OMPI_MCA_plm=isolated  # [mpi == 'openmpi']
@@ -111,6 +110,9 @@ outputs:
   - name: fenics-dolfinx
     script: build-dolfinx.sh  # [not win]
     script: build-dolfinx.bat  # [win]
+    build:
+      string: {{ sha | truncate(7, False, '') }}_py{{ py }}h{{ PKG_HASH }}_{{ build }}  # [win]
+
     requirements:
       build:
         - {{ compiler("c") }}
