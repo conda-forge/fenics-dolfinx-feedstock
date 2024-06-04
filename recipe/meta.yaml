@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 0 %}
+{% set build = 1 %}
 
 {%- if scalar is not defined %}
 {%- set scalar = "" %}
@@ -24,11 +24,7 @@ package:
 source:
   # url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   # sha256: acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9
-  url: https://github.com/minrk/dolfinx/archive/jhale/windows-build.tar.gz
-  # patches:
-  #   - unused-variable.patch
-  #   - 3180.patch
-  #   - 3190.patch
+  url: https://github.com/fenics/dolfinx/archive/f404b13d90fd5e45bd449c35130c25e550c41159.tar.gz
 
 build:
   number: {{ build }}
