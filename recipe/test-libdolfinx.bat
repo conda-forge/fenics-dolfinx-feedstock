@@ -8,6 +8,8 @@ cmake %CMAKE_ARGS% ^
   -G Ninja ^
   --debug-output --debug-trycompile ^
   -D "CMAKE_TOOLCHAIN_FILE=%cd%\impi-toolchain.cmake" ^
+  -D HDF5_NO_FIND_PACKAGE_CONFIG_FILE=ON ^
+  -D HDF5_ROOT=%LIBRARY_PREFIX% ^
   -B build-test/ ^
   -S cpp/test/
 if errorlevel 1 (
