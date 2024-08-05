@@ -1,3 +1,5 @@
+channel_sources:
+  - minrk/label/fenics-windows,conda-forge
 c_compiler:    # [win]
 - vs2022       # [win]
 cxx_compiler:  # [win]
