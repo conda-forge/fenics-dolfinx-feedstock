@@ -1,0 +1,22 @@
+Originally https://github.com/FEniCS/dolfinx/pull/321
+Format from 2fae3da4067779c7d6090827d01acfd72e6b9a35
+---
+diff --git a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
+index 31d27d1e90..306d5e4eb4 100644
+--- a/cpp/CMakeLists.txt
++++ b/cpp/CMakeLists.txt
+@@ -256,6 +256,15 @@ if(HAVE_O2_OPTIMISATION)
+   list(APPEND DOLFINX_CXX_DEVELOPER_FLAGS -O2)
+ endif()
+
++# Turn off some checks in gcc12 and gcc13 due to false positives with the fmt
++# library
++if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
++   AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "11.4"
++   AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14.0")
++  list(APPEND DOLFINX_CXX_DEVELOPER_FLAGS
++       -Wno-array-bounds;-Wno-stringop-overflow)
++endif()
++
+ # ------------------------------------------------------------------------------
+ # Find required packages

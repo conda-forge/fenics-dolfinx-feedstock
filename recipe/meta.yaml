@@ -23,6 +23,7 @@ source:
     - unused-variable.patch
     - 3180.patch
     - 3190.patch
+    - array-bounds.patch
 
 build:
   number: {{ build }}
