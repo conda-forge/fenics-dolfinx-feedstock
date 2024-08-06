@@ -1,22 +1,15 @@
-Originally https://github.com/FEniCS/dolfinx/pull/321
-Format from 2fae3da4067779c7d6090827d01acfd72e6b9a35
+First shows up in https://github.com/FEniCS/dolfinx/pull/321
 ---
-diff --git a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
-index 31d27d1e90..306d5e4eb4 100644
---- a/cpp/CMakeLists.txt
-+++ b/cpp/CMakeLists.txt
-@@ -256,6 +256,15 @@ if(HAVE_O2_OPTIMISATION)
-   list(APPEND DOLFINX_CXX_DEVELOPER_FLAGS -O2)
- endif()
+diff --git a/cpp/test/CMakeLists.txt b/cpp/test/CMakeLists.txt
+index 6f007171b2..25436d0976 100644
+--- a/cpp/test/CMakeLists.txt
++++ b/cpp/test/CMakeLists.txt
+@@ -48,7 +48,7 @@ target_include_directories(
+   unittests PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+ )
+ target_compile_options(
+-  unittests PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wall -Werror -Wextra -pedantic>
++  unittests PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wall -Werror -Wextra -pedantic -Wno-array-bounds -Wno-stringop-overread>
+ )
 
-+# Turn off some checks in gcc12 and gcc13 due to false positives with the fmt
-+# library
-+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
-+   AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "11.4"
-+   AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14.0")
-+  list(APPEND DOLFINX_CXX_DEVELOPER_FLAGS
-+       -Wno-array-bounds;-Wno-stringop-overflow)
-+endif()
-+
- # ------------------------------------------------------------------------------
- # Find required packages
+ # Enable testing
