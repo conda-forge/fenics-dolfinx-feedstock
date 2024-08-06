@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 3 %}
+{% set build = 4 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -23,17 +23,11 @@ source:
     - unused-variable.patch
     - 3180.patch
     - 3190.patch
+    - array-bounds.patch  # [linux]
 
 build:
   number: {{ build }}
   skip: true  # [win or py<39]
-  script_env:
-    - OMPI_ALLOW_RUN_AS_ROOT=1
-    - OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
-    - OMPI_MCA_rmaps_base_oversubscribe=1
-    - OMPI_MCA_plm=isolated
-    - OMPI_MCA_btl=tcp,self
-    - OMPI_MCA_btl_vader_single_copy_mechanism=none
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
