@@ -21,7 +21,7 @@ cxx_compiler_version:
 hdf5:
 - 1.14.3
 libboost_devel:
-- '1.84'
+- '1.86'
 libptscotch:
 - 7.0.4
 libscotch:
