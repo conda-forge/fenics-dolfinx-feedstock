@@ -131,6 +131,7 @@ outputs:
         - wheel
         - nanobind
         - fenics-basix {{ major_minor }}.*
+        - fenics-basix-nanobind-abi
         - mpi4py
         - petsc * {{ scalar }}_*
         - petsc4py
