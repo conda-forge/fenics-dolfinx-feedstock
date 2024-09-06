@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 5 %}
+{% set build = 6 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -140,7 +140,7 @@ outputs:
         - {{ pin_compatible("nanobind", max_pin="x.x") }}
       run:
         # we shouldn't need to depend on compiler version,
-        # but pybind11 includes compiler version in the ABI
+        # but nanobind includes compiler version in the ABI
         - {{ compiler("cxx") }}
         - pkg-config
         - python
