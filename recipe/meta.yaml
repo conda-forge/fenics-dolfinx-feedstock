@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 1 %}
+{% set build = 2 %}
 
 {%- if scalar is not defined %}
 {%- set scalar = "" %}
@@ -31,11 +31,6 @@ source:
 build:
   number: {{ build }}
   skip: true  # [py<39 or not win]
-  script_env:
-    - OMPI_MCA_rmaps_base_oversubscribe=1  # [mpi == 'openmpi']
-    - OMPI_MCA_plm=isolated  # [mpi == 'openmpi']
-    - OMPI_MCA_btl=tcp,self  # [mpi == 'openmpi']
-    - OMPI_MCA_btl_vader_single_copy_mechanism=none  # [mpi == 'openmpi']
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
@@ -136,6 +131,7 @@ outputs:
         - wheel
         - nanobind
         - fenics-basix {{ major_minor }}.*
+        - fenics-basix-nanobind-abi
         - mpi4py
         - petsc * {{ scalar }}_*  # [not win]
         - petsc4py  # [not win]
@@ -145,8 +141,7 @@ outputs:
         - {{ pin_compatible("nanobind", max_pin="x.x") }}
       run:
         # we shouldn't need to depend on compiler version,
-        # but pybind11 includes compiler version in the ABI
-        - {{ compiler("c") }}
+        # but nanobind includes compiler version in the ABI
         - {{ compiler("cxx") }}
         - pkg-config
         - python
