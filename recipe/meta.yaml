@@ -17,7 +17,7 @@
 {%   set build = build + 100 %}
 {% endif %}
 
-{% set sha="634f51467624fff613b4b5a8dc3ee5d7454a7472" %}
+{% set sha="9635a820abce147172a89009227f249bec7b8eba" %}
 
 package:
   name: {{ name|lower }}-split
