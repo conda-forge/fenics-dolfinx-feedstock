@@ -30,7 +30,7 @@ source:
 
 build:
   number: {{ build }}
-  skip: true  # [py<39 or not win]
+  skip: true  # [py<39]
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
@@ -171,7 +171,7 @@ outputs:
         - cairo  # [linux and aarch64]
         - sympy
         - scipy
-        - matplotlib
+        - matplotlib-base
 
 about:
   home: https://fenicsproject.org
