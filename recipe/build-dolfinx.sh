@@ -19,4 +19,6 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
   export CMAKE_ARGS="${CMAKE_ARGS} -DPython3_INCLUDE_DIR=${PY_INC}"
 fi
 
+export CMAKE_GENERATOR=Ninja
+
 $PYTHON -m pip install -vv --no-deps --no-build-isolation ./python
