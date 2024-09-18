@@ -24,6 +24,7 @@ jobs:
         CONFIG: win_64_python3.9.____cpython
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: win_64_python3.9.____cpython
+    maxParallel: 2
   timeoutInMinutes: 90
   variables:
     CONDA_BLD_PATH: D:\\bld\\

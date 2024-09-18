@@ -1,0 +1,192 @@
+# This file was generated automatically from conda-smithy. To update this configuration,
+# update the conda-forge.yml and/or the recipe/meta.yaml.
+# -*- mode: yaml -*-
+
+jobs:
+- job: osx
+  pool:
+    vmImage: macOS-12
+  strategy:
+    matrix:
+      osx_64_mpimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpyth_hd5dcb8e832
+      osx_64_mpimpichpython3.10.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
+      osx_64_mpimpichpython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpyth_hce2edf6d25
+      osx_64_mpimpichpython3.11.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
+      osx_64_mpimpichpython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpyth_h498bbdcf2a
+      osx_64_mpimpichpython3.12.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
+      osx_64_mpimpichpython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.9.____cpytho_hca97d18f1c
+      osx_64_mpimpichpython3.9.____cpythonscalarreal:
+        CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarreal
+      osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpy_h3248b6c8c9
+      osx_64_mpiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpy_h588c2b78d3
+      osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpy_hafbfc68d54
+      osx_64_mpiopenmpipython3.11.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpy_h6a18a4a966
+      osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpy_hdf15701b57
+      osx_64_mpiopenmpipython3.12.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpy_h9cf4cb98ec
+      osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.9.____cpyt_h1213cd031a
+      osx_64_mpiopenmpipython3.9.____cpythonscalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarreal
+      osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cp_ha82255f814
+      osx_arm64_mpimpichpython3.10.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cp_h7c48152714
+      osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cp_ha33ed6b0f1
+      osx_arm64_mpimpichpython3.11.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cp_hc3fa011ca9
+      osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cp_hd3112ea8df
+      osx_arm64_mpimpichpython3.12.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cp_hb4e82c4de7
+      osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.9.____cpy_hf0fafa0902
+      osx_arm64_mpimpichpython3.9.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.9.____cpy_hcab1f7e0bc
+      osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10._____ha299e37270
+      osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10._____h95734737ec
+      osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11._____h48703a1a21
+      osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11._____hd087caea0f
+      osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12._____h26e1910f53
+      osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12._____hbb100134dc
+      osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.9.____c_hfe3acf5ea0
+      osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.9.____c_h58153b4b8f
+    maxParallel: 19
+  timeoutInMinutes: 90
+  variables: {}
+
+  steps:
+  # TODO: Fast finish on azure pipelines?
+  - script: |
+      export CI=azure
+      export flow_run_id=azure_$(Build.BuildNumber).$(System.JobAttempt)
+      export remote_url=$(Build.Repository.Uri)
+      export sha=$(Build.SourceVersion)
+      export OSX_FORCE_SDK_DOWNLOAD="1"
+      export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+      export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+      if [[ "${BUILD_REASON:-}" == "PullRequest" ]]; then
+        export IS_PR_BUILD="True"
+      else
+        export IS_PR_BUILD="False"
+      fi
+      ./.scripts/run_osx_build.sh
+    displayName: Run OSX build
+    env:
+      BINSTAR_TOKEN: $(BINSTAR_TOKEN)
+      FEEDSTOCK_TOKEN: $(FEEDSTOCK_TOKEN)
+      STAGING_BINSTAR_TOKEN: $(STAGING_BINSTAR_TOKEN)
+  - script: |
+      export CI=azure
+      export CI_RUN_ID=$(build.BuildNumber).$(system.JobAttempt)
+      export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+      export CONDA_BLD_DIR=/Users/runner/miniforge3/conda-bld
+      export ARTIFACT_STAGING_DIR="$(Build.ArtifactStagingDirectory)"
+      # Archive everything in CONDA_BLD_DIR except environments
+      export BLD_ARTIFACT_PREFIX=conda_artifacts
+      if [[ "$AGENT_JOBSTATUS" == "Failed" ]]; then
+        # Archive the CONDA_BLD_DIR environments only when the job fails
+        export ENV_ARTIFACT_PREFIX=conda_envs
+      fi
+      ./.scripts/create_conda_build_artifacts.sh
+    displayName: Prepare conda build artifacts
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    displayName: Store conda build artifacts
+    condition: not(eq(variables.BLD_ARTIFACT_PATH, ''))
+    inputs:
+      targetPath: $(BLD_ARTIFACT_PATH)
+      artifactName: $(BLD_ARTIFACT_NAME)
+
+  - task: PublishPipelineArtifact@1
+    displayName: Store conda build environment artifacts
+    condition: not(eq(variables.ENV_ARTIFACT_PATH, ''))
+    inputs:
+      targetPath: $(ENV_ARTIFACT_PATH)
+      artifactName: $(ENV_ARTIFACT_NAME)

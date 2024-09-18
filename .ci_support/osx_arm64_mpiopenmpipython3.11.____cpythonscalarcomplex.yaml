@@ -1,0 +1,59 @@
+MACOSX_DEPLOYMENT_TARGET:
+- '11.0'
+MACOSX_SDK_VERSION:
+- '11.0'
+c_compiler:
+- clang
+c_compiler_version:
+- '17'
+c_stdlib:
+- macosx_deployment_target
+c_stdlib_version:
+- '11.0'
+channel_sources:
+- minrk/label/fenics-windows,conda-forge
+channel_targets:
+- conda-forge main
+cxx_compiler:
+- clangxx
+cxx_compiler_version:
+- '17'
+hdf5:
+- 1.14.3
+libboost_devel:
+- '1.86'
+macos_machine:
+- arm64-apple-darwin20.0.0
+mpi:
+- openmpi
+mpich:
+- '4'
+openmpi:
+- '5'
+petsc:
+- '3.21'
+petsc4py:
+- '3.21'
+pin_run_as_build:
+  python:
+    min_pin: x.x
+    max_pin: x.x
+pugixml:
+- '1.14'
+python:
+- 3.11.* *_cpython
+scalar:
+- complex
+scotch:
+- 7.0.4
+slepc:
+- '3.21'
+slepc4py:
+- '3.21'
+spdlog:
+- '1.12'
+target_platform:
+- osx-arm64
+zip_keys:
+- - c_compiler_version
+  - cxx_compiler_version
