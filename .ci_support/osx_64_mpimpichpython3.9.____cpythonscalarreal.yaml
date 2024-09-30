@@ -23,9 +23,9 @@ hdf5:
 libboost_devel:
 - '1.86'
 libptscotch:
-- 7.0.4
+- 7.0.5
 libscotch:
-- 7.0.4
+- 7.0.5
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
@@ -49,7 +49,7 @@ python:
 scalar:
 - real
 scotch:
-- 7.0.4
+- 7.0.5
 slepc:
 - '3.21'
 slepc4py:
