@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.1" %}
 
-{% set build = 7 %}
+{% set build = 8 %}
 {% if scalar == "real" %}
 {%   set build = build + 100 %}
 {% endif %}
@@ -41,6 +41,10 @@ outputs:
         - '*'  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
+        # mpi variant is in the libdolfin ABI somewhere
+        # Symbol not found: (__ZN7dolfinx3MPI4rankEi)
+        # when scifem built with mpich libdolfin tries to run with openmpi
+        - {{ mpi }}
         - petsc * {{ scalar }}_*
       ignore_run_exports_from:
         - python
