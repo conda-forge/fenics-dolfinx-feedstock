@@ -41,6 +41,10 @@ outputs:
         - '*'  # [build_platform != target_platform]
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
+        # mpi variant is in the libdolfin ABI somewhere
+        # Symbol not found: (__ZN7dolfinx3MPI4rankEi)
+        # when scifem built with mpich libdolfin tries to run with openmpi
+        - {{ mpi }}
         - petsc * {{ scalar }}_*
       ignore_run_exports_from:
         - python
