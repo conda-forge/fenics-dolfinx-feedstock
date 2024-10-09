@@ -12,6 +12,10 @@ hdf5:
 - 1.14.3
 libboost_devel:
 - '1.86'
+libptscotch:
+- 7.0.5
+libscotch:
+- 7.0.5
 mpi:
 - impi
 mpich:
@@ -26,8 +30,6 @@ pugixml:
 - '1.14'
 python:
 - 3.13.* *_cp313
-scotch:
-- 7.0.5
 spdlog:
 - '1.12'
 target_platform:

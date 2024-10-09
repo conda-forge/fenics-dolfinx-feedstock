@@ -28,6 +28,10 @@ hdf5:
 - 1.14.3
 libboost_devel:
 - '1.86'
+libptscotch:
+- 7.0.5
+libscotch:
+- 7.0.5
 mpi:
 - mpich
 mpich:
@@ -48,8 +52,6 @@ python:
 - 3.11.* *_cpython
 scalar:
 - real
-scotch:
-- 7.0.5
 slepc:
 - '3.21'
 slepc4py:
