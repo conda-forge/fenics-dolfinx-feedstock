@@ -43,9 +43,7 @@ outputs:
       run_exports:
         - {{ pin_subpackage("fenics-libdolfinx", max_pin="x.x.x") }}
         - petsc * {{ scalar }}_*  # [not win]
-      ignore_run_exports_from:
-        - python
-        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+        - {{ mpi }}
       force_use_keys:
         - python
     requirements:
@@ -102,8 +100,6 @@ outputs:
   - name: fenics-dolfinx
     script: build-dolfinx.sh  # [not win]
     script: build-dolfinx.bat  # [win]
-    build:
-      string: {{ sha | truncate(7, False, '') }}_py{{ py }}h{{ PKG_HASH }}_{{ build }}  # [win]
 
     requirements:
       build:
