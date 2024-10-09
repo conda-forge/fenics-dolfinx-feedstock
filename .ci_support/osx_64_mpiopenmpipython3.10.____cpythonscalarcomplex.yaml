@@ -45,7 +45,7 @@ python:
 scalar:
 - complex
 scotch:
-- 7.0.4
+- 7.0.5
 slepc:
 - '3.21'
 slepc4py:
@@ -57,3 +57,5 @@ target_platform:
 zip_keys:
 - - c_compiler_version
   - cxx_compiler_version
+- - python
+  - channel_sources

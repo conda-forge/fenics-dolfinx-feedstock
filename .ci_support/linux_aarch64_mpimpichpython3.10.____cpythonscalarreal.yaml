@@ -49,7 +49,7 @@ python:
 scalar:
 - real
 scotch:
-- 7.0.4
+- 7.0.5
 slepc:
 - '3.21'
 slepc4py:
@@ -63,3 +63,5 @@ zip_keys:
   - cxx_compiler_version
 - - c_stdlib_version
   - cdt_name
+- - python
+  - channel_sources
