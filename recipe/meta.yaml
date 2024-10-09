@@ -64,8 +64,8 @@ outputs:
         - libboost-devel
         - hdf5 {{ hdf5 }} mpi_{{ mpi }}_*
         - parmetis  # [not win]
-        - libscotch {{ scotch }}
-        - libptscotch {{ scotch }}
+        - libscotch
+        - libptscotch
         - petsc  # [not win]
         - petsc * {{ scalar }}_*  # [not win]
         - pugixml
