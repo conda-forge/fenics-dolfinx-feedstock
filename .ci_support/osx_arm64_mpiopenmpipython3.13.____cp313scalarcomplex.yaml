@@ -11,7 +11,7 @@ c_stdlib:
 c_stdlib_version:
 - '11.0'
 channel_sources:
-- conda-forge/label/python_rc,conda-forge
+- conda-forge
 channel_targets:
 - conda-forge main
 cxx_compiler:
@@ -48,16 +48,14 @@ python:
 - 3.13.* *_cp313
 scalar:
 - complex
-scotch:
-- 7.0.5
 slepc:
 - '3.21'
 slepc4py:
 - '3.21'
+spdlog:
+- '1.12'
 target_platform:
 - osx-arm64
 zip_keys:
 - - c_compiler_version
   - cxx_compiler_version
-- - python
-  - channel_sources

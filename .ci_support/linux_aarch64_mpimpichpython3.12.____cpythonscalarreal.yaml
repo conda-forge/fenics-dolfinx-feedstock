@@ -52,12 +52,12 @@ python:
 - 3.12.* *_cpython
 scalar:
 - real
-scotch:
-- 7.0.5
 slepc:
 - '3.21'
 slepc4py:
 - '3.21'
+spdlog:
+- '1.12'
 target_platform:
 - linux-aarch64
 zip_keys:
@@ -65,5 +65,3 @@ zip_keys:
   - cxx_compiler_version
 - - c_stdlib_version
   - cdt_name
-- - python
-  - channel_sources
