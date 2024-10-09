@@ -22,10 +22,6 @@ hdf5:
 - 1.14.3
 libboost_devel:
 - '1.86'
-libptscotch:
-- 7.0.5
-libscotch:
-- 7.0.5
 mpi:
 - mpich
 mpich:
@@ -52,6 +48,8 @@ slepc:
 - '3.21'
 slepc4py:
 - '3.21'
+spdlog:
+- '1.12'
 target_platform:
 - linux-64
 zip_keys:

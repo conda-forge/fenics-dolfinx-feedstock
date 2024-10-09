@@ -27,8 +27,11 @@ pugixml:
 python:
 - 3.12.* *_cpython
 scotch:
-- 7.0.4
+- 7.0.5
 spdlog:
 - '1.12'
 target_platform:
 - win-64
+zip_keys:
+- - python
+  - channel_sources

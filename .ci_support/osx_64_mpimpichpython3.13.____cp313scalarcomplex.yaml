@@ -22,10 +22,6 @@ hdf5:
 - 1.14.3
 libboost_devel:
 - '1.86'
-libptscotch:
-- 7.0.5
-libscotch:
-- 7.0.5
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
@@ -54,6 +50,8 @@ slepc:
 - '3.21'
 slepc4py:
 - '3.21'
+spdlog:
+- '1.12'
 target_platform:
 - osx-64
 zip_keys:
