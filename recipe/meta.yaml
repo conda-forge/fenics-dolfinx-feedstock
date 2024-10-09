@@ -134,12 +134,9 @@ outputs:
         - petsc4py  # [not win]
         - slepc  # [not win]
         - slepc4py  # [not win]
-      run_constrained:
-        - {{ pin_compatible("nanobind", max_pin="x.x") }}
       run:
-        # we shouldn't need to depend on compiler version,
-        # but nanobind includes compiler version in the ABI
-        - {{ compiler("cxx") }}
+        # code generation only needs c, not cxx
+        - {{ compiler("c") }}
         - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
