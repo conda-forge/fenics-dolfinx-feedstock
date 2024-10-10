@@ -53,7 +53,7 @@ slepc:
 slepc4py:
 - '3.21'
 spdlog:
-- '1.12'
+- '1.13'
 target_platform:
 - osx-arm64
 zip_keys:
