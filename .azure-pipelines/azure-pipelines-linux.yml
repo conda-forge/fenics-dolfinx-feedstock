@@ -38,16 +38,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
         SHORT_CONFIG: linux_64_mpimpichpython3.12.____cpy_hb767947e46
-      linux_64_mpimpichpython3.13.____cp313scalarcomplex:
-        CONFIG: linux_64_mpimpichpython3.13.____cp313scalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_64_mpimpichpython3.13.____cp3_h8eae9c3011
-      linux_64_mpimpichpython3.13.____cp313scalarreal:
-        CONFIG: linux_64_mpimpichpython3.13.____cp313scalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_64_mpimpichpython3.13.____cp313scalarreal
       linux_64_mpimpichpython3.9.____cpythonscalarcomplex:
         CONFIG: linux_64_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -88,16 +78,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
         SHORT_CONFIG: linux_64_mpiopenmpipython3.12.____c_h8dbb56e0a4
-      linux_64_mpiopenmpipython3.13.____cp313scalarcomplex:
-        CONFIG: linux_64_mpiopenmpipython3.13.____cp313scalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_64_mpiopenmpipython3.13.____c_hd41f7640f0
-      linux_64_mpiopenmpipython3.13.____cp313scalarreal:
-        CONFIG: linux_64_mpiopenmpipython3.13.____cp313scalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_64_mpiopenmpipython3.13.____c_hd86972e58d
       linux_64_mpiopenmpipython3.9.____cpythonscalarcomplex:
         CONFIG: linux_64_mpiopenmpipython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -138,16 +118,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
         SHORT_CONFIG: linux_aarch64_mpimpichpython3.12.___h7cb429a466
-      linux_aarch64_mpimpichpython3.13.____cp313scalarcomplex:
-        CONFIG: linux_aarch64_mpimpichpython3.13.____cp313scalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_aarch64_mpimpichpython3.13.___hf1a0bd7514
-      linux_aarch64_mpimpichpython3.13.____cp313scalarreal:
-        CONFIG: linux_aarch64_mpimpichpython3.13.____cp313scalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_aarch64_mpimpichpython3.13.___h179581f9d3
       linux_aarch64_mpimpichpython3.9.____cpythonscalarcomplex:
         CONFIG: linux_aarch64_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -188,16 +158,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
         SHORT_CONFIG: linux_aarch64_mpiopenmpipython3.12._h056cd857eb
-      linux_aarch64_mpiopenmpipython3.13.____cp313scalarcomplex:
-        CONFIG: linux_aarch64_mpiopenmpipython3.13.____cp313scalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_aarch64_mpiopenmpipython3.13._hb988322df6
-      linux_aarch64_mpiopenmpipython3.13.____cp313scalarreal:
-        CONFIG: linux_aarch64_mpiopenmpipython3.13.____cp313scalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_aarch64_mpiopenmpipython3.13._h61de980052
       linux_aarch64_mpiopenmpipython3.9.____cpythonscalarcomplex:
         CONFIG: linux_aarch64_mpiopenmpipython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -238,16 +198,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
         SHORT_CONFIG: linux_ppc64le_mpimpichpython3.12.___h09a5159100
-      linux_ppc64le_mpimpichpython3.13.____cp313scalarcomplex:
-        CONFIG: linux_ppc64le_mpimpichpython3.13.____cp313scalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_ppc64le_mpimpichpython3.13.___hf106ca4c2a
-      linux_ppc64le_mpimpichpython3.13.____cp313scalarreal:
-        CONFIG: linux_ppc64le_mpimpichpython3.13.____cp313scalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_ppc64le_mpimpichpython3.13.___h6b0a463d63
       linux_ppc64le_mpimpichpython3.9.____cpythonscalarcomplex:
         CONFIG: linux_ppc64le_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -288,16 +238,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
         SHORT_CONFIG: linux_ppc64le_mpiopenmpipython3.12._h03c58d8c87
-      linux_ppc64le_mpiopenmpipython3.13.____cp313scalarcomplex:
-        CONFIG: linux_ppc64le_mpiopenmpipython3.13.____cp313scalarcomplex
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_ppc64le_mpiopenmpipython3.13._h22653c6be5
-      linux_ppc64le_mpiopenmpipython3.13.____cp313scalarreal:
-        CONFIG: linux_ppc64le_mpiopenmpipython3.13.____cp313scalarreal
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_ppc64le_mpiopenmpipython3.13._h366863bbb7
       linux_ppc64le_mpiopenmpipython3.9.____cpythonscalarcomplex:
         CONFIG: linux_ppc64le_mpiopenmpipython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
