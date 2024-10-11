@@ -139,6 +139,8 @@ outputs:
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi <1.17
+        # cffi < 1.17 needs setuptools on Windows
+        - setuptools  # [win]
         - mpi4py
         - numpy >=1.21
         - petsc4py  # [not win]
