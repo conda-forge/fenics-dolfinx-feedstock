@@ -27,7 +27,9 @@ source:
 
 build:
   number: {{ build }}
-  skip: true  # [py<39]
+  # need to skip Python 3.13 due to cffi pin
+  # 1.17 breaks one demo, but it's also the first version to support 3.13
+  skip: true  # [py<39 or py>=313]
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
