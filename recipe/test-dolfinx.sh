@@ -1,6 +1,6 @@
 set -ex
 
-pip check || echo "pip check failed! if it's petsc4py objecting to numpy 1, that's ok"
+pip check
 
 TEST_DIR=$PWD
 

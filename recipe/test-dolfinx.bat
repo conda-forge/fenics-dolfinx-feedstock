@@ -1,8 +1,8 @@
 setlocal EnableDelayedExpansion
 @echo on
 
-:: pip check
-:: if errorlevel 1 exit 1
+pip check
+if errorlevel 1 exit 1
 
 :: test packaging
 pytest -vs test_dolfinx.py

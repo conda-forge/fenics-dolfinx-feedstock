@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.2" %}
 
-{% set build = 1 %}
+{% set build = 2 %}
 
 {%- if scalar is not defined %}
 {%- set scalar = "" %}
@@ -24,6 +24,10 @@ package:
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   sha256: b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1
+  patches:
+    # cffi is pinned down for a bug
+    # but 1.17 is needed for Windows, CPython 3.13
+    - unpin-cffi.patch  # [win or py>=313]
 
 build:
   number: {{ build }}
@@ -137,6 +141,7 @@ outputs:
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
+        - cffi <1.17  # [not (win or py>=313)]
         - mpi4py
         - numpy >=1.21
         - petsc4py  # [not win]

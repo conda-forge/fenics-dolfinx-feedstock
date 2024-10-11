@@ -8,6 +8,14 @@ if [[ "$target_platform" == "linux-aarch64" || "$target_platform" == "linux-ppc6
   export CMAKE_BUILD_PARALLEL_LEVEL=1
 fi
 
+# cross-compiled linux produces wrong wheel tags
+# causing pip check to fail
+if [[ "${target_platform}" == "linux-aarch64" ]]; then
+  export _PYTHON_HOST_PLATFORM=linux_aarch64
+elif [[ "${target_platform}" == "linux-ppc64le" ]]; then
+  export _PYTHON_HOST_PLATFORM=linux_ppc64le
+fi
+
 if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
   # needed for cross-compile openmpi
   export OPAL_CC="$CC"
