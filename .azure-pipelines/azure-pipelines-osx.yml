@@ -32,6 +32,14 @@ jobs:
         CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
+      osx_64_mpimpichpython3.13.____cp313scalarcomplex:
+        CONFIG: osx_64_mpimpichpython3.13.____cp313scalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.13.____cp313scalarcomplex
+      osx_64_mpimpichpython3.13.____cp313scalarreal:
+        CONFIG: osx_64_mpimpichpython3.13.____cp313scalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpimpichpython3.13.____cp313scalarreal
       osx_64_mpimpichpython3.9.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -64,6 +72,14 @@ jobs:
         CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpy_h9cf4cb98ec
+      osx_64_mpiopenmpipython3.13.____cp313scalarcomplex:
+        CONFIG: osx_64_mpiopenmpipython3.13.____cp313scalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.13.____cp3_h299f7b8993
+      osx_64_mpiopenmpipython3.13.____cp313scalarreal:
+        CONFIG: osx_64_mpiopenmpipython3.13.____cp313scalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.13.____cp313scalarreal
       osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -96,6 +112,14 @@ jobs:
         CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cp_hb4e82c4de7
+      osx_arm64_mpimpichpython3.13.____cp313scalarcomplex:
+        CONFIG: osx_arm64_mpimpichpython3.13.____cp313scalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.13.____cp_hc416d47118
+      osx_arm64_mpimpichpython3.13.____cp313scalarreal:
+        CONFIG: osx_arm64_mpimpichpython3.13.____cp313scalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.13.____cp313scalarreal
       osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
@@ -128,6 +152,14 @@ jobs:
         CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12._____hbb100134dc
+      osx_arm64_mpiopenmpipython3.13.____cp313scalarcomplex:
+        CONFIG: osx_arm64_mpiopenmpipython3.13.____cp313scalarcomplex
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.13._____h04dd567b9b
+      osx_arm64_mpiopenmpipython3.13.____cp313scalarreal:
+        CONFIG: osx_arm64_mpiopenmpipython3.13.____cp313scalarreal
+        UPLOAD_PACKAGES: 'True'
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.13._____h86d0316f62
       osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
