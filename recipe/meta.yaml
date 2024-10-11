@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.2" %}
 
-{% set build = 1 %}
+{% set build = 2 %}
 
 {%- if scalar is not defined %}
 {%- set scalar = "" %}
@@ -136,7 +136,7 @@ outputs:
         - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
-        - cffi
+        - cffi <1.17
         - mpi4py
         - numpy >=1.21
         - petsc4py  # [not win]
