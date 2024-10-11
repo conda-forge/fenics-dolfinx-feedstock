@@ -24,12 +24,14 @@ package:
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v{{ version }}{{ extra }}.tar.gz
   sha256: b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1
+  patches:
+    # cffi is pinned down for a bug
+    # but 1.17 is needed for Windows, CPython 3.13
+    - unpin-cffi.patch  # [win or py>313]
 
 build:
   number: {{ build }}
-  # need to skip Python 3.13 due to cffi pin
-  # 1.17 breaks one demo, but it's also the first version to support 3.13
-  skip: true  # [py<39 or py>=313]
+  skip: true  # [py<39]
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
@@ -138,9 +140,8 @@ outputs:
         - pkg-config
         - python
         - {{ pin_subpackage("fenics-libdolfinx", exact=True) }}
-        - cffi <1.17
-        # cffi < 1.17 needs setuptools on Windows
-        - setuptools  # [win]
+        - cffi
+        - cffi <1.17  # [not (win or py>313)]
         - mpi4py
         - numpy >=1.21
         - petsc4py  # [not win]
