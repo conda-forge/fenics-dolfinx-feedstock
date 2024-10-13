@@ -1,6 +1,8 @@
 setlocal EnableDelayedExpansion
 @echo on
 
+echo !PATH!
+
 pip check
 if errorlevel 1 exit 1
 
