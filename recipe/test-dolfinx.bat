@@ -5,6 +5,7 @@ pip check
 if errorlevel 1 exit 1
 
 :: test packaging
+set PYTHONUNBUFFERED=1
 pytest -vs test_dolfinx.py
 if errorlevel 1 exit 1
 

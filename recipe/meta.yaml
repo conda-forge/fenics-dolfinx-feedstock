@@ -31,7 +31,7 @@ source:
 
 build:
   number: {{ build }}
-  skip: true  # [py<39]
+  skip: true  # [py<39 or not win]
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds
