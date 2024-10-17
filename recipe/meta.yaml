@@ -70,7 +70,6 @@ outputs:
         - parmetis  # [not win]
         - libscotch
         - libptscotch
-        - libptscotch 7.0.5 h908f345_1  # [win]
         - petsc  # [not win]
         - petsc * {{ scalar }}_*  # [not win]
         - pugixml
@@ -83,7 +82,6 @@ outputs:
         # but are needed at runtime for code generation
         - fenics-ufcx  {{ major_minor }}.*
         - parmetis  # [not win]
-        - libptscotch 7.0.5 h908f345_1  # [win]
         # needs boost metadata just to CMake-load fenix-libdolfinx
         - libboost-devel
     test:
