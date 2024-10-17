@@ -28,6 +28,7 @@ source:
     # cffi is pinned down for a bug
     # but 1.17 is needed for Windows, CPython 3.13
     - unpin-cffi.patch  # [win or py>=313]
+    - debug.patch
 
 build:
   number: {{ build }}
