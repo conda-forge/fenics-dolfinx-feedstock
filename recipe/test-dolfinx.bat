@@ -5,7 +5,8 @@ pip check
 if errorlevel 1 exit 1
 
 :: test packaging
-pytest -vs test_dolfinx.py
+set PYTHONUNBUFFERED=1
+mpiexec -n 2 pytest -vs test_dolfinx.py
 if errorlevel 1 exit 1
 
 :: exercise a demo
