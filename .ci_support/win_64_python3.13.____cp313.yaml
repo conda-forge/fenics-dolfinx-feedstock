@@ -31,6 +31,6 @@ pugixml:
 python:
 - 3.13.* *_cp313
 spdlog:
-- '1.13'
+- '1.14'
 target_platform:
 - win-64
