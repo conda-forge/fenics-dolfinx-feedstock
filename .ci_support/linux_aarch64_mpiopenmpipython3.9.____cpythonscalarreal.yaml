@@ -57,7 +57,7 @@ slepc:
 slepc4py:
 - '3.22'
 spdlog:
-- '1.13'
+- '1.14'
 target_platform:
 - linux-aarch64
 zip_keys:
