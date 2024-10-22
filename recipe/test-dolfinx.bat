@@ -4,8 +4,10 @@ setlocal EnableDelayedExpansion
 pip check
 if errorlevel 1 exit 1
 
+set I_MPI_DEBUG=100
 :: test packaging
-pytest -vs test_dolfinx.py
+set PYTHONUNBUFFERED=1
+mpiexec -n 1 pytest -vs test_dolfinx.py
 if errorlevel 1 exit 1
 
 :: exercise a demo
