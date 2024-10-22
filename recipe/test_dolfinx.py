@@ -7,11 +7,13 @@ import dolfinx  # noqa
 import gmsh
 import numpy as np
 import pytest
+from dolfinx import log
 from dolfinx.cpp import common
 from dolfinx.io import gmshio
 from mpi4py import MPI
 from dolfinx import default_scalar_type
 
+log.set_log_level(log.LogLevel.DEBUG)
 skip_win = pytest.mark.skipif(sys.platform == "win32", reason="not on windows")
 
 @skip_win
