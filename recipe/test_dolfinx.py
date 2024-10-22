@@ -1,6 +1,8 @@
 import os
 import sys
 
+import basix.ufl
+import ufl
 import dolfinx  # noqa
 import gmsh
 import numpy as np
@@ -44,6 +46,16 @@ def test_mpi():
     B = comm.bcast(A, root=0)
     assert (B == A).all()
     print("broadcasted")
+
+def test_mesh():
+    print("test mesh")
+    nodes = np.array([[1.0, 0.0], [2.0, 0.0], [3.0, 2.0], [1, 3]], dtype=np.float64)
+    connectivity = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.int64)
+    print("ufl.Mesh")
+    c_el = ufl.Mesh(basix.ufl.element("Lagrange", "triangle", 1, shape=(nodes.shape[1],)))
+    print("create_mesh")
+    domain = dolfinx.mesh.create_mesh(MPI.COMM_SELF, connectivity, nodes, c_el)
+    print("mesh created")
 
 def test_gmshio():
     # meshing example taken from https://jsdokken.com/dolfinx-tutorial/chapter1/membrane_code.html
