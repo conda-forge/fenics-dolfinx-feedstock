@@ -106,3 +106,65 @@ index 1053923279..74b3e59ef4 100644
      return (mesh, ct, ft)
  
  
+diff --git a/python/dolfinx/mesh.py b/python/dolfinx/mesh.py
+index e58563a2bf..3e23a11c45 100644
+--- a/python/dolfinx/mesh.py
++++ b/python/dolfinx/mesh.py
+@@ -607,7 +607,9 @@ def create_mesh(
+     Returns:
+         A mesh.
+     """
++    
+     if partitioner is None and comm.size > 1:
++        print("create partitioner")
+         partitioner = create_cell_partitioner(GhostMode.none)
+ 
+     x = np.asarray(x, order="C")
+@@ -618,6 +620,7 @@ def create_mesh(
+ 
+     dtype = None
+     try:
++        print("ufl domain")
+         # e is a UFL domain
+         e_ufl = e.ufl_coordinate_element()  # type: ignore
+         cmap = _coordinate_element(e_ufl.basix_element)  # type: ignore
+@@ -625,14 +628,16 @@ def create_mesh(
+         dtype = cmap.dtype
+         # TODO: Resolve UFL vs Basix geometric dimension issue
+         # assert domain.geometric_dimension() == gdim
+-    except AttributeError:
++    except AttributeError as _e:
++        print("AttributeError", _e)
+         try:
+             # e is a Basix 'UFL' element
+             cmap = _coordinate_element(e.basix_element)  # type: ignore
+             domain = ufl.Mesh(e)
+             dtype = cmap.dtype
+             assert domain.geometric_dimension() == gdim
+-        except AttributeError:
++        except AttributeError as _e:
++            print("AttributeError2", _e)
+             try:
+                 # e is a Basix element
+                 # TODO: Resolve geometric dimension vs shape for manifolds
+@@ -643,14 +648,19 @@ def create_mesh(
+                 dtype = cmap.dtype
+                 assert domain.geometric_dimension() == gdim
+             except (AttributeError, TypeError):
++                print("CoordinateElement")
+                 # e is a CoordinateElement
+                 cmap = e
+                 domain = None
+                 dtype = cmap.dtype
+-
++    
++    print("asarray x")
+     x = np.asarray(x, dtype=dtype, order="C")
++    print("asarray cells")
+     cells = np.asarray(cells, dtype=np.int64, order="C")
++    print("cpp create_mesh")
+     msh = _cpp.mesh.create_mesh(comm, cells, cmap._cpp_object, x, partitioner)
++    print("returning mesh")
+ 
+     return Mesh(msh, domain)
+ 
