@@ -74,6 +74,7 @@ outputs:
         - petsc * {{ scalar }}_*  # [not win]
         - pugixml
         - slepc  # [not win]
+        - fmt
         - spdlog
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
