@@ -12,6 +12,11 @@ scalar:
   - real  # [not win]
   - complex  # [not win]
 
+hdf5:
+  # FIXME: weird mpi crashes in #89
+  # due to something in intel mpi update
+  - 1.14.3  # [win]
+
 pin_run_as_build:
   parmetis:
     max_pin: x.x
