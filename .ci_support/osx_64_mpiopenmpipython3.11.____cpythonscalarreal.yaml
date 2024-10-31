@@ -18,6 +18,8 @@ cxx_compiler:
 - clangxx
 cxx_compiler_version:
 - '18'
+fmt:
+- '11'
 hdf5:
 - 1.14.4
 libboost_devel:
