@@ -12,9 +12,17 @@ scalar:
   - real  # [not win]
   - complex  # [not win]
 
+# FIXME: weird mpi crashes in #89
+# due to something in intel mpi update
+# from 2012.12 to 2012.13
+impi:
+  - "2021.12"  # [win]
+
+# manually apply hdf5 1.14.4 migration
+# except on Windows
+# can't use migrator, which overrides conda_build_config.yaml
 hdf5:
-  # FIXME: weird mpi crashes in #89
-  # due to something in intel mpi update
+  - 1.14.4  # [not win]
   - 1.14.3  # [win]
 
 pin_run_as_build:
