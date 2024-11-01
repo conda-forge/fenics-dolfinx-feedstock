@@ -135,6 +135,9 @@ outputs:
         - petsc4py  # [not win]
         - slepc  # [not win]
         - slepc4py  # [not win]
+        # not actually a dependency of the Python part, but having it here
+        # seems to fix a solver error on libxml2's noicu build
+        - libboost-devel
       run:
         # code generation only needs c, not cxx
         - {{ compiler("c") }}
