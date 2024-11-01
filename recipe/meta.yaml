@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.2" %}
 
-{% set build = 4 %}
+{% set build = 5 %}
 
 {%- if scalar is not defined %}
 {%- set scalar = "" %}
@@ -74,6 +74,7 @@ outputs:
         - petsc * {{ scalar }}_*  # [not win]
         - pugixml
         - slepc  # [not win]
+        - fmt
         - spdlog
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
@@ -134,6 +135,9 @@ outputs:
         - petsc4py  # [not win]
         - slepc  # [not win]
         - slepc4py  # [not win]
+        # not actually a dependency of the Python part, but having it here
+        # seems to fix a solver error on libxml2's noicu build
+        - libboost-devel
       run:
         # code generation only needs c, not cxx
         - {{ compiler("c") }}
