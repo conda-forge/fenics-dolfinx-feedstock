@@ -11,9 +11,7 @@ cxx_compiler:
 fmt:
 - '11'
 hdf5:
-- 1.14.3
-impi:
-- '2021.12'
+- 1.14.4
 libboost_devel:
 - '1.86'
 libptscotch:
