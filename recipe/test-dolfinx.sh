@@ -28,6 +28,8 @@ else
   TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
 fi
 
+# unit/fem/test_fem_pipeline.py::test_dP_simplex[3-DG-tetrahedron] is failing
+# with 4e-6 > 1e-9
 if [[ "$target_platform" =~ "osx" ]]; then
   SELECTOR=''
   MPI_SELECTOR=''
