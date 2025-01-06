@@ -1,27 +1,19 @@
 c_compiler:
-- gcc
-c_compiler_version:
-- '13'
+- vs2022
 c_stdlib:
-- sysroot
-c_stdlib_version:
-- '2.17'
-cdt_name:
-- conda
+- vs
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
 cxx_compiler:
-- gxx
-cxx_compiler_version:
-- '13'
-docker_image:
-- quay.io/condaforge/linux-anvil-x86_64:alma9
+- vs2022
 fmt:
 - '11'
 hdf5:
 - 1.14.4
+impi:
+- '2021.12'
 libboost_devel:
 - '1.86'
 libptscotch:
@@ -29,15 +21,11 @@ libptscotch:
 libscotch:
 - 7.0.5
 mpi:
-- openmpi
+- impi
 mpich:
 - '4'
 openmpi:
 - '5'
-petsc:
-- '3.22'
-petsc4py:
-- '3.22'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -46,16 +34,7 @@ pugixml:
 - '1.14'
 python:
 - 3.13.* *_cp313
-scalar:
-- complex
-slepc:
-- '3.22'
-slepc4py:
-- '3.22'
 spdlog:
 - '1.14'
 target_platform:
-- linux-ppc64le
-zip_keys:
-- - c_compiler_version
-  - cxx_compiler_version
+- win-64
