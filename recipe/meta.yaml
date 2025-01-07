@@ -104,6 +104,8 @@ outputs:
         - make  # [not win]
         - ninja  # [win]
         - fenics-ffcx {{ major_minor }}.*
+        - zlib  # [win]
+        - liblzma-devel  # [win]
   - name: fenics-dolfinx
     script: build-dolfinx.sh  # [not win]
     script: build-dolfinx.bat  # [win]
@@ -137,6 +139,9 @@ outputs:
         - petsc4py  # [not win]
         - slepc  # [not win]
         - slepc4py  # [not win]
+        # cmake on windows seems to find zlib/lzma .lib dependencies needed for dolfin.dll
+        - zlib  # [win]
+        - liblzma-devel  # [win]
         # not actually a dependency of the Python part, but having it here
         # seems to fix a solver error on libxml2's noicu build
         - libboost-devel
