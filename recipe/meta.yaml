@@ -76,6 +76,7 @@ outputs:
         - slepc  # [not win]
         - fmt
         - spdlog
+        - zlib  # [win]
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
       run:
