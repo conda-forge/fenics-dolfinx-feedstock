@@ -94,6 +94,10 @@ outputs:
         # due to changes in the liblzma-devel split in 5.6
         # remove when impi is unpinned
         - xz 5.2  # [win]
+        # debug:
+        - pthreads-win32  # [win]
+      run_constrained:
+        - liblzma <0  # [win]
     test:
       script: test-libdolfinx.sh  # [not win]
       script: test-libdolfinx.bat  # [win]
