@@ -17,9 +17,3 @@ scalar:
 # from 2012.12 to 2012.13
 impi:
   - "2021.12"  # [win]
-
-pin_run_as_build:
-  parmetis:
-    max_pin: x.x
-  fenics-ufcx:
-    max_pin: x.x.x
