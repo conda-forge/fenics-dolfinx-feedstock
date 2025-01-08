@@ -12,10 +12,10 @@ fmt:
 - '11'
 hdf5:
 - 1.14.3
-impi:
-- '2021.12'
 libboost_devel:
 - '1.86'
+liblzma_devel:
+- '5'
 libptscotch:
 - 7.0.5
 libscotch:
@@ -38,3 +38,5 @@ spdlog:
 - '1.14'
 target_platform:
 - win-64
+zlib:
+- '1'
