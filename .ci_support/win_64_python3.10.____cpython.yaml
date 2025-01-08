@@ -12,7 +12,7 @@ fmt:
 - '11'
 hdf5:
 - 1.14.3
-impi:
+impi_devel:
 - '2021.12'
 libboost_devel:
 - '1.86'
