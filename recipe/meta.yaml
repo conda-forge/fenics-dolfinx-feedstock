@@ -76,8 +76,11 @@ outputs:
         - slepc  # [not win]
         - fmt
         - spdlog
+        # these seem to be problems in cmake discovery,
+        # possibly via scotch
+        # possibly remove when we bump impi
         - zlib  # [win]
-        - liblzma-devel  # [win]
+        - xz 5.2  # [win]
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
       run:
@@ -87,6 +90,10 @@ outputs:
         - parmetis  # [not win]
         # needs boost metadata just to CMake-load fenix-libdolfinx
         - libboost-devel
+        # xz pinning seems to be required
+        # due to changes in the liblzma-devel split in 5.6
+        # remove when impi is unpinned
+        - xz 5.2  # [win]
     test:
       script: test-libdolfinx.sh  # [not win]
       script: test-libdolfinx.bat  # [win]
@@ -105,7 +112,6 @@ outputs:
         - ninja  # [win]
         - fenics-ffcx {{ major_minor }}.*
         - zlib  # [win]
-        - liblzma-devel  # [win]
   - name: fenics-dolfinx
     script: build-dolfinx.sh  # [not win]
     script: build-dolfinx.bat  # [win]
@@ -141,7 +147,6 @@ outputs:
         - slepc4py  # [not win]
         # cmake on windows seems to find zlib/lzma .lib dependencies needed for dolfin.dll
         - zlib  # [win]
-        - liblzma-devel  # [win]
         # not actually a dependency of the Python part, but having it here
         # seems to fix a solver error on libxml2's noicu build
         - libboost-devel
