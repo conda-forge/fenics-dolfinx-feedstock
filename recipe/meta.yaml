@@ -78,6 +78,9 @@ outputs:
         - spdlog
         - fenics-libbasix {{ major_minor }}.*
         - fenics-ufcx {{ major_minor }}.*
+        # needed for cmake via scotch
+        - zlib  # [win]
+        - liblzma-devel  # [win]
       run:
         # these don't have run_exports
         # but are needed at runtime for code generation
@@ -85,6 +88,9 @@ outputs:
         - parmetis  # [not win]
         # needs boost metadata just to CMake-load fenix-libdolfinx
         - libboost-devel
+        # needed for cmake via scotch
+        - zlib  # [win]
+        - liblzma-devel  # [win]
     test:
       script: test-libdolfinx.sh  # [not win]
       script: test-libdolfinx.bat  # [win]
