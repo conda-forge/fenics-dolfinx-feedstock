@@ -16,8 +16,6 @@ impi_devel:
 - '2021.12'
 libboost_devel:
 - '1.86'
-liblzma_devel:
-- '5'
 libptscotch:
 - 7.0.5
 libscotch:
