@@ -7,7 +7,7 @@
 {% set major_minor = version.rsplit(".", 1)[0] %}
 {% set ufl_version = "2024.2" %}
 
-{% set build = 6 %}
+{% set build = 7 %}
 
 {%- if scalar is not defined %}
 {%- set scalar = "" %}
@@ -31,7 +31,7 @@ source:
 
 build:
   number: {{ build }}
-  skip: true  # [py<39]
+  skip: true  # [py<39 or win]
   force_use_keys:
     # separate builds for each Python
     # this duplicates libdolfinx outputs, but results in faster builds

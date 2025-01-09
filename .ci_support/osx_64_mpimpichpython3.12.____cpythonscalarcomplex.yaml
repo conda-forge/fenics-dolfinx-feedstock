@@ -21,13 +21,13 @@ cxx_compiler_version:
 fmt:
 - '11'
 hdf5:
-- 1.14.4
+- 1.14.3
 libboost_devel:
 - '1.86'
 libptscotch:
-- 7.0.5
+- 7.0.6
 libscotch:
-- 7.0.5
+- 7.0.6
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
