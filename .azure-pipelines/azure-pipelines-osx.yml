@@ -40,7 +40,7 @@ jobs:
         CONFIG: osx_arm64_mpiopenmpiscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpiscalarreal
-  timeoutInMinutes: 90
+  timeoutInMinutes: 120
   variables: {}
 
   steps:
