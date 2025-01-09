@@ -86,7 +86,10 @@ outputs:
             - petsc * ${{ scalar }}_*
         - ${{ mpi | replace("impi", "impi_rt") }}
     tests:
-      - script: test-libdolfinx
+      - script:
+          file: test-libdolfinx
+          env:
+            target_platform: ${{ target_platform }}
         files:
           recipe:
             - if: win
@@ -174,6 +177,7 @@ outputs:
           file: test-dolfinx
           env:
             scalar: ${{ scalar }}
+            target_platform: ${{ target_platform }}
         files:
           recipe:
             - test_dolfinx.py
@@ -206,4 +210,3 @@ extra:
   feedstock-name: fenics-dolfinx
   recipe-maintainers:
     - minrk
-
