@@ -154,7 +154,6 @@ outputs:
         # code generation only needs c, not cxx
         - ${{ compiler("c") }}
         - pkg-config
-        - python
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
         - if: not (win or match(python, ">=3.13"))
