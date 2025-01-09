@@ -25,9 +25,9 @@ hdf5:
 libboost_devel:
 - '1.86'
 libptscotch:
-- 7.0.5
+- 7.0.6
 libscotch:
-- 7.0.5
+- 7.0.6
 macos_machine:
 - x86_64-apple-darwin13.4.0
 mpi:
