@@ -1,7 +1,7 @@
 context:
   name: fenics-dolfinx
   version: 0.9.0
-  major_minor: ${{ version | split(".") | slice(2) | first | join(".") }}.*
+  major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
   build: 8
 
