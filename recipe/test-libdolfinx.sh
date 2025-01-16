@@ -15,6 +15,7 @@ if [[ "$target_platform" =~ "linux" ]]; then
   # ref: https://github.com/FEniCS/dolfinx/pull/3216/files#diff-1bba462ab050e89360fd88110a689e85ee037749cea091a1848ab574381d3795R260-R265
   export CXXFLAGS="${CXXFLAGS} -Wno-array-bounds"
 fi
+export CMAKE_GENERATOR=Ninja
 
 cmake -DCMAKE_BUILD_TYPE=Developer -B build-test/ -S cpp/test/
 cmake --build build-test --parallel "${CPU_COUNT:-1}" --verbose
