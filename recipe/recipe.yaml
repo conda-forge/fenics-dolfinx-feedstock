@@ -3,7 +3,7 @@ context:
   version: 0.9.0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  build: 8
+  build: 9
 
 recipe:
   name: ${{ name|lower }}
@@ -107,7 +107,7 @@ outputs:
             - catch2 3.*
             - ninja
             - fenics-ffcx ${{ major_minor }}
-    
+
   - package:
       name: fenics-dolfinx
     build:
