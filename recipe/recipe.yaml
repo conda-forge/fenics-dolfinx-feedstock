@@ -3,7 +3,7 @@ context:
   version: 0.9.0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  build: 8
+  build: 9
 
 recipe:
   name: ${{ name|lower }}
@@ -80,11 +80,12 @@ outputs:
             - zlib
             - liblzma-devel
       run_exports:
-        - ${{ pin_subpackage("fenics-libdolfinx", upper_bound="x.x.x") }}
-        - if: not win
-          then:
-            - petsc * ${{ scalar }}_*
-        - ${{ mpi | replace("impi", "impi_rt") }}
+        weak:
+          - ${{ pin_subpackage("fenics-libdolfinx", upper_bound="x.x.x") }}
+          - if: not win
+            then:
+              - petsc * ${{ scalar }}_*
+          - ${{ mpi | replace("impi", "impi_rt") }}
     tests:
       - script:
           file: test-libdolfinx
