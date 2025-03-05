@@ -29,11 +29,6 @@ cd $TEST_DIR/python/test
 if [[ "$target_platform" == "linux-aarch64" || "$target_platform" == "linux-ppc64le" ]]; then
   # emulated platforms time out running tests
   TESTS="unit/fem/test_fem_pipeline.py::test_P_simplex unit/mesh/test_mesh_partitioners.py"
-  
-  # emulated platforms are seeing crashes in ucs _sometimes_
-  # try avoiding ucx
-  export MPICH_CH4_NETMOD=ofi
-  export OMPI_MCA_osc=sm
 else
   TESTS="unit/fem/test_fem_pipeline.py unit/mesh/test_mesh_partitioners.py"
 fi
