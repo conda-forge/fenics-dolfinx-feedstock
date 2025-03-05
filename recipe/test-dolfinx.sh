@@ -2,6 +2,8 @@ set -ex
 
 pip check
 
+env | grep MPI
+
 TEST_DIR=$PWD
 
 # disable clang availability check
