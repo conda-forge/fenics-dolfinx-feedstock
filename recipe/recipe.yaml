@@ -26,6 +26,9 @@ outputs:
       name: fenics-libdolfinx
     build:
       script: build-libdolfinx
+      variant:
+        use_keys:
+          - python
     requirements:
       build:
         - ${{ compiler("c") }}
