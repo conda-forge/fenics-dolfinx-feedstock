@@ -2,7 +2,10 @@ set -ex
 
 pip check
 
-env | grep MPI
+# UCX seems to segfault sometimes on linux-aarch64 without this
+# see https://github.com/JuliaParallel/MPI.jl/pull/370
+# and https://github.com/openucx/ucx/issues/4870
+export UCX_MEM_EVENTS=no
 
 TEST_DIR=$PWD
 

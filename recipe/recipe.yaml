@@ -172,21 +172,11 @@ outputs:
         - fenics-ffcx ${{ major_minor }}
         - fenics-ufl ${{ ufl_version }}
     tests:
-      # - python:
-      #     pip_check: true
-      #     imports:
-      #       - dolfinx
       - script:
           file: test-dolfinx
           env:
             scalar: ${{ scalar }}
             target_platform: ${{ target_platform }}
-            # emulated platforms are seeing crashes in ucs _sometimes_
-            # try avoiding ucx
-            MPICH_CH4_NETMOD: ofi
-            OMPI_MCA_osc: sm
-            OMPI_MCA_coll_ucc_enable: "0"
-            
         files:
           recipe:
             - test_dolfinx.py
