@@ -26,6 +26,9 @@ outputs:
       name: fenics-libdolfinx
     build:
       script: build-libdolfinx
+      variant:
+        use_keys:
+          - python
     requirements:
       build:
         - ${{ compiler("c") }}
@@ -169,10 +172,6 @@ outputs:
         - fenics-ffcx ${{ major_minor }}
         - fenics-ufl ${{ ufl_version }}
     tests:
-      - python:
-          pip_check: true
-          imports:
-            - dolfinx
       - script:
           file: test-dolfinx
           env:
