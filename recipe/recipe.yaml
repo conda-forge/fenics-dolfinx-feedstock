@@ -3,7 +3,7 @@ context:
   version: 0.9.0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  build: 10
+  build: 11
 
 recipe:
   name: ${{ name|lower }}
@@ -125,11 +125,10 @@ outputs:
         - ninja
         - pkg-config
         - if: build_platform != target_platform
-          then: python
-        - if: build_platform != target_platform
-          then: cross-python_${{ target_platform }}
-        - if: build_platform != target_platform
-          then: nanobind
+          then:
+            - python
+            - cross-python_${{ target_platform }}
+            - nanobind
         - if: mpi == 'openmpi' and build_platform != target_platform
           then: ${{ mpi }}
       host:
