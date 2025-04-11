@@ -3,7 +3,7 @@ context:
   version: 0.9.0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  build: 11
+  build: 12
 
 recipe:
   name: ${{ name|lower }}
@@ -129,8 +129,8 @@ outputs:
             - python
             - cross-python_${{ target_platform }}
             - nanobind
-        - if: mpi == 'openmpi' and build_platform != target_platform
-          then: ${{ mpi }}
+            - if: mpi == 'openmpi'
+              then: ${{ mpi }}
       host:
         - ${{ mpi | replace("impi", "impi-devel") }}
         # hdf5 shouldn't be needed here, but solver fails without it
