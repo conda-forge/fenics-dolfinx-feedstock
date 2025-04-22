@@ -19,7 +19,7 @@ source:
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
-  skip: win # temporarily
+  skip: win or ppc64le # temporarily
 
 outputs:
   - package:
