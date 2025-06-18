@@ -1,17 +1,18 @@
 context:
   name: fenics-dolfinx
-  version: 0.9.0
+  version: 0.9.0_monthly
+  commit_sha: 5fcb988c5b0f46b8f9183bc844d8f533a2130d6a
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  build: 14
+  build: 0
 
 recipe:
   name: ${{ name|lower }}
   version: ${{ version }}
 
 source:
-  url: https://github.com/fenics/dolfinx/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1
+  url: https://github.com/FEniCS/dolfinx/archive/${{ commit_sha }}.tar.gz
+  sha256: 05ff796907748c69b7f166f9f2de9e5d601760860f5735108091569e0c4baac9
   patches:
     # cffi is pinned down for a bug
     # but 1.17 is needed for Windows, CPython 3.13
