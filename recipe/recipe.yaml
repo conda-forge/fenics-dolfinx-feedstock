@@ -1,9 +1,15 @@
 context:
   name: fenics-dolfinx
   version: 0.9.0
+  build: 15
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  build: 15
+  
+  # nanobind abi:
+  # cxx_compiler_version not specified on Windows
+  # extract from cxx_compiler
+  cxx_compiler_version: ${{ cxx_compiler_version | default(cxx_compiler | replace("vs", "")) }}
+  abi_version: 1.${{ nanobind_abi }}.${{ cxx_compiler_version }}
 
 recipe:
   name: ${{ name|lower }}
@@ -124,6 +130,7 @@ outputs:
         - cmake
         - ninja
         - pkg-config
+        - fenics-basix-nanobind-abi ${{ abi_version }}.*
         - if: build_platform != target_platform
           then:
             - python
@@ -144,7 +151,7 @@ outputs:
         - nanobind
         - nanobind-abi
         - fenics-basix ${{ major_minor }}
-        - fenics-basix-nanobind-abi
+        - fenics-basix-nanobind-abi ${{ abi_version }}.*
         - mpi4py
         - if: not win
           then:
