@@ -129,6 +129,7 @@ outputs:
             - python
             - cross-python_${{ target_platform }}
             - nanobind
+            - nanobind-abi
             - if: mpi == 'openmpi'
               then: ${{ mpi }}
       host:
@@ -141,6 +142,7 @@ outputs:
         - scikit-build-core
         - wheel
         - nanobind
+        - nanobind-abi
         - fenics-basix ${{ major_minor }}
         - fenics-basix-nanobind-abi
         - mpi4py

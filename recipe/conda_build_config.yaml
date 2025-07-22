@@ -1,7 +1,5 @@
-c_compiler:    # [win]
-- vs2022       # [win]
-cxx_compiler:  # [win]
-- vs2022       # [win]
+nanobind_abi:
+  - 15
 
 mpi:
   - mpich  # [not win]
