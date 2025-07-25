@@ -1,10 +1,10 @@
 context:
   name: fenics-dolfinx
   version: 0.9.0
-  build: 16
+  build: 17
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
-  
+
   # nanobind abi:
   # cxx_compiler_version not specified on Windows
   # extract from cxx_compiler
