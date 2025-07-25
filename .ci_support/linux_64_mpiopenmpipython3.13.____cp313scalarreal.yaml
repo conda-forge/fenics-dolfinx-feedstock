@@ -23,7 +23,7 @@ fmt:
 hdf5:
 - 1.14.6
 libboost_devel:
-- '1.86'
+- '1.88'
 libptscotch:
 - 7.0.6
 libscotch:
