@@ -4,13 +4,13 @@ context:
   build: 0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
+  # Python Stable ABI (SABI with nanobind requires 3.12)
+  abi3_tag: cp312
+  build_abi3: ${{ is_abi3 and match(python, "3.12.*") }}
+  skip_abi3: ${{ is_abi3 and match(python, ">=3.13") }}
 
   # nanobind abi:
-  # cxx_compiler_version not specified on Windows
-  # extract from cxx_compiler
-  cxx_compiler_version: ${{ cxx_compiler_version | default(cxx_compiler | replace("vs", "")) }}
-  # abi_version: 1.${{ nanobind_abi }}.${{ cxx_compiler_version }}
-  abi_version: 0.${{ nanobind }}.${{ cxx_compiler_version }}
+  abi_version: 2.${{ nanobind_abi }}
 
 recipe:
   name: ${{ name|lower }}
@@ -26,7 +26,7 @@ source:
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
-  skip: win or ppc64le # temporarily
+  skip: win or ppc64le or skip_abi3
 
 outputs:
   - package:
@@ -101,6 +101,7 @@ outputs:
           file: test-libdolfinx
           env:
             target_platform: ${{ target_platform }}
+            CONDA_BUILD: "1"
         files:
           recipe:
             - if: win
@@ -126,7 +127,12 @@ outputs:
   - package:
       name: fenics-dolfinx
     build:
-      script: build-dolfinx
+      script:
+        file: build-dolfinx
+        env:
+          SKBUILD_WHEEL_PY_API: ${{ "cp312" if build_abi3 else "" }}
+      python:
+        version_independent: ${{ build_abi3 }}
     requirements:
       build:
         - ${{ compiler("c") }}
@@ -141,7 +147,7 @@ outputs:
             - python
             - cross-python_${{ target_platform }}
             - nanobind
-            # - nanobind-abi
+            - nanobind-abi
             - if: mpi == 'openmpi'
               then: ${{ mpi }}
       host:
@@ -149,12 +155,16 @@ outputs:
         # hdf5 shouldn't be needed here, but solver fails without it
         - hdf5 ${{ hdf5 }}.* mpi_${{ mpi }}_*
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
+        - fenics-libdolfinx ${{ major_minor }}
         - python
+        - if: build_abi3
+          then:
+            - python-abi3
         - pip
         - scikit-build-core
         - wheel
         - nanobind
-        # - nanobind-abi
+        - nanobind-abi
         - fenics-basix ${{ major_minor }}
         - fenics-basix-nanobind-abi ${{ abi_version }}.*
         - mpi4py
@@ -173,7 +183,7 @@ outputs:
         - pkg-config
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
-        - if: not (win or match(python, ">=3.13"))
+        - if: not (win or match(python, ">=3.12"))
           then: cffi <1.17
         - mpi4py
         - numpy >=1.21
@@ -216,6 +226,14 @@ outputs:
             - sympy
             - scipy
             - matplotlib-base
+      - if: build_abi3
+        then:
+          - script:
+              - abi3audit $PREFIX/lib/python3.13/site-packages/dolfinx/*.so --assume-minimum-abi3 3.12
+            requirements:
+              run:
+                - abi3audit
+                - python 3.13.*
 
 about:
   summary: The computational environment of FEniCSx

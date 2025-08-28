@@ -1,0 +1,38 @@
+diff --git a/python/CMakeLists.txt b/python/CMakeLists.txt
+index 2a9f9de56e..a9f7dffe6a 100644
+--- a/python/CMakeLists.txt
++++ b/python/CMakeLists.txt
+@@ -10,7 +10,7 @@ endif(WIN32)
+ 
+ find_package(
+   Python
+-  COMPONENTS Interpreter Development
++  COMPONENTS Interpreter Development ${SKBUILD_SABI_COMPONENT}
+   REQUIRED
+ )
+ 
+@@ -31,9 +31,15 @@ endif()
+ 
+ # Create the binding library nanobind handles its own calls to
+ # target_link_libraries
++
++if(NOT "${SKBUILD_SABI_VERSION}" STREQUAL "")
++  set(NANOBIND_SABI "STABLE_ABI")
++endif()
++
+ nanobind_add_module(
+   cpp
+   NOMINSIZE
++  ${NANOBIND_SABI}
+   dolfinx/wrappers/dolfinx.cpp
+   dolfinx/wrappers/assemble.cpp
+   dolfinx/wrappers/common.cpp
+@@ -47,6 +53,8 @@ nanobind_add_module(
+   dolfinx/wrappers/petsc.cpp
+   dolfinx/wrappers/refinement.cpp
+ )
++target_compile_definitions(cpp PRIVATE CYTHON_COMPILING_IN_LIMITED_APIxx=1)
++target_compile_definitions(cpp PRIVATE MPI4PY_LIMITED_APIxx=1)
+ target_compile_definitions(cpp PRIVATE cxx_std_20)
+ 
+ # Add DOLFINx libraries

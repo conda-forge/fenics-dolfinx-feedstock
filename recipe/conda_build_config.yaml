@@ -1,7 +1,7 @@
 nanobind_abi:
   - 16
 nanobind:
-  - "2.8"
+  - "2.9"
 
 mpi:
   - mpich  # [not win]
@@ -11,9 +11,3 @@ mpi:
 scalar:
   - real  # [not win]
   - complex  # [not win]
-
-# FIXME: weird mpi crashes in #89
-# due to something in intel mpi update
-# from 2012.12 to 2012.13
-impi:
-  - "2021.12"  # [win]
