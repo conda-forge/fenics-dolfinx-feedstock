@@ -25,9 +25,9 @@ hdf5:
 libboost_devel:
 - '1.88'
 libptscotch:
-- 7.0.6
+- 7.0.8
 libscotch:
-- 7.0.6
+- 7.0.8
 macos_machine:
 - arm64-apple-darwin20.0.0
 mpi:
@@ -39,9 +39,9 @@ nanobind:
 openmpi:
 - '5'
 petsc:
-- '3.23'
+- '3.24'
 petsc4py:
-- '3.23'
+- '3.24'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -53,9 +53,9 @@ python:
 scalar:
 - real
 slepc:
-- '3.23'
+- '3.24'
 slepc4py:
-- '3.23'
+- '3.24'
 spdlog:
 - '1.15'
 target_platform:
