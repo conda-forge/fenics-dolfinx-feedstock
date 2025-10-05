@@ -5,169 +5,169 @@
 jobs:
 - job: osx
   pool:
-    vmImage: macOS-13
+    vmImage: macOS-15
   strategy:
     matrix:
-      osx_64_mpimpichpython3.10.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarcomplex
+      osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonsca_hd5dcb8e8
-      osx_64_mpimpichpython3.10.____cpythonscalarreal:
-        CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgeconda-f_h54f29bdf
+      osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
-      osx_64_mpimpichpython3.11.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgeconda-f_h8303c723
+      osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonsca_hce2edf6d
-      osx_64_mpimpichpython3.11.____cpythonscalarreal:
-        CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgeconda-f_ha32897b3
+      osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
-      osx_64_mpimpichpython3.12.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgeconda-f_h35e75734
+      osx_64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonsca_h498bbdcf
-      osx_64_mpimpichpython3.12.____cpythonscalarreal:
-        CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_h15b69cfb
+      osx_64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
-      osx_64_mpimpichpython3.13.____cp313scalarcomplex:
-        CONFIG: osx_64_mpimpichpython3.13.____cp313scalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_hce59eac2
+      osx_64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.13.____cp313scalarcomplex
-      osx_64_mpimpichpython3.13.____cp313scalarreal:
-        CONFIG: osx_64_mpimpichpython3.13.____cp313scalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_ha57b1fe8
+      osx_64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.13.____cp313scalarreal
-      osx_64_mpimpichpython3.9.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_h37bd4f3d
+      osx_64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.9.____cpythonscal_hca97d18f
-      osx_64_mpimpichpython3.9.____cpythonscalarreal:
-        CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_hc8b524a5
+      osx_64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.9.____cpythonscalarreal
-      osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_h51fb8626
+      osx_64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h3248b6c8
-      osx_64_mpiopenmpipython3.10.____cpythonscalarreal:
-        CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_h5cf572a7
+      osx_64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h588c2b78
-      osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempimpic_h9f38c4a1
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_hafbfc68d
-      osx_64_mpiopenmpipython3.11.____cpythonscalarreal:
-        CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_h8c26ff96
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_h6a18a4a9
-      osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_h18d3c383
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_hdf15701b
-      osx_64_mpiopenmpipython3.12.____cpythonscalarreal:
-        CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_hdff0de5c
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_h9cf4cb98
-      osx_64_mpiopenmpipython3.13.____cp313scalarcomplex:
-        CONFIG: osx_64_mpiopenmpipython3.13.____cp313scalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_h13f620b7
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.13.____cp313sca_h299f7b89
-      osx_64_mpiopenmpipython3.13.____cp313scalarreal:
-        CONFIG: osx_64_mpiopenmpipython3.13.____cp313scalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_hb073c97c
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.13.____cp313scalarreal
-      osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex:
-        CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_h1a2dde96
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarcomplex:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.9.____cpythonsc_h1213cd03
-      osx_64_mpiopenmpipython3.9.____cpythonscalarreal:
-        CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarreal
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_h52f1574d
+      osx_64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarreal:
+        CONFIG: osx_64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.9.____cpythonscalarreal
-      osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_64_channel_sourcesconda-forgempiopen_hf560618e
+      osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_ha82255f8
-      osx_arm64_mpimpichpython3.10.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgecond_h65b7ba1a
+      osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpimpichpython3.14.____cp314scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_h7c481527
-      osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgecond_h5614ff27
+      osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_ha33ed6b0
-      osx_arm64_mpimpichpython3.11.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgecond_h9109ee42
+      osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgeconda-forgelabelpython_rcmpiopenmpipython3.14.____cp314scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_hc3fa011c
-      osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgecond_h4d6346b0
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hd3112ea8
-      osx_arm64_mpimpichpython3.12.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h7d49da06
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hb4e82c4d
-      osx_arm64_mpimpichpython3.13.____cp313scalarcomplex:
-        CONFIG: osx_arm64_mpimpichpython3.13.____cp313scalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h6fb5d2a4
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.13.____cp313sc_hc416d471
-      osx_arm64_mpimpichpython3.13.____cp313scalarreal:
-        CONFIG: osx_arm64_mpimpichpython3.13.____cp313scalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h8c7fb25f
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.13.____cp313scalarreal
-      osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h52471f37
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.9.____cpythons_hf0fafa09
-      osx_arm64_mpimpichpython3.9.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpimpichpython3.9.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h46733ab1
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.9.____cpythons_hcab1f7e0
-      osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h1d8e93fb
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_ha299e372
-      osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_hcea5efdc
+      osx_arm64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempimpichpython3.13.____cp313scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_h95734737
-      osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempim_h79f0e4b0
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_h48703a1a
-      osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_hfe2f60de
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_hd087caea
-      osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_hace360ee
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_h26e1910f
-      osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_hcd2b27b1
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_hbb100134
-      osx_arm64_mpiopenmpipython3.13.____cp313scalarcomplex:
-        CONFIG: osx_arm64_mpiopenmpipython3.13.____cp313scalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_h0b41aad1
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.13.____cp313_h04dd567b
-      osx_arm64_mpiopenmpipython3.13.____cp313scalarreal:
-        CONFIG: osx_arm64_mpiopenmpipython3.13.____cp313scalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_h076b1db6
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.13.____cp313_h86d0316f
-      osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex:
-        CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarcomplex
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_h61a75180
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarcomplex:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.9.____cpytho_hfe3acf5e
-      osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal:
-        CONFIG: osx_arm64_mpiopenmpipython3.9.____cpythonscalarreal
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_hed9b64d0
+      osx_arm64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarreal:
+        CONFIG: osx_arm64_channel_sourcesconda-forgempiopenmpipython3.13.____cp313scalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.9.____cpytho_h58153b4b
+        SHORT_CONFIG: osx_arm64_channel_sourcesconda-forgempio_h610d4a15
     maxParallel: 25
   timeoutInMinutes: 120
   variables: {}
