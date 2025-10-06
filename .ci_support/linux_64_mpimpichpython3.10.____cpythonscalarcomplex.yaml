@@ -35,9 +35,9 @@ nanobind:
 openmpi:
 - '5'
 petsc:
-- '3.23'
+- '3.24'
 petsc4py:
-- '3.23'
+- '3.24'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -49,9 +49,9 @@ python:
 scalar:
 - complex
 slepc:
-- '3.23'
+- '3.24'
 slepc4py:
-- '3.23'
+- '3.24'
 spdlog:
 - '1.15'
 target_platform:
