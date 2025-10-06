@@ -6,8 +6,6 @@ c_stdlib:
 - sysroot
 c_stdlib_version:
 - '2.17'
-cdt_name:
-- conda
 channel_sources:
 - conda-forge
 channel_targets:
@@ -25,9 +23,9 @@ hdf5:
 libboost_devel:
 - '1.88'
 libptscotch:
-- 7.0.6
+- 7.0.10
 libscotch:
-- 7.0.6
+- 7.0.10
 mpi:
 - mpich
 mpich:
