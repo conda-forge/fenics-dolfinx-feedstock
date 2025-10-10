@@ -6,8 +6,6 @@ c_stdlib:
 - sysroot
 c_stdlib_version:
 - '2.17'
-cdt_name:
-- conda
 channel_sources:
 - conda-forge
 channel_targets:
@@ -25,9 +23,9 @@ hdf5:
 libboost_devel:
 - '1.88'
 libptscotch:
-- 7.0.6
+- 7.0.10
 libscotch:
-- 7.0.6
+- 7.0.10
 mpi:
 - mpich
 mpich:
@@ -37,9 +35,9 @@ nanobind:
 openmpi:
 - '5'
 petsc:
-- '3.23'
+- '3.24'
 petsc4py:
-- '3.23'
+- '3.24'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -51,9 +49,9 @@ python:
 scalar:
 - real
 slepc:
-- '3.23'
+- '3.24'
 slepc4py:
-- '3.23'
+- '3.24'
 spdlog:
 - '1.15'
 target_platform:

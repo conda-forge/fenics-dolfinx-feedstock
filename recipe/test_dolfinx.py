@@ -29,7 +29,7 @@ def test_petsc_scalar():
         "slepc",
         "kahip",
         "petsc",
-        # "scotch",
+        "ptscotch",
     ])
 def test_has(feature):
     assert getattr(common, f"has_{feature}")

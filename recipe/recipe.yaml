@@ -1,7 +1,7 @@
 context:
   name: fenics-dolfinx
   version: 0.9.0
-  build: 17
+  build: 18
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2024.2.*"
 
@@ -203,7 +203,12 @@ outputs:
             - pytest >=6
             - python-gmsh
             - if: linux and aarch64
-              then: cairo
+              then:
+                - libgl-devel
+                # seem to be getting nvpl on py310 for some reason
+                # which doesn't have sparse symbols
+                # 
+                - blas[build=openblas]
             - if: linux and target_platform != build_platform
               then:
                 # __glibc virtual package seems to resolve wrong on emulated linux
