@@ -209,7 +209,7 @@ outputs:
                 # __glibc virtual package seems to resolve wrong on emulated linux
                 - ${{ stdlib("c") }}
             - sympy
-            - scipy
+            - scipy >=1.16
             - matplotlib-base
 
 about:
