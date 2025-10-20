@@ -20,6 +20,8 @@ fmt:
 - '11.2'
 hdf5:
 - 1.14.6
+is_abi3:
+- true
 libboost_devel:
 - '1.88'
 libptscotch:
@@ -31,7 +33,9 @@ mpi:
 mpich:
 - '4'
 nanobind:
-- '2.8'
+- '2.9'
+nanobind_abi:
+- '16'
 openmpi:
 - '5'
 petsc:
