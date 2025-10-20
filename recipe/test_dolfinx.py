@@ -6,7 +6,7 @@ import gmsh
 import numpy as np
 import pytest
 from dolfinx.cpp import common
-from dolfinx.io import gmshio
+from dolfinx.io import gmsh as gmshio
 from mpi4py import MPI
 from dolfinx import default_scalar_type
 
@@ -46,7 +46,7 @@ def test_gmshio():
 
     gmsh_model_rank = 0
     mesh_comm = MPI.COMM_WORLD
-    domain, cell_markers, facet_markers = gmshio.model_to_mesh(
+    mesh_data = gmshio.model_to_mesh(
         gmsh.model, mesh_comm, gmsh_model_rank, gdim=2
     )
     gmsh.finalize()
