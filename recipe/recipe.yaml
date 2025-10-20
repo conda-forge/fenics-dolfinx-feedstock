@@ -224,12 +224,15 @@ outputs:
             - matplotlib-base
       - if: build_abi3
         then:
-          - script:
-              - abi3audit $PREFIX/lib/python3.13/site-packages/dolfinx/*.so --assume-minimum-abi3 3.12
-              - python3 -c 'import dolfinx'
-            requirements:
-              run:
-                - abi3audit
+          - if: unix
+            then:
+              - script:
+                  - abi3audit $PREFIX/lib/python3.13/site-packages/dolfinx/*.so --assume-minimum-abi3 3.12
+                  - python3 -c 'import dolfinx'
+                requirements:
+                  run:
+                    - abi3audit
+                    - python 3.13.*
           # duplicate of above test, run with latest python
           - script:
               file: test-dolfinx
