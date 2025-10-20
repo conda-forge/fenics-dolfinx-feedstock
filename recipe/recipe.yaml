@@ -19,7 +19,7 @@ recipe:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: d9d4be17bff951106b5c73fcffab81fbd9a700b656f00ed7bef30b89c53e68d2
+  sha256: 24cbad2f604b38248e7655280e5f894eed19b409de4618cd6148a362a70105fd
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
