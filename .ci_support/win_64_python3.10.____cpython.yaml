@@ -1,0 +1,50 @@
+c_compiler:
+- vs2022
+c_stdlib:
+- vs
+channel_sources:
+- conda-forge
+channel_targets:
+- conda-forge main
+cxx_compiler:
+- vs2022
+fmt:
+- '11.2'
+hdf5:
+- 1.14.6
+impi_devel:
+- '2021.14'
+is_abi3:
+- true
+libboost_devel:
+- '1.88'
+liblzma_devel:
+- '5'
+libptscotch:
+- 7.0.10
+libscotch:
+- 7.0.10
+mpi:
+- impi
+mpich:
+- '4'
+nanobind:
+- '2.9'
+nanobind_abi:
+- '16'
+openmpi:
+- '5'
+pin_run_as_build:
+  python:
+    min_pin: x.x
+    max_pin: x.x
+pugixml:
+- '1.15'
+python:
+- 3.10.* *_cpython
+spdlog:
+- '1.15'
+target_platform:
+- win-64
+zlib:
+- '1'
