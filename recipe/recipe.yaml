@@ -3,10 +3,11 @@ context:
   version: "0.10.0"
   build: 0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
-  ufl_version: "2024.2.*"
+  ufl_version: "2025.2.*"
   # Python Stable ABI (SABI with nanobind requires 3.12)
   abi3_tag: cp312
-  build_abi3: ${{ is_abi3 and match(python, "3.12.*") }}
+  abi3_python: "3.12"
+  build_abi3: ${{ is_abi3 and match(python, abi3_python + ".*") }}
   skip_abi3: ${{ is_abi3 and match(python, ">=3.13") }}
 
   # nanobind abi:
@@ -19,10 +20,6 @@ recipe:
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v${{ version }}.tar.gz
   sha256: d9d4be17bff951106b5c73fcffab81fbd9a700b656f00ed7bef30b89c53e68d2
-  patches:
-    # cffi is pinned down for a bug
-    # but 1.17 is needed for Windows, CPython 3.13
-    - unpin-cffi.patch
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
@@ -183,8 +180,6 @@ outputs:
         - pkg-config
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
-        - if: not (win or match(python, ">=3.12"))
-          then: cffi <1.17
         - mpi4py
         - numpy >=1.21
         - if: not win
@@ -209,6 +204,7 @@ outputs:
             - python/test/
         requirements:
           run:
+            - python ${{ python }}
             - pip
             - pytest >=6
             - python-gmsh
@@ -230,10 +226,39 @@ outputs:
         then:
           - script:
               - abi3audit $PREFIX/lib/python3.13/site-packages/dolfinx/*.so --assume-minimum-abi3 3.12
+              - python3 -c 'import dolfinx'
             requirements:
               run:
                 - abi3audit
+          # duplicate of above test, run with latest python
+          - script:
+              file: test-dolfinx
+              env:
+                scalar: ${{ scalar }}
+                target_platform: ${{ target_platform }}
+                CONDA_BUILD: "1"
+            files:
+              recipe:
+                - test_dolfinx.py
+              source:
+                - python/demo/
+                - python/test/
+            requirements:
+              run:
                 - python 3.13.*
+                - pip
+                - pytest >=6
+                - python-gmsh
+                - if: linux and aarch64
+                  then:
+                    - libgl-devel
+                - if: linux and target_platform != build_platform
+                  then:
+                    # __glibc virtual package seems to resolve wrong on emulated linux
+                    - ${{ stdlib("c") }}
+                - sympy
+                - scipy
+                - matplotlib-base
 
 about:
   summary: The computational environment of FEniCSx
