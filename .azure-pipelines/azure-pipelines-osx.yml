@@ -104,6 +104,7 @@ jobs:
         CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_hbb100134
+    maxParallel: 24
   timeoutInMinutes: 120
   variables: {}
 

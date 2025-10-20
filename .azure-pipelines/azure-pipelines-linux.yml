@@ -128,6 +128,7 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
         SHORT_CONFIG: linux_aarch64_mpiopenmpipython3.12.____c_h056cd857
+    maxParallel: 24
   timeoutInMinutes: 120
   variables: {}
 
