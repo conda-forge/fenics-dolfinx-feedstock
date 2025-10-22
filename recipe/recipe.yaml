@@ -1,6 +1,6 @@
 context:
   name: fenics-dolfinx
-  version: "0.10.0"
+  version: "0.10.0.post0"
   build: 0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2025.2.*"
@@ -19,7 +19,7 @@ recipe:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 24cbad2f604b38248e7655280e5f894eed19b409de4618cd6148a362a70105fd
+  sha256: d3bc5e38c5ab2f69a9af6e645c03168ec565b9be2dd01b8d0eceed898a4c2df6
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
