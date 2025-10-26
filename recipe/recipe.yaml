@@ -1,7 +1,7 @@
 context:
   name: fenics-dolfinx
   version: "0.10.0"
-  build: 0
+  build: 1
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2025.2.*"
   # Python Stable ABI (SABI with nanobind requires 3.12)
