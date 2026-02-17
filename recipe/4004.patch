@@ -1,0 +1,94 @@
+From 4ed117b443a06041b1a22d82a3ae91c637d061b3 Mon Sep 17 00:00:00 2001
+From: qbisi <qbisicwate@gmail.com>
+Date: Tue, 25 Nov 2025 08:47:41 +0800
+Subject: [PATCH 1/4] fix build with adios2 v2.11
+
+The target cxx11_mpi has been renamed to cxx_mpi since adios2 v2.11.
+---
+ cpp/dolfinx/CMakeLists.txt | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/cpp/dolfinx/CMakeLists.txt b/cpp/dolfinx/CMakeLists.txt
+index 1485d757fb..9958b1beb0 100644
+--- a/cpp/dolfinx/CMakeLists.txt
++++ b/cpp/dolfinx/CMakeLists.txt
+@@ -123,7 +123,15 @@ target_link_libraries(dolfinx PUBLIC hdf5::hdf5)
+ # ADIOS2
+ if(ADIOS2_FOUND)
+   target_compile_definitions(dolfinx PUBLIC HAS_ADIOS2)
+-  target_link_libraries(dolfinx PUBLIC adios2::cxx11_mpi)
++  if(TARGET adios2::cxx_mpi)
++    set(_adios2_mpi_target adios2::cxx_mpi)
++  elseif(TARGET adios2::cxx11_mpi)
++    set(_adios2_mpi_target adios2::cxx11_mpi)
++  else()
++    message(FATAL_ERROR
++      "ADIOS2 found, but no MPI target available")
++  endif()
++  target_link_libraries(dolfinx PUBLIC ${_adios2_mpi_target})
+ endif()
+ 
+ # PETSc
+
+From c4d98a76df6cb2377a64c6722e64461da67ff015 Mon Sep 17 00:00:00 2001
+From: qbisi <qbisicwate@gmail.com>
+Date: Tue, 25 Nov 2025 09:00:37 +0800
+Subject: [PATCH 2/4] find adios2 with component MPI
+
+---
+ cpp/CMakeLists.txt | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
+index c324bc7eb4..d5d51cf44d 100644
+--- a/cpp/CMakeLists.txt
++++ b/cpp/CMakeLists.txt
+@@ -377,15 +377,9 @@ set_package_properties(
+ # ------------------------------------------------------------------------------
+ # Find optional packages
+ if(DOLFINX_ENABLE_ADIOS2 AND _REQUIRE_ADIOS2)
+-  find_package(ADIOS2 2.8.1 REQUIRED COMPONENTS CXX)
++  find_package(ADIOS2 2.8.1 REQUIRED COMPONENTS CXX MPI)
+ elseif(DOLFINX_ENABLE_ADIOS2)
+-  find_package(ADIOS2 2.8.1 COMPONENTS CXX)
+-endif()
+-if(ADIOS2_FOUND AND NOT ADIOS2_HAVE_MPI)
+-  message(
+-    FATAL_ERROR
+-      "Found serial ADIOS2, MPI ADIOS2 build required. Try setting ADIOS2_DIR or ADIOS2_ROOT."
+-  )
++  find_package(ADIOS2 2.8.1 COMPONENTS CXX MPI)
+ endif()
+ 
+ if(DOLFINX_ENABLE_PETSC)
+
+From c4e185956134f0c2567c663c42521d172c3c98b3 Mon Sep 17 00:00:00 2001
+From: qbisi <qbisicwate@gmail.com>
+Date: Wed, 26 Nov 2025 23:21:43 +0800
+Subject: [PATCH 3/4] BUMP adios2 to 2.11.0
+
+---
+ cpp/dolfinx/CMakeLists.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/cpp/dolfinx/CMakeLists.txt b/cpp/dolfinx/CMakeLists.txt
+index 9958b1beb0..2bb1688407 100644
+--- a/cpp/dolfinx/CMakeLists.txt
++++ b/cpp/dolfinx/CMakeLists.txt
+@@ -123,13 +123,15 @@ target_link_libraries(dolfinx PUBLIC hdf5::hdf5)
+ # ADIOS2
+ if(ADIOS2_FOUND)
+   target_compile_definitions(dolfinx PUBLIC HAS_ADIOS2)
++  # ADIOS2 2.11 and later
+   if(TARGET adios2::cxx_mpi)
+     set(_adios2_mpi_target adios2::cxx_mpi)
++  # And prior
+   elseif(TARGET adios2::cxx11_mpi)
+     set(_adios2_mpi_target adios2::cxx11_mpi)
+   else()
+     message(FATAL_ERROR
+-      "ADIOS2 found, but no MPI target available")
++      "ADIOS2 found, but no adios2::cxx*_mpi target found.")
+   endif()
+   target_link_libraries(dolfinx PUBLIC ${_adios2_mpi_target})
+ endif()
