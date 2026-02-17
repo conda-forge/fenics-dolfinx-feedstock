@@ -19,7 +19,7 @@ cxx_compiler:
 cxx_compiler_version:
 - '19'
 fmt:
-- '11.2'
+- '12.0'
 hdf5:
 - 1.14.6
 is_abi3:
@@ -27,9 +27,9 @@ is_abi3:
 libboost_devel:
 - '1.88'
 libptscotch:
-- 7.0.10
+- 7.0.11
 libscotch:
-- 7.0.10
+- 7.0.11
 macos_machine:
 - arm64-apple-darwin20.0.0
 mpi:
@@ -61,7 +61,7 @@ slepc:
 slepc4py:
 - '3.24'
 spdlog:
-- '1.15'
+- '1.16'
 target_platform:
 - osx-arm64
 zip_keys:
