@@ -19,7 +19,7 @@ cxx_compiler:
 cxx_compiler_version:
 - '19'
 fmt:
-- '12.0'
+- '12.1'
 hdf5:
 - 1.14.6
 is_abi3:
@@ -61,7 +61,7 @@ slepc:
 slepc4py:
 - '3.24'
 spdlog:
-- '1.16'
+- '1.17'
 target_platform:
 - osx-arm64
 zip_keys:
