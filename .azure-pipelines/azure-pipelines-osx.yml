@@ -5,105 +5,130 @@
 jobs:
 - job: osx
   pool:
-    vmImage: macOS-15
+    vmImage: $(VMIMAGE)
   strategy:
     matrix:
       osx_64_mpimpichpython3.10.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonsca_hd5dcb8e8
+        VMIMAGE: macOS-15
       osx_64_mpimpichpython3.10.____cpythonscalarreal:
         CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
+        VMIMAGE: macOS-15
       osx_64_mpimpichpython3.11.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonsca_hce2edf6d
+        VMIMAGE: macOS-15
       osx_64_mpimpichpython3.11.____cpythonscalarreal:
         CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
+        VMIMAGE: macOS-15
       osx_64_mpimpichpython3.12.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonsca_h498bbdcf
+        VMIMAGE: macOS-15
       osx_64_mpimpichpython3.12.____cpythonscalarreal:
         CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
+        VMIMAGE: macOS-15
       osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h3248b6c8
+        VMIMAGE: macOS-15
       osx_64_mpiopenmpipython3.10.____cpythonscalarreal:
         CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h588c2b78
+        VMIMAGE: macOS-15
       osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_hafbfc68d
+        VMIMAGE: macOS-15
       osx_64_mpiopenmpipython3.11.____cpythonscalarreal:
         CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_h6a18a4a9
+        VMIMAGE: macOS-15
       osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_hdf15701b
+        VMIMAGE: macOS-15
       osx_64_mpiopenmpipython3.12.____cpythonscalarreal:
         CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_h9cf4cb98
+        VMIMAGE: macOS-15
       osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_ha82255f8
+        VMIMAGE: macOS-15
       osx_arm64_mpimpichpython3.10.____cpythonscalarreal:
         CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_h7c481527
+        VMIMAGE: macOS-15
       osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_ha33ed6b0
+        VMIMAGE: macOS-15
       osx_arm64_mpimpichpython3.11.____cpythonscalarreal:
         CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_hc3fa011c
+        VMIMAGE: macOS-15
       osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hd3112ea8
+        VMIMAGE: macOS-15
       osx_arm64_mpimpichpython3.12.____cpythonscalarreal:
         CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hb4e82c4d
+        VMIMAGE: macOS-15
       osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_ha299e372
+        VMIMAGE: macOS-15
       osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal:
         CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_h95734737
+        VMIMAGE: macOS-15
       osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_h48703a1a
+        VMIMAGE: macOS-15
       osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal:
         CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_hd087caea
+        VMIMAGE: macOS-15
       osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_h26e1910f
+        VMIMAGE: macOS-15
       osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal:
         CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_hbb100134
+        VMIMAGE: macOS-15
+    maxParallel: 24
   timeoutInMinutes: 120
   variables: {}
 
