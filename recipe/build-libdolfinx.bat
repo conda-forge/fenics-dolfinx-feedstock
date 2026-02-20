@@ -37,3 +37,8 @@ if errorlevel 1 (
 
 cmake --install build
 if errorlevel 1 exit 1
+
+:: pkgconfig gets mixed-up path separators, which rattler-build doesn't tolerate
+:: it's unused so drop it
+type %LIBRARY_PREFIX%\lib\pkgconfig\dolfinx.pc
+del %LIBRARY_PREFIX%\lib\pkgconfig\dolfinx.pc
