@@ -22,6 +22,7 @@ source:
   sha256: 24cbad2f604b38248e7655280e5f894eed19b409de4618cd6148a362a70105fd
   patches:
     - 4004.patch  # adios2 2.11 build
+    - remove-symlink.patch # windows can't handle symlinks
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
