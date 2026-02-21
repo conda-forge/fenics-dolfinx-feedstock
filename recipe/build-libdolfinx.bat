@@ -1,6 +1,10 @@
 setlocal EnableDelayedExpansion
 @echo on
 
+:: can't have symlinks in windows package, delete unused file
+:: that rattler-build installs under test-files
+del %PREFIX%/etc/conda/test-files/fenics-libdolfinx/0/cpp/test/vcpkg.json
+
 set "CXXFLAGS=%CXXFLAGS% -DH5_BUILT_AS_DYNAMIC_LIB"
 
 cmake ^
