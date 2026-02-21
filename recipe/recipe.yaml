@@ -98,7 +98,9 @@ outputs:
           - ${{ mpi | replace("impi", "impi_rt") }}
     tests:
       - script:
-          file: test-libdolfinx
+          # rattler-build bug:
+          # invoking .sh by default instead of .bat
+          file: test-libdolfinx${{ ".bat" if win else "" }}
           env:
             target_platform: ${{ target_platform }}
             CONDA_BUILD: "1"
@@ -194,7 +196,9 @@ outputs:
         - fenics-ufl ${{ ufl_version }}
     tests:
       - script:
-          file: test-dolfinx
+          # rattler-build bug:
+          # invoking .sh by default instead of .bat
+          file: test-dolfinx${{ ".bat" if win else "" }}
           env:
             scalar: ${{ scalar }}
             target_platform: ${{ target_platform }}
