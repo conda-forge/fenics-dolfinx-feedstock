@@ -9,7 +9,6 @@ context:
   abi3_python: "3.12"
   build_abi3: ${{ is_abi3 and match(python, abi3_python + ".*") }}
   skip_abi3: ${{ is_abi3 and match(python, ">=3.13") }}
-  c_compiler_name: ${{ c_compiler | default("bot")  + ("_impl" if linux else "") }}
 
   # nanobind abi:
   abi_version: 2.${{ nanobind_abi }}
@@ -184,7 +183,12 @@ outputs:
         # code generation only needs c, not cxx
         # get implementation, not full activation package
         # need unqualified 'gcc' to get `gcc` executable
-        - ${{ c_compiler | default("bot") }} >=${{ c_compiler_version | default("0") }}
+        - if: win
+          then:
+            # windows only has activation
+            - ${{ compiler("c") }}
+          else:
+            - ${{ c_compiler | default("bot") }} >=${{ c_compiler_version | default("0") }}
         - pkg-config
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
