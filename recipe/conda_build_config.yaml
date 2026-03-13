@@ -9,5 +9,5 @@ mpi:
   - impi  # [win]
 
 scalar:
-  - real  # [not win]
+  - real
   - complex  # [not win]
