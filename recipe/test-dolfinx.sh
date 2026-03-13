@@ -9,10 +9,17 @@ export UCX_MEM_EVENTS=no
 
 TEST_DIR=$PWD
 
+# unset compiler flags, should still work
+unset CC
+unset CXX
+unset CFLAGS
+unset CXXFLAGS
+
 # disable clang availability check
 if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
 fi
+
 
 export PYTHONUNBUFFERED=1
 
@@ -52,4 +59,3 @@ if [[ "${target_platform}-${mpi}" == "linux-aarch64-openmpi" ]]; then
 else
   mpiexec -n 2 pytest -vs -k "$MPI_SELECTOR" $TESTS
 fi
-
