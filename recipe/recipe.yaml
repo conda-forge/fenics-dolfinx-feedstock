@@ -182,10 +182,9 @@ outputs:
         - libboost-devel
       run:
         # code generation only needs c, not cxx
-        # get implementation, not activation
-        - if: not win
-          then:
-            - ${{ c_compiler_name }}_${{ target_platform }} >=${{ c_compiler_version|default("0") }}
+        # get implementation, not full activation package
+        # need unqualified 'gcc' to get `gcc` executable
+        - ${{ c_compiler | default("bot") }} >=${{ c_compiler_version | default("0") }}
         - pkg-config
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
