@@ -1,7 +1,7 @@
 context:
   name: fenics-dolfinx
   version: "0.10.0"
-  build: 4
+  build: 5
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2025.2.*"
   # Python Stable ABI (SABI with nanobind requires 3.12)
@@ -9,6 +9,7 @@ context:
   abi3_python: "3.12"
   build_abi3: ${{ is_abi3 and match(python, abi3_python + ".*") }}
   skip_abi3: ${{ is_abi3 and match(python, ">=3.13") }}
+  c_compiler_name: ${{ c_compiler | default("bot")  + ("_impl" if linux else "") }}
 
   # nanobind abi:
   abi_version: 2.${{ nanobind_abi }}
@@ -181,7 +182,10 @@ outputs:
         - libboost-devel
       run:
         # code generation only needs c, not cxx
-        - ${{ compiler("c") }}
+        # get implementation, not activation
+        - if: not win
+          then:
+            - ${{ c_compiler_name }}_${{ target_platform }} >=${{ c_compiler_version|default("0") }}
         - pkg-config
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
