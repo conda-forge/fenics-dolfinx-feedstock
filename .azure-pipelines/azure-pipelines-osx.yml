@@ -128,7 +128,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_hbb100134
         VMIMAGE: macOS-15
-    maxParallel: 24
   timeoutInMinutes: 120
   variables: {}
 
