@@ -42,6 +42,8 @@ pugixml:
 - '1.15'
 python:
 - 3.10.* *_cpython
+scalar:
+- real
 spdlog:
 - '1.17'
 target_platform:
