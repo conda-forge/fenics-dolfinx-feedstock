@@ -31,7 +31,7 @@ libscotch:
 mpi:
 - mpich
 mpich:
-- '4'
+- '5'
 nanobind:
 - '2.9'
 nanobind_abi:
