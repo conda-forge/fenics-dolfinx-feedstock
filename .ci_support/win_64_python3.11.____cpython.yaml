@@ -27,7 +27,7 @@ libscotch:
 mpi:
 - impi
 mpich:
-- '4'
+- '5'
 nanobind:
 - '2.9'
 nanobind_abi:
@@ -42,6 +42,8 @@ pugixml:
 - '1.15'
 python:
 - 3.11.* *_cpython
+scalar:
+- real
 spdlog:
 - '1.17'
 target_platform:
