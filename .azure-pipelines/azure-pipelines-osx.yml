@@ -11,123 +11,147 @@ jobs:
       osx_64_mpimpichpython3.10.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonsca_hd5dcb8e8
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonsca_hd5dcb8e8
       osx_64_mpimpichpython3.10.____cpythonscalarreal:
         CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpimpichpython3.10.____cpythonscalarreal
       osx_64_mpimpichpython3.11.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonsca_hce2edf6d
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonsca_hce2edf6d
       osx_64_mpimpichpython3.11.____cpythonscalarreal:
         CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpimpichpython3.11.____cpythonscalarreal
       osx_64_mpimpichpython3.12.____cpythonscalarcomplex:
         CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonsca_h498bbdcf
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonsca_h498bbdcf
       osx_64_mpimpichpython3.12.____cpythonscalarreal:
         CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpimpichpython3.12.____cpythonscalarreal
       osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h3248b6c8
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h3248b6c8
       osx_64_mpiopenmpipython3.10.____cpythonscalarreal:
         CONFIG: osx_64_mpiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h588c2b78
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.10.____cpythons_h588c2b78
       osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_hafbfc68d
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_hafbfc68d
       osx_64_mpiopenmpipython3.11.____cpythonscalarreal:
         CONFIG: osx_64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_h6a18a4a9
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.11.____cpythons_h6a18a4a9
       osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex:
         CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_hdf15701b
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_hdf15701b
       osx_64_mpiopenmpipython3.12.____cpythonscalarreal:
         CONFIG: osx_64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_h9cf4cb98
         VMIMAGE: macOS-15
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_64_mpiopenmpipython3.12.____cpythons_h9cf4cb98
       osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_ha82255f8
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_ha82255f8
       osx_arm64_mpimpichpython3.10.____cpythonscalarreal:
         CONFIG: osx_arm64_mpimpichpython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_h7c481527
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.10.____cpython_h7c481527
       osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_ha33ed6b0
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_ha33ed6b0
       osx_arm64_mpimpichpython3.11.____cpythonscalarreal:
         CONFIG: osx_arm64_mpimpichpython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_hc3fa011c
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.11.____cpython_hc3fa011c
       osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hd3112ea8
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hd3112ea8
       osx_arm64_mpimpichpython3.12.____cpythonscalarreal:
         CONFIG: osx_arm64_mpimpichpython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hb4e82c4d
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpimpichpython3.12.____cpython_hb4e82c4d
       osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_ha299e372
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_ha299e372
       osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal:
         CONFIG: osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_h95734737
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.10.____cpyth_h95734737
       osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_h48703a1a
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_h48703a1a
       osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal:
         CONFIG: osx_arm64_mpiopenmpipython3.11.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_hd087caea
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.11.____cpyth_hd087caea
       osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex:
         CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarcomplex
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_h26e1910f
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_h26e1910f
       osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal:
         CONFIG: osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal
         UPLOAD_PACKAGES: 'True'
-        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_hbb100134
         VMIMAGE: macOS-15-arm64
+        store_build_artifacts: true
+        SHORT_CONFIG: osx_arm64_mpiopenmpipython3.12.____cpyth_hbb100134
   timeoutInMinutes: 120
   variables: {}
 
@@ -152,21 +176,22 @@ jobs:
       BINSTAR_TOKEN: $(BINSTAR_TOKEN)
       FEEDSTOCK_TOKEN: $(FEEDSTOCK_TOKEN)
       STAGING_BINSTAR_TOKEN: $(STAGING_BINSTAR_TOKEN)
+
   - script: |
       export CI=azure
       export CI_RUN_ID=$(build.BuildNumber).$(system.JobAttempt)
       export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
-      export CONDA_BLD_DIR=/Users/runner/miniforge3/conda-bld
+      export CONDA_BLD_PATH=/Users/runner/miniforge3/conda-bld
       export ARTIFACT_STAGING_DIR="$(Build.ArtifactStagingDirectory)"
-      # Archive everything in CONDA_BLD_DIR except environments
+      # Archive everything in CONDA_BLD_PATH except environments
       export BLD_ARTIFACT_PREFIX=conda_artifacts
       if [[ "$AGENT_JOBSTATUS" == "Failed" ]]; then
-        # Archive the CONDA_BLD_DIR environments only when the job fails
+        # Archive the CONDA_BLD_PATH environments only when the job fails
         export ENV_ARTIFACT_PREFIX=conda_envs
       fi
       ./.scripts/create_conda_build_artifacts.sh
     displayName: Prepare conda build artifacts
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(), eq(variables.store_build_artifacts, true))
 
   - task: PublishPipelineArtifact@1
     displayName: Store conda build artifacts
