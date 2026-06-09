@@ -1,5 +1,4 @@
 azure:
-  store_build_artifacts: true
   timeout_minutes: 120
 conda_build:
   pkg_format: '2'
