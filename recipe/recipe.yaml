@@ -212,6 +212,7 @@ outputs:
           recipe:
             - test_dolfinx.py
           source:
+            - python/pyproject.toml
             - python/demo/
             - python/test/
         requirements:
