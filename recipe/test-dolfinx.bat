@@ -1,6 +1,7 @@
 setlocal EnableDelayedExpansion
 @echo on
 
+set "CFLAGS=!CFLAGS! /wd4305"
 pip check
 if errorlevel 1 exit 1
 
