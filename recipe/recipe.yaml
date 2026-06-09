@@ -103,7 +103,6 @@ outputs:
           file: test-libdolfinx${{ ".bat" if win else "" }}
           env:
             target_platform: ${{ target_platform }}
-            CONDA_BUILD: "1"
         files:
           recipe:
             - if: win
@@ -209,7 +208,6 @@ outputs:
           env:
             scalar: ${{ scalar }}
             target_platform: ${{ target_platform }}
-            CONDA_BUILD: "1"
         files:
           recipe:
             - test_dolfinx.py
