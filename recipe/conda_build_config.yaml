@@ -1,7 +1,7 @@
 nanobind_abi:
-  - 16
+  - 19
 nanobind:
-  - "2.9"
+  - "2.12"
 
 mpi:
   - mpich  # [not win]
