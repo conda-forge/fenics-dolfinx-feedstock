@@ -1,6 +1,9 @@
 # disable clang availability check
 if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
+  # jthread with clang 19 is behind a flag
+  export CXXFLAGS="${CXXFLAGS} -fexperimental-library"
+  
 fi
 
 if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
@@ -20,6 +23,7 @@ cmake \
   -DDOLFINX_ENABLE_KAHIP=ON \
   -DDOLFINX_ENABLE_PETSC=ON \
   -DDOLFINX_ENABLE_SLEPC=ON \
+  -DDOLFINX_ENABLE_SUPERLU_DIST=ON \
   -DDOLFINX_ENABLE_PARMETIS=ON \
   -DDOLFINX_ENABLE_SCOTCH=ON \
   -DCMAKE_INSTALL_PREFIX=$PREFIX \

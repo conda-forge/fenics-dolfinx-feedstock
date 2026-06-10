@@ -1,9 +1,9 @@
 context:
   name: fenics-dolfinx
-  version: "0.10.0"
-  build: 7
+  version: "0.11.0"
+  build: 0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
-  ufl_version: "2025.2.*"
+  ufl_version: "2026.1.*"
   # Python Stable ABI (SABI with nanobind requires 3.12)
   abi3_tag: cp312
   abi3_python: "3.12"
@@ -19,14 +19,13 @@ recipe:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 24cbad2f604b38248e7655280e5f894eed19b409de4618cd6148a362a70105fd
+  sha256: 4df167823d316da519c1b2f8d5d0afc20de1405de601dab51da67a405b25cc2f
   patches:
-    - 4004.patch  # adios2 2.11 build
     - remove-symlink.patch # windows can't handle symlinks
 
 build:
   number: ${{ (build | int + 100) if scalar == 'real' else build }}
-  skip: ppc64le or skip_abi3
+  skip: ppc64le or skip_abi3 or match(python, "<3.11")
 
 outputs:
   - package:
@@ -59,6 +58,7 @@ outputs:
             - petsc
             - petsc * ${{ scalar }}_*
             - slepc
+            - superlu_dist
         - libboost-devel
         - hdf5 ${{ hdf5 }}.* mpi_${{ mpi }}_*
         - libscotch
@@ -192,7 +192,7 @@ outputs:
         - ${{ pin_subpackage("fenics-libdolfinx", exact=True) }}
         - cffi
         - mpi4py
-        - numpy >=1.21
+        - numpy >=2
         - if: not win
           then:
             - petsc4py
