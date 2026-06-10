@@ -3,7 +3,6 @@ if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
   # jthread with clang 19 is behind a flag
   export CXXFLAGS="${CXXFLAGS} -fexperimental-library"
-  
 fi
 
 if [[ "${CONDA_BUILD_CROSS_COMPILATION:-0}" == "1" ]]; then
