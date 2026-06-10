@@ -1,7 +1,7 @@
 context:
   name: fenics-dolfinx
   version: "0.10.0"
-  build: 6
+  build: 7
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2025.2.*"
   # Python Stable ABI (SABI with nanobind requires 3.12)
@@ -103,7 +103,6 @@ outputs:
           file: test-libdolfinx${{ ".bat" if win else "" }}
           env:
             target_platform: ${{ target_platform }}
-            CONDA_BUILD: "1"
         files:
           recipe:
             - if: win
@@ -209,11 +208,12 @@ outputs:
           env:
             scalar: ${{ scalar }}
             target_platform: ${{ target_platform }}
-            CONDA_BUILD: "1"
         files:
           recipe:
             - test_dolfinx.py
           source:
+            # pyproject 0.10 is incompatible with current pytest
+            # - python/pyproject.toml
             - python/demo/
             - python/test/
         requirements:
