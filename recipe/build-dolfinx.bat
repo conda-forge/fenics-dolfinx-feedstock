@@ -1,10 +1,10 @@
 setlocal EnableDelayedExpansion
 @echo on
 
-rm COPYING
-rm COPYING.LESSER
-copy ../COPYING COPYING
-copy ../COPYING.LESSER COPYING.LESSER
+rm python\COPYING
+rm python\COPYING.LESSER
+copy COPYING python\COPYING
+copy COPYING.LESSER python\COPYING.LESSER
 
 set "CXXFLAGS=%CXXFLAGS% -DH5_BUILT_AS_DYNAMIC_LIB"
 
