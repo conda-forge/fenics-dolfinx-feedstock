@@ -8,7 +8,10 @@ ffcx cpp/test/poisson.py -o cpp/test
 # disable clang availability check
 if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
+  # jthread with clang 19 is behind a flag
+  export CXXFLAGS="${CXXFLAGS} -fexperimental-library"
 fi
+
 if [[ "$target_platform" =~ "linux" ]]; then
   # array bounds check seems to be needed for some versions of gcc
   # (only linux cross-compile at the moment)

@@ -37,9 +37,9 @@ mpi:
 mpich:
 - '5'
 nanobind:
-- '2.9'
+- '2.12'
 nanobind_abi:
-- '16'
+- '19'
 openmpi:
 - '5'
 petsc:
@@ -62,6 +62,8 @@ slepc4py:
 - '3.25'
 spdlog:
 - '1.17'
+superlu_dist:
+- '9'
 target_platform:
 - osx-arm64
 zip_keys:

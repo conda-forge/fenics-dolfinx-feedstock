@@ -1,11 +1,8 @@
 # disable clang availability check
 if [[ "$target_platform" =~ "osx" ]]; then
   export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
-fi
-
-if [[ "$target_platform" == "linux-aarch64" || "$target_platform" == "linux-ppc64le" ]]; then
-  # travis aarch/ppc builds run out of memory with parallel builds
-  export CMAKE_BUILD_PARALLEL_LEVEL=1
+  # jthread with clang 19 is behind a flag
+  export CXXFLAGS="${CXXFLAGS} -fexperimental-library"
 fi
 
 # cross-compiled linux produces wrong wheel tags
