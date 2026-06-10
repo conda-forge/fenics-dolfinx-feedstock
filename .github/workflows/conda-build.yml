@@ -22,24 +22,6 @@ jobs:
       max-parallel: 50
       matrix:
         include:
-          - CONFIG: linux_64_mpimpichpython3.10.____cpythonscalarcomplex
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-latest']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
-          - CONFIG: linux_64_mpimpichpython3.10.____cpythonscalarreal
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-latest']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
           - CONFIG: linux_64_mpimpichpython3.11.____cpythonscalarcomplex
             STORE_BUILD_ARTIFACTS: False
             UPLOAD_PACKAGES: True
@@ -68,24 +50,6 @@ jobs:
             build_workspace_dir: build_artifacts
             docker_run_args: 
           - CONFIG: linux_64_mpimpichpython3.12.____cpythonscalarreal
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-latest']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
-          - CONFIG: linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-latest']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
-          - CONFIG: linux_64_mpiopenmpipython3.10.____cpythonscalarreal
             STORE_BUILD_ARTIFACTS: False
             UPLOAD_PACKAGES: True
             os: ubuntu
@@ -130,24 +94,6 @@ jobs:
             tools_install_dir: ~/miniforge3
             build_workspace_dir: build_artifacts
             docker_run_args: 
-          - CONFIG: linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-24.04-arm']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
-          - CONFIG: linux_aarch64_mpimpichpython3.10.____cpythonscalarreal
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-24.04-arm']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
           - CONFIG: linux_aarch64_mpimpichpython3.11.____cpythonscalarcomplex
             STORE_BUILD_ARTIFACTS: False
             UPLOAD_PACKAGES: True
@@ -176,24 +122,6 @@ jobs:
             build_workspace_dir: build_artifacts
             docker_run_args: 
           - CONFIG: linux_aarch64_mpimpichpython3.12.____cpythonscalarreal
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-24.04-arm']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
-          - CONFIG: linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex
-            STORE_BUILD_ARTIFACTS: False
-            UPLOAD_PACKAGES: True
-            os: ubuntu
-            runs_on: ['ubuntu-24.04-arm']
-            DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
-            tools_install_dir: ~/miniforge3
-            build_workspace_dir: build_artifacts
-            docker_run_args: 
-          - CONFIG: linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal
             STORE_BUILD_ARTIFACTS: False
             UPLOAD_PACKAGES: True
             os: ubuntu

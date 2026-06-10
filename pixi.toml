@@ -23,18 +23,6 @@ description = "List contents of all packages found in rattler-build build direct
 [tasks.build]
 cmd = "rattler-build build --recipe recipe"
 description = "Build fenics-dolfinx-feedstock directly (without setup scripts), no particular variant specified"
-[tasks."build-linux_64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_64_mpimpichpython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-linux_64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_64_mpimpichpython3.10.____cpythonscalarcomplex"
-[tasks."build-linux_64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_64_mpimpichpython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-linux_64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_64_mpimpichpython3.10.____cpythonscalarreal"
 [tasks."build-linux_64_mpimpichpython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_mpimpichpython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant linux_64_mpimpichpython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -59,18 +47,6 @@ description = "Build fenics-dolfinx-feedstock with variant linux_64_mpimpichpyth
 [tasks."inspect-linux_64_mpimpichpython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_mpimpichpython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_64_mpimpichpython3.12.____cpythonscalarreal"
-[tasks."build-linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_64_mpiopenmpipython3.10.____cpythonscalarcomplex"
-[tasks."build-linux_64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_64_mpiopenmpipython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-linux_64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_64_mpiopenmpipython3.10.____cpythonscalarreal"
 [tasks."build-linux_64_mpiopenmpipython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_mpiopenmpipython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant linux_64_mpiopenmpipython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -95,18 +71,6 @@ description = "Build fenics-dolfinx-feedstock with variant linux_64_mpiopenmpipy
 [tasks."inspect-linux_64_mpiopenmpipython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_mpiopenmpipython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_64_mpiopenmpipython3.12.____cpythonscalarreal"
-[tasks."build-linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_aarch64_mpimpichpython3.10.____cpythonscalarcomplex"
-[tasks."build-linux_aarch64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_aarch64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpimpichpython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-linux_aarch64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_aarch64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_aarch64_mpimpichpython3.10.____cpythonscalarreal"
 [tasks."build-linux_aarch64_mpimpichpython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/linux_aarch64_mpimpichpython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpimpichpython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -131,18 +95,6 @@ description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpimpic
 [tasks."inspect-linux_aarch64_mpimpichpython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_aarch64_mpimpichpython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_aarch64_mpimpichpython3.12.____cpythonscalarreal"
-[tasks."build-linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_aarch64_mpiopenmpipython3.10.____cpythonscalarcomplex"
-[tasks."build-linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_aarch64_mpiopenmpipython3.10.____cpythonscalarreal"
 [tasks."build-linux_aarch64_mpiopenmpipython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/linux_aarch64_mpiopenmpipython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpiopenmpipython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -167,18 +119,6 @@ description = "Build fenics-dolfinx-feedstock with variant linux_aarch64_mpiopen
 [tasks."inspect-linux_aarch64_mpiopenmpipython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_aarch64_mpiopenmpipython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant linux_aarch64_mpiopenmpipython3.12.____cpythonscalarreal"
-[tasks."build-osx_64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_64_mpimpichpython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-osx_64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_64_mpimpichpython3.10.____cpythonscalarcomplex"
-[tasks."build-osx_64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_64_mpimpichpython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-osx_64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_64_mpimpichpython3.10.____cpythonscalarreal"
 [tasks."build-osx_64_mpimpichpython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/osx_64_mpimpichpython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant osx_64_mpimpichpython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -203,18 +143,6 @@ description = "Build fenics-dolfinx-feedstock with variant osx_64_mpimpichpython
 [tasks."inspect-osx_64_mpimpichpython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_64_mpimpichpython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_64_mpimpichpython3.12.____cpythonscalarreal"
-[tasks."build-osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_64_mpiopenmpipython3.10.____cpythonscalarcomplex"
-[tasks."build-osx_64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_64_mpiopenmpipython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-osx_64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_64_mpiopenmpipython3.10.____cpythonscalarreal"
 [tasks."build-osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant osx_64_mpiopenmpipython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -239,18 +167,6 @@ description = "Build fenics-dolfinx-feedstock with variant osx_64_mpiopenmpipyth
 [tasks."inspect-osx_64_mpiopenmpipython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_64_mpiopenmpipython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_64_mpiopenmpipython3.12.____cpythonscalarreal"
-[tasks."build-osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_arm64_mpimpichpython3.10.____cpythonscalarcomplex"
-[tasks."build-osx_arm64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_arm64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpimpichpython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-osx_arm64_mpimpichpython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_arm64_mpimpichpython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_arm64_mpimpichpython3.10.____cpythonscalarreal"
 [tasks."build-osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpimpichpython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -275,18 +191,6 @@ description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpimpichpyt
 [tasks."inspect-osx_arm64_mpimpichpython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_arm64_mpimpichpython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_arm64_mpimpichpython3.12.____cpythonscalarreal"
-[tasks."build-osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex directly (without setup scripts)"
-[tasks."inspect-osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_arm64_mpiopenmpipython3.10.____cpythonscalarcomplex"
-[tasks."build-osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal directly (without setup scripts)"
-[tasks."inspect-osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_arm64_mpiopenmpipython3.10.____cpythonscalarreal"
 [tasks."build-osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex.yaml"
 description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpiopenmpipython3.11.____cpythonscalarcomplex directly (without setup scripts)"
@@ -311,12 +215,6 @@ description = "Build fenics-dolfinx-feedstock with variant osx_arm64_mpiopenmpip
 [tasks."inspect-osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal.yaml"
 description = "List contents of fenics-dolfinx-feedstock packages built for variant osx_arm64_mpiopenmpipython3.12.____cpythonscalarreal"
-[tasks."build-win_64_python3.10.____cpython"]
-cmd = "rattler-build build --recipe recipe -m .ci_support/win_64_python3.10.____cpython.yaml"
-description = "Build fenics-dolfinx-feedstock with variant win_64_python3.10.____cpython directly (without setup scripts)"
-[tasks."inspect-win_64_python3.10.____cpython"]
-cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/win_64_python3.10.____cpython.yaml"
-description = "List contents of fenics-dolfinx-feedstock packages built for variant win_64_python3.10.____cpython"
 [tasks."build-win_64_python3.11.____cpython"]
 cmd = "rattler-build build --recipe recipe -m .ci_support/win_64_python3.11.____cpython.yaml"
 description = "Build fenics-dolfinx-feedstock with variant win_64_python3.11.____cpython directly (without setup scripts)"

@@ -58,6 +58,8 @@ slepc4py:
 - '3.25'
 spdlog:
 - '1.17'
+superlu_dist:
+- '9'
 target_platform:
 - linux-64
 zip_keys:
