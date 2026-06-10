@@ -37,9 +37,9 @@ mpi:
 mpich:
 - '5'
 nanobind:
-- '2.9'
+- '2.12'
 nanobind_abi:
-- '16'
+- '19'
 openmpi:
 - '5'
 petsc:
