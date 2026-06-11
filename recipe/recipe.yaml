@@ -1,6 +1,6 @@
 context:
   name: fenics-dolfinx
-  version: "0.11.0"
+  version: "0.11.0.post0"
   build: 0
   major_minor: ${{ (version | split('.'))[:2] | join('.') }}.*
   ufl_version: "2026.1.*"
@@ -19,7 +19,7 @@ recipe:
 
 source:
   url: https://github.com/fenics/dolfinx/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 4df167823d316da519c1b2f8d5d0afc20de1405de601dab51da67a405b25cc2f
+  sha256: 47c635cb82a99482d23e2e6bca26c31c9b2297bcad1ab5f5c651541caaaec68f
   patches:
     - remove-symlink.patch # windows can't handle symlinks
 
