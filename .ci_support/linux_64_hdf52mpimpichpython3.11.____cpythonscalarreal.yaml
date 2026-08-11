@@ -15,11 +15,11 @@ cxx_compiler:
 cxx_compiler_version:
 - '14'
 docker_image:
-- quay.io/condaforge/linux-anvil-x86_64:alma9
+- quay.io/condaforge/linux-anvil-x86_64:alma10
 fmt:
 - '12.1'
 hdf5:
-- 1.14.6
+- '2'
 is_abi3:
 - true
 libboost_devel:
@@ -29,7 +29,7 @@ libptscotch:
 libscotch:
 - 7.0.11
 mpi:
-- openmpi
+- mpich
 mpich:
 - '5'
 nanobind:
@@ -49,7 +49,7 @@ pin_run_as_build:
 pugixml:
 - '1.15'
 python:
-- 3.12.* *_cpython
+- 3.11.* *_cpython
 scalar:
 - real
 slepc:

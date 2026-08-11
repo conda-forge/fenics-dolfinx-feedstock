@@ -15,7 +15,7 @@ cxx_compiler:
 cxx_compiler_version:
 - '14'
 docker_image:
-- quay.io/condaforge/linux-anvil-x86_64:alma9
+- quay.io/condaforge/linux-anvil-aarch64:alma10
 fmt:
 - '12.1'
 hdf5:
@@ -61,7 +61,7 @@ spdlog:
 superlu_dist:
 - '9'
 target_platform:
-- linux-64
+- linux-aarch64
 zip_keys:
 - - c_compiler_version
   - cxx_compiler_version
